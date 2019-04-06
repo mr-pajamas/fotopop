@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="72px" height="72px" viewBox="0 0 72 72" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.2 (57519) - http://www.bohemiancoding.com/sketch -->
+    <title>游戏提示</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <circle id="path-1" cx="36" cy="36" r="36"></circle>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="足记游戏切图" transform="translate(-474.000000, -331.000000)">
+            <g id="游戏提示" transform="translate(474.000000, 331.000000)">
+                <mask id="mask-2" fill="white">
+                    <use xlink:href="#path-1"></use>
+                </mask>
+                <use id="Mask" fill="#FFE82A" xlink:href="#path-1"></use>
+                <g id="nav_profile_game" mask="url(#mask-2)">
+                    <g transform="translate(19.000000, 20.000000)">
+                        <path d="M0,29.0186916 L0,16.942903 C0,7.58559607 7.61115925,0 17,0 C26.3888407,0 34,7.58559607 34,16.942903 L34,30" id="Rectangle-9" stroke="#000000" stroke-width="4" fill="none"></path>
+                        <path d="M0,21 L1.5,21 C4.53756612,21 7,23.4624339 7,26.5 L7,28.5 C7,30.4329966 5.43299662,32 3.5,32 L1.88888889,32 C0.845684361,32 3.49800313e-16,31.1543156 2.22044605e-16,30.1111111 L0,21 Z" id="Rectangle-10" stroke="#000000" stroke-width="4" fill="#FFFFFF" fill-rule="evenodd"></path>
+                        <path d="M32.5,21 L34,21 L34,30.1111111 C34,31.1543156 33.1543156,32 32.1111111,32 L30.5,32 C28.5670034,32 27,30.4329966 27,28.5 L27,26.5 C27,23.4624339 29.4624339,21 32.5,21 Z" id="Rectangle-10" stroke="#000000" stroke-width="4" fill="#FFFFFF" fill-rule="evenodd"></path>
+                        <rect id="Rectangle-11" stroke="none" fill="#000000" fill-rule="evenodd" x="15" y="19" width="4" height="11" rx="1"></rect>
+                        <rect id="Rectangle-11-Copy" stroke="none" fill="#000000" fill-rule="evenodd" x="10" y="23" width="4" height="7" rx="1"></rect>
+                        <rect id="Rectangle-11-Copy-2" stroke="none" fill="#000000" fill-rule="evenodd" x="20" y="23" width="4" height="7" rx="1"></rect>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

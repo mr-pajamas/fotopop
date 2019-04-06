@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="40px" height="58px" viewBox="0 0 40 58" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.2 (57519) - http://www.bohemiancoding.com/sketch -->
+    <title>提示</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="足记游戏切图" transform="translate(-205.000000, -532.000000)" stroke="#030303" stroke-width="4">
+            <g id="提示" transform="translate(209.000000, 534.000000)">
+                <g id="Group-9-Copy">
+                    <path d="M13,33.7565596 L13,50.1794872 C13,52.2045313 14.6416226,53.8461538 16.6666667,53.8461538 L18.0833333,53.8461538 C20.1083774,53.8461538 21.75,52.2045313 21.75,50.1794872 L21.75,33.7565596 C20.0655782,34.7210146 18.6298016,35.2118389 17.375,35.2118389 C16.1201984,35.2118389 14.6844218,34.7210146 13,33.7565596 Z" id="Rectangle-15" fill="#FFFFFF"></path>
+                    <ellipse id="Oval-24" fill="#EB5A6B" cx="17" cy="17.2307692" rx="17" ry="17.2307692"></ellipse>
+                    <path d="M9,22.8476562 L26,12" id="Line-Copy" stroke-linecap="round"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

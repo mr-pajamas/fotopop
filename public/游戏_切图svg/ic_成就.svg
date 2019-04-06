@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="74px" height="108px" viewBox="0 0 74 108" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.2 (57519) - http://www.bohemiancoding.com/sketch -->
+    <title>ic_成就</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <polygon id="path-1" points="0 0 46.6666667 0 46.6666667 48.3333333 23.3333333 39.6777344 0 48.3333333"></polygon>
+        <linearGradient x1="90.8342634%" y1="59.484282%" x2="-11.983817%" y2="19.8800223%" id="linearGradient-3">
+            <stop stop-color="#FFE200" offset="0%"></stop>
+            <stop stop-color="#FFAB00" offset="100%"></stop>
+        </linearGradient>
+        <polygon id="path-4" points="35 49.2747335 19.5491503 57.3657736 22.5 40.2286757 10 28.0921156 27.2745751 25.5918467 35 10 42.7254249 25.5918467 60 28.0921156 47.5 40.2286757 50.4508497 57.3657736"></polygon>
+        <filter x="-3.0%" y="-3.2%" width="106.0%" height="106.3%" filterUnits="objectBoundingBox" id="filter-5">
+            <feOffset dx="-3" dy="-3" in="SourceAlpha" result="shadowOffsetInner1"></feOffset>
+            <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
+            <feColorMatrix values="0 0 0 0 1   0 0 0 0 0.870588235   0 0 0 0 0.533333333  0 0 0 1 0" type="matrix" in="shadowInnerInner1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="足记游戏切图" transform="translate(-813.000000, -70.000000)">
+            <g id="ic_成就" transform="translate(815.000000, 72.000000)">
+                <g id="Rectangle-19" transform="translate(11.666667, 51.666667)">
+                    <mask id="mask-2" fill="white">
+                        <use xlink:href="#path-1"></use>
+                    </mask>
+                    <path stroke="#FFCF1E" stroke-width="4" d="M23.3333333,41.8109076 L-2,51.2084151 L-2,-2 L48.6666667,-2 L48.6666667,51.2084151 L23.3333333,41.8109076 Z"></path>
+                    <rect stroke="#FEA948" stroke-width="6.66000666" mask="url(#mask-2)" x="16.6633367" y="4.99667" width="13.3399933" height="41.6733267"></rect>
+                </g>
+                <circle id="Oval-8" stroke="#FF9B00" stroke-width="4" fill="url(#linearGradient-3)" cx="35" cy="35" r="35"></circle>
+                <circle id="Oval-8-Copy" fill="#FFCF1E" cx="35" cy="35" r="28.3333333"></circle>
+                <g id="Star">
+                    <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-4"></use>
+                    <use fill="black" fill-opacity="1" filter="url(#filter-5)" xlink:href="#path-4"></use>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

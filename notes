@@ -1,0 +1,54 @@
+把 meteor的reactive 转换成 Vue的
+
+subscribe 都是模板级的？还是方法级的
+
+模板级好处：声明式
+
+方法级好处：流程控制
+
+subscribe handle key, 重新subscribe的话自动暂停原来的，是先停还是[后停]，还是参数化
+
+
+handle本身也是响应式的（可能会更换）
+
+
+
+
+游戏过程：
+
+1、开房间进入准备阶段
+2、两种开始方式：房主开始/全部准备开始 倒计时
+3、房主开始直接三秒倒计时（第一题倒计时）
+4、全部准备开始先过五秒钟再进入第一题倒计时
+5、每题20秒（加准备23秒）
+6、结束后出结果，用户停留在结果页视为没有准备好
+
+
+
+房间匹配
+1、没有房间时：创建一个房间，开始定时加机器人，
+2、有房间时：加入该房间，直接准备
+3、人满时候（不一定都准备）开始5秒 -> 3秒
+
+
+结算页面做成全局弹窗
+
+
+在游戏一轮快结束时：
+服务器接收每个在线用户的endRound请求，以第51%的人为准
+此时，如果有人掉线重回
+
+
+渣渣辉
+10.1.1.186:3000/?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJ1c2VyIiwic3ViIjoidXVpZDIiLCJpc3MiOiJqMzYwLm1lIiwiZXhwIjoxNTgzNjQ2Nzk0LCJpYXQiOjE1NTIwMjQzOTQsIm5vbmNlIjoxNTUyMDI0Mzk0NjAwLCJqdGkiOiIxMTEifQ.bLJu7dss2BwkyOEtk7CKIxHKtkQzUOaRXLJySRnzX18&ua=b35d7751bc8ef46b87892a6abcb8f8/4.8.2/19013014/2/12.1.4/iPhone%20X/CFBEF14A-CA5E-45F3-B81C-944A3E954253
+localhost:3000/?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJ1c2VyIiwic3ViIjoidXVpZDIiLCJpc3MiOiJqMzYwLm1lIiwiZXhwIjoxNTgzNjQ2Nzk0LCJpYXQiOjE1NTIwMjQzOTQsIm5vbmNlIjoxNTUyMDI0Mzk0NjAwLCJqdGkiOiIxMTEifQ.bLJu7dss2BwkyOEtk7CKIxHKtkQzUOaRXLJySRnzX18&ua=b35d7751bc8ef46b87892a6abcb8f8/4.8.2/19013014/2/12.1.4/iPhone%20X/CFBEF14A-CA5E-45F3-B81C-944A3E954253
+192.168.1.5:3000/?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJ1c2VyIiwic3ViIjoidXVpZDIiLCJpc3MiOiJqMzYwLm1lIiwiZXhwIjoxNTgzNjQ2Nzk0LCJpYXQiOjE1NTIwMjQzOTQsIm5vbmNlIjoxNTUyMDI0Mzk0NjAwLCJqdGkiOiIxMTEifQ.bLJu7dss2BwkyOEtk7CKIxHKtkQzUOaRXLJySRnzX18&ua=b35d7751bc8ef46b87892a6abcb8f8/4.8.2/19013014/2/12.1.4/iPhone%20X/CFBEF14A-CA5E-45F3-B81C-944A3E954253
+
+古田螺 1a18af17dd144b88aabe55f05b334b8b
+10.1.1.186:3000/?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJ1c2VyIiwic3ViIjoiMWExOGFmMTdkZDE0NGI4OGFhYmU1NWYwNWIzMzRiOGIiLCJpc3MiOiJmb3RvcGxhY2UuY2MiLCJleHAiOjE1ODUzMDU3NDIsImlhdCI6MTU1MzY4MzM0Miwibm9uY2UiOjE1NTM2ODMzNDI0MzgsImp0aSI6IkNGQkVGMTRBLUNBNUUtNDVGMy1CODFDLTk0NEEzRTk1NDI1MyJ9.cceGRhoQVUe-PDJZ3B6pnEdLBs7zgJIFgIhbEKIFR5U&ua=b35d7751bc8ef46b87892a6abcb8f8/4.8.2/19013014/2/12.1.4/iPhone%20X/CFBEF14A-CA5E-45F3-B81C-944A3E954253
+localhost:3000/?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJ1c2VyIiwic3ViIjoiMWExOGFmMTdkZDE0NGI4OGFhYmU1NWYwNWIzMzRiOGIiLCJpc3MiOiJmb3RvcGxhY2UuY2MiLCJleHAiOjE1ODUzMDU3NDIsImlhdCI6MTU1MzY4MzM0Miwibm9uY2UiOjE1NTM2ODMzNDI0MzgsImp0aSI6IkNGQkVGMTRBLUNBNUUtNDVGMy1CODFDLTk0NEEzRTk1NDI1MyJ9.cceGRhoQVUe-PDJZ3B6pnEdLBs7zgJIFgIhbEKIFR5U&ua=b35d7751bc8ef46b87892a6abcb8f8/4.8.2/19013014/2/12.1.4/iPhone%20X/CFBEF14A-CA5E-45F3-B81C-944A3E954253
+
+
+
+winners 第一个元素加了个空字符串：难以重现
+先没了userAccount再没users

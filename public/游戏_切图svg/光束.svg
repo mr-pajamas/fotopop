@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="411px" height="420px" viewBox="0 0 411 420" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.2 (57519) - http://www.bohemiancoding.com/sketch -->
+    <title>光束</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="50%" y1="41.5366441%" x2="50%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#FFFFFF" stop-opacity="0" offset="0%"></stop>
+            <stop stop-color="#FFFFFF" stop-opacity="0.182574728" offset="100%"></stop>
+        </linearGradient>
+        <filter x="0.0%" y="0.0%" width="100.0%" height="100.0%" filterUnits="objectBoundingBox" id="filter-2">
+            <feGaussianBlur stdDeviation="0" in="SourceGraphic"></feGaussianBlur>
+        </filter>
+        <filter x="0.0%" y="0.0%" width="100.0%" height="100.0%" filterUnits="objectBoundingBox" id="filter-3">
+            <feGaussianBlur stdDeviation="0" in="SourceGraphic"></feGaussianBlur>
+        </filter>
+        <filter x="0.0%" y="0.0%" width="100.0%" height="100.0%" filterUnits="objectBoundingBox" id="filter-4">
+            <feGaussianBlur stdDeviation="0" in="SourceGraphic"></feGaussianBlur>
+        </filter>
+        <filter x="0.0%" y="0.0%" width="100.0%" height="100.0%" filterUnits="objectBoundingBox" id="filter-5">
+            <feGaussianBlur stdDeviation="0" in="SourceGraphic"></feGaussianBlur>
+        </filter>
+        <filter x="0.0%" y="0.0%" width="100.0%" height="100.0%" filterUnits="objectBoundingBox" id="filter-6">
+            <feGaussianBlur stdDeviation="0" in="SourceGraphic"></feGaussianBlur>
+        </filter>
+        <filter x="0.0%" y="0.0%" width="100.0%" height="100.0%" filterUnits="objectBoundingBox" id="filter-7">
+            <feGaussianBlur stdDeviation="0" in="SourceGraphic"></feGaussianBlur>
+        </filter>
+        <filter x="0.0%" y="0.0%" width="100.0%" height="100.0%" filterUnits="objectBoundingBox" id="filter-8">
+            <feGaussianBlur stdDeviation="0" in="SourceGraphic"></feGaussianBlur>
+        </filter>
+        <filter x="0.0%" y="0.0%" width="100.0%" height="100.0%" filterUnits="objectBoundingBox" id="filter-9">
+            <feGaussianBlur stdDeviation="0" in="SourceGraphic"></feGaussianBlur>
+        </filter>
+        <filter x="0.0%" y="0.0%" width="100.0%" height="100.0%" filterUnits="objectBoundingBox" id="filter-10">
+            <feGaussianBlur stdDeviation="0" in="SourceGraphic"></feGaussianBlur>
+        </filter>
+        <filter x="0.0%" y="0.0%" width="100.0%" height="100.0%" filterUnits="objectBoundingBox" id="filter-11">
+            <feGaussianBlur stdDeviation="0" in="SourceGraphic"></feGaussianBlur>
+        </filter>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="足记游戏切图" transform="translate(-119.000000, -1740.000000)" fill="url(#linearGradient-1)">
+            <g id="光束" transform="translate(-176.000000, 1443.000000)">
+                <polygon id="Triangle-2" filter="url(#filter-2)" points="497.180731 506.981561 558.663141 1013.94709 435.698321 1013.94709"></polygon>
+                <polygon id="Triangle-2-Copy" filter="url(#filter-3)" transform="translate(348.541861, 714.875276) rotate(36.000000) translate(-348.541861, -714.875276) " points="348.541861 461.392511 410.024271 968.35804 287.059451 968.35804"></polygon>
+                <polygon id="Triangle-2-Copy-2" filter="url(#filter-4)" transform="translate(260.794094, 585.917903) rotate(72.000000) translate(-260.794094, -585.917903) " points="260.794094 332.435139 322.276504 839.400668 199.311685 839.400668"></polygon>
+                <polygon id="Triangle-2-Copy-3" filter="url(#filter-5)" transform="translate(260.794094, 431.542895) rotate(108.000000) translate(-260.794094, -431.542895) " points="260.794094 178.06013 322.276504 685.025659 199.311685 685.025659"></polygon>
+                <polygon id="Triangle-2-Copy-4" filter="url(#filter-6)" transform="translate(348.541861, 304.378094) rotate(144.000000) translate(-348.541861, -304.378094) " points="348.541861 50.89533 410.024271 557.860859 287.059451 557.860859"></polygon>
+                <polygon id="Triangle-2-Copy-5" filter="url(#filter-7)" transform="translate(497.180731, 253.482764) rotate(180.000000) translate(-497.180731, -253.482764) " points="497.180731 -5.68434189e-14 558.663141 506.965529 435.698321 506.965529"></polygon>
+                <polygon id="Triangle-2-Copy-6" filter="url(#filter-8)" transform="translate(648.401385, 304.378094) rotate(216.000000) translate(-648.401385, -304.378094) " points="648.401385 50.89533 709.883795 557.860859 586.918976 557.860859"></polygon>
+                <polygon id="Triangle-2-Copy-7" filter="url(#filter-9)" transform="translate(739.517195, 431.542895) rotate(252.000000) translate(-739.517195, -431.542895) " points="739.517195 178.06013 800.999605 685.025659 678.034785 685.025659"></polygon>
+                <polygon id="Triangle-2-Copy-8" filter="url(#filter-10)" transform="translate(739.517195, 585.917903) rotate(288.000000) translate(-739.517195, -585.917903) " points="739.517195 332.435139 800.999605 839.400668 678.034785 839.400668"></polygon>
+                <polygon id="Triangle-2-Copy-9" filter="url(#filter-11)" transform="translate(648.401385, 714.875276) rotate(324.000000) translate(-648.401385, -714.875276) " points="648.401385 461.392511 709.883795 968.35804 586.918976 968.35804"></polygon>
+            </g>
+        </g>
+    </g>
+</svg>

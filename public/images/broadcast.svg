@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="110px" height="110px" viewBox="0 0 110 110" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.2 (57519) - http://www.bohemiancoding.com/sketch -->
+    <title>喇叭</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="足记游戏切图" transform="translate(-635.000000, -72.000000)">
+            <g id="喇叭" transform="translate(635.000000, 72.000000)">
+                <rect id="Rectangle" fill="#40C5FF" x="0" y="0" width="110" height="110"></rect>
+                <g id="Group-3" transform="translate(21.000000, 26.000000)">
+                    <ellipse id="Oval-6" fill="#333333" cx="3.39473684" cy="22.7255639" rx="3.39473684" ry="3.29887218"></ellipse>
+                    <path d="M12.056858,31.3846619 L23.0220894,31.3846619 L23.0220894,45.3199921 C23.0220894,48.3479571 20.5674387,50.8026078 17.5394737,50.8026078 L17.5394737,50.8026078 C14.5115086,50.8026078 12.056858,48.3479571 12.056858,45.3199921 L12.056858,31.3846619 Z" id="Rectangle-23" fill="#333333" transform="translate(17.539474, 41.093635) rotate(-9.000000) translate(-17.539474, -41.093635) "></path>
+                    <rect id="Rectangle-22-Copy" fill="#333333" x="2.64035088" y="14.6616541" width="6.78947368" height="16.2177259" rx="0.936170213"></rect>
+                    <path d="M27.8195832,13.1591233 L27.6657167,33.0504952 C31.4450544,32.9421291 34.988359,33.5904839 38.2767758,35.0002874 C41.340146,36.3136093 45.00417,38.6432814 49.2982456,41.9931761 L49.2982456,4.28608002 C44.345298,8.3577706 40.8332904,10.835658 38.6399714,11.7759733 C36.2297794,12.809266 32.6465998,13.2510808 27.8195832,13.1591233 Z" id="Rectangle-21" stroke="#333333" stroke-width="4" fill="#FFFFFF"></path>
+                    <path d="M8.03508772,13.1795113 L8.03508772,33.0046992 L24.0263158,33.0046992 L24.0263158,13.1795113 L8.03508772,13.1795113 Z" id="Rectangle-22" stroke="#333333" stroke-width="4" fill="#40C5FF"></path>
+                    <rect id="Rectangle-16" stroke="#333333" stroke-width="3.7037037" x="49.7553606" y="1.85185185" width="3.08576998" height="42.4805068" rx="1.54288499"></rect>
+                </g>
+                <rect id="Combined-Shape" fill="#333333" transform="translate(84.739198, 36.666667) rotate(-45.000000) translate(-84.739198, -36.666667) " x="79.6296296" y="33.6666667" width="10.2191358" height="6" rx="3"></rect>
+                <rect id="Combined-Shape-Copy-2" fill="#333333" transform="translate(84.739198, 64.400000) scale(1, -1) rotate(-45.000000) translate(-84.739198, -64.400000) " x="79.6296296" y="61.4" width="10.2191358" height="6" rx="3"></rect>
+                <rect id="Combined-Shape-Copy" fill="#333333" transform="translate(83.629630, 49.666667) scale(-1, 1) translate(-83.629630, -49.666667) " x="79.6296296" y="46.6666667" width="8" height="6" rx="3"></rect>
+            </g>
+        </g>
+    </g>
+</svg>

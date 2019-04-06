@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="94px" height="94px" viewBox="0 0 94 94" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.2 (57519) - http://www.bohemiancoding.com/sketch -->
+    <title>ic歌曲分类</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#281B4B" offset="0%"></stop>
+            <stop stop-color="#352B56" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="足记游戏切图" transform="translate(-93.000000, -320.000000)">
+            <g id="ic歌曲分类" transform="translate(77.000000, 304.000000)">
+                <g id="Group-5" transform="translate(63.000000, 63.000000) rotate(-126.000000) translate(-63.000000, -63.000000) translate(18.000000, 18.000000)">
+                    <circle id="Oval" stroke="#7F5BF9" stroke-width="3.6" fill="url(#linearGradient-1)" cx="45" cy="45" r="45"></circle>
+                    <path d="M22.5098789,69.5194884 C28.8483858,64.9855788 36.6125961,62.3173692 45,62.3173692 C53.3834131,62.3173692 61.1442253,64.9830403 67.4810722,69.5130177 L52.9407483,84.0533417 C50.6384621,83.0964971 48.1071344,82.5673692 45.45,82.5673692 C42.5454209,82.5673692 39.791171,83.1996355 37.3220954,84.3317048 L22.5098789,69.5194884 Z" id="Combined-Shape-Copy-5" fill="#FFFEFF" opacity="0.1" transform="translate(44.995476, 73.324537) scale(1, -1) translate(-44.995476, -73.324537) "></path>
+                    <path d="M21.8208408,12.2833527 C28.1593477,7.74944315 35.9235579,5.08123357 44.3109619,5.08123357 C52.6943749,5.08123357 60.4551872,7.74690459 66.792034,12.2768821 L52.2517101,26.817206 C49.949424,25.8603614 47.4180963,25.3312336 44.7609619,25.3312336 C41.8563828,25.3312336 39.1021329,25.9634998 36.6330573,27.0955692 L21.8208408,12.2833527 Z" id="Combined-Shape-Copy-6" fill="#FFFEFF" opacity="0.1"></path>
+                    <circle id="Oval-Copy" fill="#EB5A6B" cx="44.55" cy="44.55" r="15.75"></circle>
+                    <circle id="Oval-Copy-3" fill="#FFFFFF" cx="45" cy="45" r="6.3"></circle>
+                </g>
+                <g id="Group-6" transform="translate(75.000000, 23.000000)">
+                    <ellipse id="Oval-22" fill="#FFFFFF" cx="7.5" cy="25.5" rx="7.5" ry="6.5"></ellipse>
+                    <path d="M13.6445312,25.0068359 C13.6445312,11.3284505 13.6445312,3.43391927 13.6445312,1.32324219 C13.6445312,-1.84277344 15.9960937,6.234375 20.9423828,2.66113281" id="Path-3" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

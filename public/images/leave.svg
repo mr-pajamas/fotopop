@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="50px" height="50px" viewBox="0 0 50 50" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.2 (57519) - http://www.bohemiancoding.com/sketch -->
+    <title>退出</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="足记游戏切图" transform="translate(-769.000000, -342.000000)">
+            <g id="退出" transform="translate(769.000000, 342.000000)">
+                <circle id="Oval" fill="#1F1E48" cx="25" cy="25" r="25"></circle>
+                <path d="M15.2573064,17.9328353 L10.6254026,23.0701169 C10.2733071,23.4606288 10.2837742,24.0571072 10.6493542,24.4350252 L15.2812581,29.2232519 C15.6652489,29.6202022 16.2983267,29.6307078 16.6952769,29.246717 C16.8900352,29.058317 17,28.7989461 17,28.527975 L17,18.6024668 C17,18.050182 16.5522847,17.6024668 16,17.6024668 C15.7168261,17.6024668 15.4469286,17.7225239 15.2573064,17.9328353 Z" id="ic_back-copy" fill="#FFFFFF"></path>
+                <path d="M14,22 L26,22 C27.1045695,22 28,22.8954305 28,24 L28,24 C28,25.1045695 27.1045695,26 26,26 L14,26 L14,22 Z" id="Rectangle-2" fill="#FFFFFF"></path>
+                <path d="M19,12 L32,12 C34.209139,12 36,13.790861 36,16 L36,32 C36,34.209139 34.209139,36 32,36 L19,36" id="Rectangle-49" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"></path>
+            </g>
+        </g>
+    </g>
+</svg>

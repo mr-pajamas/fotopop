@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="320px" height="100px" viewBox="0 0 320 100" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.2 (57519) - http://www.bohemiancoding.com/sketch -->
+    <title>开始游戏</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="320" height="100" rx="50"></rect>
+        <filter x="-2.2%" y="-7.0%" width="104.4%" height="114.0%" filterUnits="objectBoundingBox" id="filter-3">
+            <feOffset dx="0" dy="-14" in="SourceAlpha" result="shadowOffsetInner1"></feOffset>
+            <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
+            <feColorMatrix values="0 0 0 0 0.325387968   0 0 0 0 0.28877797   0 0 0 0 0.28877797  0 0 0 0.5 0" type="matrix" in="shadowInnerInner1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="足记游戏切图" transform="translate(-2232.000000, -753.000000)">
+            <g id="开始游戏" transform="translate(2232.000000, 753.000000)">
+                <g id="Group-8">
+                    <mask id="mask-2" fill="white">
+                        <use xlink:href="#path-1"></use>
+                    </mask>
+                    <g id="Mask">
+                        <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-1"></use>
+                        <use fill="black" fill-opacity="1" filter="url(#filter-3)" xlink:href="#path-1"></use>
+                        <rect stroke="#0B0B0B" stroke-width="6" stroke-linejoin="square" x="3" y="3" width="314" height="94" rx="47"></rect>
+                    </g>
+                </g>
+                <text font-family="PingFangSC-Semibold, PingFang SC" font-size="40" font-weight="500" letter-spacing="3" fill="#444444">
+                    <tspan x="74" y="65">开始游戏</tspan>
+                </text>
+                <text id="开始游戏-copy" stroke="#555555" font-family="PingFangSC-Semibold, PingFang SC" font-size="40" font-weight="500" letter-spacing="3" fill="#AFAFAF">
+                    <tspan x="74" y="62">开始游戏</tspan>
+                </text>
+            </g>
+        </g>
+    </g>
+</svg>

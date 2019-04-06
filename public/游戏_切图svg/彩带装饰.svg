@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="554px" height="362px" viewBox="0 0 554 362" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.2 (57519) - http://www.bohemiancoding.com/sketch -->
+    <title>彩带装饰</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="50%" y1="41.5366441%" x2="50%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#FFFFFF" stop-opacity="0" offset="0%"></stop>
+            <stop stop-color="#FFFFFF" stop-opacity="0.182574728" offset="100%"></stop>
+        </linearGradient>
+        <filter x="0.0%" y="0.0%" width="100.0%" height="100.0%" filterUnits="objectBoundingBox" id="filter-2">
+            <feGaussianBlur stdDeviation="0" in="SourceGraphic"></feGaussianBlur>
+        </filter>
+        <filter x="0.0%" y="0.0%" width="100.0%" height="100.0%" filterUnits="objectBoundingBox" id="filter-3">
+            <feGaussianBlur stdDeviation="0" in="SourceGraphic"></feGaussianBlur>
+        </filter>
+        <filter x="0.0%" y="0.0%" width="100.0%" height="100.0%" filterUnits="objectBoundingBox" id="filter-4">
+            <feGaussianBlur stdDeviation="0" in="SourceGraphic"></feGaussianBlur>
+        </filter>
+        <filter x="0.0%" y="0.0%" width="100.0%" height="100.0%" filterUnits="objectBoundingBox" id="filter-5">
+            <feGaussianBlur stdDeviation="0" in="SourceGraphic"></feGaussianBlur>
+        </filter>
+        <filter x="-37.3%" y="-223.7%" width="174.6%" height="547.5%" filterUnits="objectBoundingBox" id="filter-6">
+            <feGaussianBlur stdDeviation="3" in="SourceGraphic"></feGaussianBlur>
+        </filter>
+        <filter x="-83.3%" y="-83.3%" width="266.7%" height="266.7%" filterUnits="objectBoundingBox" id="filter-7">
+            <feGaussianBlur stdDeviation="5" in="SourceGraphic"></feGaussianBlur>
+        </filter>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="足记游戏切图" transform="translate(-610.000000, -1740.000000)">
+            <g id="光束" transform="translate(-176.000000, 1443.000000)" fill="url(#linearGradient-1)">
+                <polygon id="Triangle-2-Copy-6" filter="url(#filter-2)" transform="translate(648.401385, 304.378094) rotate(216.000000) translate(-648.401385, -304.378094) " points="648.401385 50.89533 709.883795 557.860859 586.918976 557.860859"></polygon>
+                <polygon id="Triangle-2-Copy-7" filter="url(#filter-3)" transform="translate(739.517195, 431.542895) rotate(252.000000) translate(-739.517195, -431.542895) " points="739.517195 178.06013 800.999605 685.025659 678.034785 685.025659"></polygon>
+                <polygon id="Triangle-2-Copy-8" filter="url(#filter-4)" transform="translate(739.517195, 585.917903) rotate(288.000000) translate(-739.517195, -585.917903) " points="739.517195 332.435139 800.999605 839.400668 678.034785 839.400668"></polygon>
+                <polygon id="Triangle-2-Copy-9" filter="url(#filter-5)" transform="translate(648.401385, 714.875276) rotate(324.000000) translate(-648.401385, -714.875276) " points="648.401385 461.392511 709.883795 968.35804 586.918976 968.35804"></polygon>
+            </g>
+            <g id="彩带装饰" transform="translate(610.000000, 1740.000000)">
+                <path d="M417.535723,228.255994 C418.839739,226.578981 420.227024,225.740474 421.697579,225.740474 C423.168133,225.740474 424.718731,226.578981 426.349371,228.255994 C427.471882,229.912314 428.769344,230.740474 430.241756,230.740474 C431.714168,230.740474 433.354589,229.912314 435.163018,228.255994 C436.506975,226.578981 437.914035,225.740474 439.384199,225.740474 C440.854363,225.740474 442.385185,226.578981 443.976666,228.255994 C445.836209,229.912314 447.498495,230.740474 448.963523,230.740474 C450.428551,230.740474 451.704148,229.912314 452.790313,228.255994 C454.487208,226.578981 456.069012,225.740474 457.535723,225.740474" id="Path-28-Copy" stroke="#43FFEA" stroke-width="5.14129444" stroke-linecap="round" transform="translate(437.535723, 228.240474) scale(-1, 1) rotate(-42.000000) translate(-437.535723, -228.240474) "></path>
+                <path d="M476,60.12966 C477.521814,58.04322 479.140805,57 480.856974,57 C482.573143,57 484.382723,58.04322 486.285714,60.12966 C487.595709,62.1903554 489.109875,63.2207031 490.828211,63.2207031 C492.546547,63.2207031 494.460953,62.1903554 496.571429,60.12966 C498.139854,58.04322 499.781923,57 501.497636,57 C503.213349,57 504.999851,58.04322 506.857143,60.12966 C509.027269,62.1903554 510.967192,63.2207031 512.676911,63.2207031 C514.38663,63.2207031 515.875279,62.1903554 517.142857,60.12966" id="Path-28-Copy-2" stroke="#FFC710" stroke-width="6" stroke-linecap="round"></path>
+                <path d="M10.135935,328.31262 C11.2455912,326.635607 12.4261057,325.7971 13.6774785,325.7971 C14.9288514,325.7971 16.2483369,326.635607 17.635935,328.31262 C18.5911398,329.96894 19.6952189,330.7971 20.9481723,330.7971 C22.2011258,330.7971 23.5970467,329.96894 25.135935,328.31262 C26.2795787,326.635607 27.4769208,325.7971 28.7279612,325.7971 C29.9790016,325.7971 31.2816596,326.635607 32.635935,328.31262 C34.2183187,329.96894 35.6328457,330.7971 36.8795159,330.7971 C38.1261861,330.7971 39.2116591,329.96894 40.135935,328.31262" id="Path-28-Copy-4" stroke="#FFC710" stroke-width="4.375" stroke-linecap="round" filter="url(#filter-6)" transform="translate(25.135935, 328.297100) rotate(-15.000000) translate(-25.135935, -328.297100) "></path>
+                <circle id="Oval-39" fill="#FFDE10" cx="10" cy="172" r="10"></circle>
+                <circle id="Oval-39-Copy" fill="#FFDE10" filter="url(#filter-7)" cx="517" cy="313" r="9"></circle>
+                <circle id="Oval-39-Copy-4" fill="#FF589F" cx="431.5" cy="355.5" r="6.5"></circle>
+                <circle id="Oval-39-Copy-2" fill="#FF589F" cx="398" cy="126" r="12"></circle>
+                <path d="M528.516237,175.176584 C536.248224,175.176584 542.516237,168.908571 542.516237,161.176584 C542.516237,153.444598 536.248224,147.176584 528.516237,147.176584" id="Oval-40-Copy" stroke="#FF589F" stroke-width="4" stroke-linecap="round" transform="translate(535.516237, 161.176584) rotate(-109.000000) translate(-535.516237, -161.176584) "></path>
+                <polygon id="Path-28" fill="#FF589F" points="78.6330165 113 67 137.979188 95.5742187 123.616371"></polygon>
+                <polygon id="Path-28-Copy-5" fill="#FFFFFF" transform="translate(134.287109, 280.580571) scale(-1, -1) translate(-134.287109, -280.580571) " points="131.633017 268.090977 120 293.070165 148.574219 278.707348"></polygon>
+                <path d="M115.212671,65.1085128 C127.362935,65.1085128 137.212671,55.2587773 137.212671,43.1085128 C137.212671,30.9582483 127.362935,21.1085128 115.212671,21.1085128" id="Oval-40" stroke="#43FFEA" stroke-width="6" stroke-linecap="round" transform="translate(126.212671, 43.108513) rotate(38.000000) translate(-126.212671, -43.108513) "></path>
+                <path d="M429.538231,0.172945821 C430.851391,4.62819973 432.731737,7.84620015 435.179272,9.8269471 C437.626807,11.807694 440.900383,12.7606729 445,12.6858837 L441.525635,19.4809484 L425.358544,12.6858837 C424.880485,8.47475242 424.880485,5.65359176 425.358544,4.22240175 C425.836604,2.79121174 427.229833,1.4413931 429.538231,0.172945821 Z" id="Path" fill="#61EEFF"></path>
+                <path d="M105.538231,158 C106.851391,162.455254 108.731737,165.673254 111.179272,167.654001 C113.626807,169.634748 116.900383,170.587727 121,170.512938 L117.525635,177.308003 L101.358544,170.512938 C100.880485,166.301807 100.880485,163.480646 101.358544,162.049456 C101.836604,160.618266 103.229833,159.268447 105.538231,158 Z" id="Path-Copy" fill="#61EEFF"></path>
+            </g>
+        </g>
+    </g>
+</svg>

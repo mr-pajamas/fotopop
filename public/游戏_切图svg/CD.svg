@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="290px" height="300px" viewBox="0 0 290 300" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.2 (57519) - http://www.bohemiancoding.com/sketch -->
+    <title>CD</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="50%" y1="41.5366441%" x2="50%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#FFFFFF" stop-opacity="0" offset="0%"></stop>
+            <stop stop-color="#FFFFFF" stop-opacity="0.182574728" offset="100%"></stop>
+        </linearGradient>
+        <filter x="0.0%" y="0.0%" width="100.0%" height="100.0%" filterUnits="objectBoundingBox" id="filter-2">
+            <feGaussianBlur stdDeviation="0" in="SourceGraphic"></feGaussianBlur>
+        </filter>
+        <filter x="0.0%" y="0.0%" width="100.0%" height="100.0%" filterUnits="objectBoundingBox" id="filter-3">
+            <feGaussianBlur stdDeviation="0" in="SourceGraphic"></feGaussianBlur>
+        </filter>
+        <filter x="0.0%" y="0.0%" width="100.0%" height="100.0%" filterUnits="objectBoundingBox" id="filter-4">
+            <feGaussianBlur stdDeviation="0" in="SourceGraphic"></feGaussianBlur>
+        </filter>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-5">
+            <stop stop-color="#281B4B" offset="0%"></stop>
+            <stop stop-color="#352B56" offset="100%"></stop>
+        </linearGradient>
+        <circle id="path-6" cx="139.946952" cy="139.946952" r="139.946952"></circle>
+        <filter x="-3.6%" y="-3.6%" width="107.1%" height="110.7%" filterUnits="objectBoundingBox" id="filter-7">
+            <feMorphology radius="5" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="0" dy="10" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feComposite in="shadowOffsetOuter1" in2="SourceAlpha" operator="out" result="shadowOffsetOuter1"></feComposite>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.3 0" type="matrix" in="shadowOffsetOuter1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="足记游戏切图" transform="translate(-108.000000, -1318.000000)">
+            <g id="光束" transform="translate(-176.000000, 1443.000000)" fill="url(#linearGradient-1)">
+                <polygon id="Triangle-2-Copy-4" filter="url(#filter-2)" transform="translate(348.541861, 304.378094) rotate(144.000000) translate(-348.541861, -304.378094) " points="348.541861 50.89533 410.024271 557.860859 287.059451 557.860859"></polygon>
+                <polygon id="Triangle-2-Copy-5" filter="url(#filter-3)" transform="translate(497.180731, 253.482764) rotate(180.000000) translate(-497.180731, -253.482764) " points="497.180731 -5.68434189e-14 558.663141 506.965529 435.698321 506.965529"></polygon>
+                <polygon id="Triangle-2-Copy-6" filter="url(#filter-4)" transform="translate(648.401385, 304.378094) rotate(216.000000) translate(-648.401385, -304.378094) " points="648.401385 50.89533 709.883795 557.860859 586.918976 557.860859"></polygon>
+            </g>
+            <g id="CD播放器" transform="translate(113.000000, 1323.000000)">
+                <g id="Oval">
+                    <use fill="black" fill-opacity="1" filter="url(#filter-7)" xlink:href="#path-6"></use>
+                    <use stroke="#6F55C3" stroke-width="10" fill="url(#linearGradient-5)" fill-rule="evenodd" xlink:href="#path-6"></use>
+                </g>
+                <circle id="Oval-Copy-2" fill="url(#linearGradient-5)" cx="139.946952" cy="139.946952" r="139.946952"></circle>
+                <circle id="Oval-Copy" fill="#FA4B7F" cx="138.981433" cy="138.981433" r="48.9814333"></circle>
+                <circle id="Oval-Copy-3" fill="#FFFFFF" cx="138.592573" cy="138.592573" r="19.5925733"></circle>
+            </g>
+        </g>
+    </g>
+</svg>

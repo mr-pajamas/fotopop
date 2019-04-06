@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="25px" height="19px" viewBox="0 0 25 19" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.2 (57519) - http://www.bohemiancoding.com/sketch -->
+    <title>打开</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="足记游戏切图" transform="translate(-1208.000000, -159.000000)">
+            <g id="打开" transform="translate(1208.000000, 154.000000)">
+                <rect id="Rectangle-2" fill="#545454" x="0" y="5" width="24" height="2" rx="1"></rect>
+                <polyline id="Rectangle-3" stroke="#545454" stroke-width="2" transform="translate(12.313708, 11.313708) scale(1, -1) rotate(45.000000) translate(-12.313708, -11.313708) " points="4.3137085 19.3137085 4.3137085 3.3137085 20.3137085 3.3137085"></polyline>
+            </g>
+        </g>
+    </g>
+</svg>

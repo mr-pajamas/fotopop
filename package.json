@@ -1,0 +1,79 @@
+{
+  "name": "fotopop",
+  "version": "0.0.1",
+  "author": "汤力丞 <lctang@foxmail.com>",
+  "private": true,
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "cross-env NO_HMR=1 meteor run --settings settings.json",
+    "test": "meteor test --once --driver-package meteortesting:mocha",
+    "test-app": "TEST_WATCH=1 meteor test --full-app --driver-package meteortesting:mocha",
+    "visualize": "meteor --production --extra-packages bundle-visualizer"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.1.5",
+    "bluebird": "^3.5.3",
+    "color": "^3.1.0",
+    "crypto-js": "^3.1.9-1",
+    "gsap": "^2.1.2",
+    "jsonwebtoken": "^8.5.0",
+    "lodash": "^4.17.11",
+    "meteor-node-stubs": "^0.4.1",
+    "normalize.css": "^8.0.1",
+    "query-string": "^5.1.1",
+    "seedrandom": "^3.0.1",
+    "simpl-schema": "^1.5.5",
+    "ua-parser-js": "^0.7.19",
+    "vue": "^2.6.8",
+    "vue-meteor-tracker": "^2.0.0-beta.5"
+  },
+  "devDependencies": {
+    "@meteorjs/eslint-config-meteor": "^1.0.5",
+    "babel-eslint": "^10.0.1",
+    "cross-env": "^5.2.0",
+    "eslint": "^5.15.1",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-import-resolver-meteor": "^0.4.0",
+    "eslint-plugin-import": "^2.16.0",
+    "eslint-plugin-jsx-a11y": "^6.2.1",
+    "eslint-plugin-meteor": "^5.1.0",
+    "eslint-plugin-react": "^7.12.4"
+  },
+  "meteor": {
+    "mainModule": {
+      "client": "client/main.js",
+      "server": "server/main.js"
+    },
+    "testModule": "tests/main.js"
+  },
+  "eslintConfig": {
+    "extends": "@meteorjs/eslint-config-meteor",
+    "rules": {
+      "no-unused-expressions": [
+        "error",
+        {
+          "allowShortCircuit": true,
+          "allowTernary": true
+        }
+      ],
+      "no-restricted-syntax": [
+        "error",
+        "ForInStatement",
+        "LabeledStatement",
+        "WithStatement"
+      ],
+      "no-plusplus": [
+        "error",
+        {
+          "allowForLoopAfterthoughts": true
+        }
+      ],
+      "no-param-reassign": [
+        "error",
+        {
+          "props": false
+        }
+      ]
+    }
+  }
+}

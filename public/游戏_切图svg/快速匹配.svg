@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="686px" height="100px" viewBox="0 0 686 100" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.2 (57519) - http://www.bohemiancoding.com/sketch -->
+    <title>快速匹配</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="686" height="100" rx="50"></rect>
+        <filter x="-1.0%" y="-7.0%" width="102.0%" height="114.0%" filterUnits="objectBoundingBox" id="filter-3">
+            <feOffset dx="0" dy="-14" in="SourceAlpha" result="shadowOffsetInner1"></feOffset>
+            <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0.272111827   0 0 0 0 0.615991709  0 0 0 0.5 0" type="matrix" in="shadowInnerInner1" result="shadowMatrixInner1"></feColorMatrix>
+            <feGaussianBlur stdDeviation="1.5" in="SourceAlpha" result="shadowBlurInner2"></feGaussianBlur>
+            <feOffset dx="0" dy="1" in="shadowBlurInner2" result="shadowOffsetInner2"></feOffset>
+            <feComposite in="shadowOffsetInner2" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner2"></feComposite>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.5 0" type="matrix" in="shadowInnerInner2" result="shadowMatrixInner2"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixInner1"></feMergeNode>
+                <feMergeNode in="shadowMatrixInner2"></feMergeNode>
+            </feMerge>
+        </filter>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="足记游戏切图" transform="translate(-1508.000000, -944.000000)">
+            <g id="快速匹配" transform="translate(1508.000000, 906.000000)">
+                <g id="Group-8" transform="translate(0.000000, 38.000000)">
+                    <mask id="mask-2" fill="white">
+                        <use xlink:href="#path-1"></use>
+                    </mask>
+                    <g id="Mask">
+                        <use fill="#40C5FF" fill-rule="evenodd" xlink:href="#path-1"></use>
+                        <use fill="black" fill-opacity="1" filter="url(#filter-3)" xlink:href="#path-1"></use>
+                        <rect stroke="#030303" stroke-width="6" stroke-linejoin="square" x="3" y="3" width="680" height="94" rx="47"></rect>
+                    </g>
+                </g>
+                <text font-family="PingFangSC-Semibold, PingFang SC" font-size="40" font-weight="500" letter-spacing="3" fill="#156C91">
+                    <tspan x="257" y="103">快速匹配</tspan>
+                </text>
+                <text stroke="#1176BE" font-family="PingFangSC-Semibold, PingFang SC" font-size="40" font-weight="500" letter-spacing="3" fill="#FFFFFF">
+                    <tspan x="257" y="100">快速匹配</tspan>
+                </text>
+            </g>
+        </g>
+    </g>
+</svg>

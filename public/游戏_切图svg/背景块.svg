@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="74px" height="74px" viewBox="0 0 74 74" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.2 (57519) - http://www.bohemiancoding.com/sketch -->
+    <title>背景块</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <rect id="path-1" x="111" y="525" width="74" height="74" rx="10"></rect>
+        <filter x="-5.4%" y="-5.4%" width="110.8%" height="110.8%" filterUnits="objectBoundingBox" id="filter-2">
+            <feOffset dx="0" dy="-8" in="SourceAlpha" result="shadowOffsetInner1"></feOffset>
+            <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
+            <feColorMatrix values="0 0 0 0 0.980392157   0 0 0 0 0.294117647   0 0 0 0 0.498039216  0 0 0 1 0" type="matrix" in="shadowInnerInner1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="足记游戏切图" transform="translate(-111.000000, -525.000000)">
+            <g id="Rectangle-11-Copy-9">
+                <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-1"></use>
+                <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
+                <rect stroke="#030303" stroke-width="4" stroke-linejoin="square" x="113" y="527" width="70" height="70" rx="10"></rect>
+            </g>
+        </g>
+    </g>
+</svg>

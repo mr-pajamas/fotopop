@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="50px" height="50px" viewBox="0 0 50 50" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.2 (57519) - http://www.bohemiancoding.com/sketch -->
+    <title>退出游戏</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="足记游戏切图" transform="translate(-2622.000000, -786.000000)">
+            <g id="退出游戏" transform="translate(2622.000000, 786.000000)">
+                <circle id="Oval-2" fill="#363666" opacity="0.4" cx="25" cy="25" r="25"></circle>
+                <rect id="Rectangle-2" fill="#FFFFFF" transform="translate(25.000000, 14.000000) rotate(90.000000) translate(-25.000000, -14.000000) " x="18" y="12" width="14" height="4" rx="2"></rect>
+                <path d="M14.7294058,14.0676509 C11.8181571,16.8037369 10,20.6895418 10,25 C10,33.2842712 16.7157288,40 25,40 C33.2842712,40 40,33.2842712 40,25 C40,20.6341194 38.1347879,16.7038825 35.1577582,13.9626838" id="Oval-7" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"></path>
+            </g>
+        </g>
+    </g>
+</svg>

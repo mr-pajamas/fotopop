@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="280px" height="280px" viewBox="0 0 280 280" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.2 (57519) - http://www.bohemiancoding.com/sketch -->
+    <title>旋转</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="50%" y1="41.5366441%" x2="50%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#FFFFFF" stop-opacity="0" offset="0%"></stop>
+            <stop stop-color="#FFFFFF" stop-opacity="0.182574728" offset="100%"></stop>
+        </linearGradient>
+        <filter x="0.0%" y="0.0%" width="100.0%" height="100.0%" filterUnits="objectBoundingBox" id="filter-2">
+            <feGaussianBlur stdDeviation="0" in="SourceGraphic"></feGaussianBlur>
+        </filter>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="足记游戏切图" transform="translate(-433.000000, -1323.000000)">
+            <g id="光束" transform="translate(-176.000000, 1443.000000)" fill="url(#linearGradient-1)">
+                <polygon id="Triangle-2-Copy-6" filter="url(#filter-2)" transform="translate(648.401385, 304.378094) rotate(216.000000) translate(-648.401385, -304.378094) " points="648.401385 50.89533 709.883795 557.860859 586.918976 557.860859"></polygon>
+            </g>
+            <g id="旋转" transform="translate(571.500000, 1463.000000) rotate(68.000000) translate(-571.500000, -1463.000000) translate(500.000000, 1339.000000)" fill="#FFFEFF" opacity="0.1">
+                <g id="Group-4">
+                    <path d="M3.00419907,201.200901 C22.7165263,187.100749 46.8626942,178.802798 72.9469524,178.802798 C99.0187993,178.802798 123.1544,187.092854 142.861564,201.180777 L97.6421417,246.4002 C90.4821878,243.424478 82.6099301,241.778927 74.3464219,241.778927 C65.3133777,241.778927 56.747847,243.745232 49.069189,247.265891 L3.00419907,201.200901 Z" id="Combined-Shape-Copy-5" transform="translate(72.932882, 213.034344) scale(1, -1) translate(-72.932882, -213.034344) "></path>
+                    <path d="M0.861337158,23.2003951 C20.5736643,9.10024337 44.7198323,0.802292269 70.8040905,0.802292269 C96.8759374,0.802292269 121.011538,9.09234863 140.718702,23.1802718 L95.4992798,68.3996944 C88.3393258,65.4239727 80.4670682,63.7784209 72.20356,63.7784209 C63.1705158,63.7784209 54.6049851,65.744726 46.9263271,69.2653851 L0.861337157,23.2003951 Z" id="Combined-Shape-Copy-6"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

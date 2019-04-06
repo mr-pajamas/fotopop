@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="110px" height="110px" viewBox="0 0 110 110" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.2 (57519) - http://www.bohemiancoding.com/sketch -->
+    <title>创建</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="足记游戏切图" transform="translate(-275.000000, -72.000000)">
+            <g id="创建" transform="translate(275.000000, 72.000000)">
+                <rect id="Rectangle" fill="#6D60DB" x="0" y="0" width="110" height="110"></rect>
+                <g id="Group-4" transform="translate(33.000000, 23.000000)">
+                    <rect id="Rectangle-17" stroke="#333333" stroke-width="6" fill="#FFFFFF" x="3" y="3" width="38" height="46.3636364" rx="5.81818182"></rect>
+                    <path d="M3,5.39115208 L3,50.6942344 L25.839159,64.8611747 C26.2852426,65.1378767 26.7997424,65.2844891 27.3246753,65.2844891 C28.8811142,65.2844891 30.1428571,64.0227462 30.1428571,62.4663073 L30.1428571,23.7958667 C30.1428571,22.8207846 29.6388084,21.9149834 28.8101917,21.4009993 L3,5.39115208 Z" id="Rectangle-17-Copy" stroke="#333333" stroke-width="6" fill="#40C5FF"></path>
+                    <rect id="Rectangle-28" fill="#333333" x="18.4285714" y="33.4545455" width="4" height="7.27272727" rx="1.45454545"></rect>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

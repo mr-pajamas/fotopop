@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="539px" height="704px" viewBox="0 0 539 704" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.2 (57519) - http://www.bohemiancoding.com/sketch -->
+    <title>Path 17 Copy</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="56.0857562%" y1="95.9296756%" x2="56.0857562%" y2="-3.83470133%" id="linearGradient-1">
+            <stop stop-color="#FFFFFF" stop-opacity="0" offset="0%"></stop>
+            <stop stop-color="#FDDAE0" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.126897321">
+        <g id="足记游戏切图" transform="translate(-2314.000000, -1686.000000)" fill="url(#linearGradient-1)">
+            <polygon id="Path-17-Copy" transform="translate(2583.500000, 2022.500000) scale(1, -1) translate(-2583.500000, -2022.500000) " points="2517.04312 1656 2305 2389 2862 2389 2642.51478 1656"></polygon>
+        </g>
+    </g>
+</svg>

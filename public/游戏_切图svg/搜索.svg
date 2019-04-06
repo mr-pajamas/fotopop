@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="110px" height="110px" viewBox="0 0 110 110" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.2 (57519) - http://www.bohemiancoding.com/sketch -->
+    <title>搜索</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="足记游戏切图" transform="translate(-93.000000, -72.000000)">
+            <g id="搜索" transform="translate(93.000000, 72.000000)">
+                <rect id="Rectangle" fill="#FF5E72" x="0" y="0" width="110" height="110"></rect>
+                <g id="Group-2" transform="translate(27.000000, 26.000000)">
+                    <path d="M52.2799459,26.5456216 C52.2799459,40.7591351 40.7583243,52.2807568 26.5448108,52.2807568 C12.3329189,52.2807568 0.811297297,40.7591351 0.811297297,26.5456216 C0.811297297,12.3321081 12.3329189,0.810486486 26.5448108,0.810486486 C40.7583243,0.810486486 52.2799459,12.3321081 52.2799459,26.5456216" id="Fill-1" fill="#FFFFFF"></path>
+                    <rect id="Rectangle-32" fill="#333333" transform="translate(47.838835, 48.838835) rotate(-45.000000) translate(-47.838835, -48.838835) " x="44.8388348" y="39.3388348" width="6" height="19" rx="3"></rect>
+                    <path d="M52.2799459,26.5456216 C52.2799459,40.7591351 40.7583243,52.2807568 26.5448108,52.2807568 C12.3329189,52.2807568 0.811297297,40.7591351 0.811297297,26.5456216 C0.811297297,12.3321081 12.3329189,0.810486486 26.5448108,0.810486486 C40.7583243,0.810486486 52.2799459,12.3321081 52.2799459,26.5456216 Z" id="Combined-Shape" stroke="#333333" stroke-width="6" fill="#FFFFFF"></path>
+                    <path d="M30.4882812,10.9003906 C37.3059896,12.3183594 41.3222656,16.6425781 42.5371094,23.8730469" id="Path-2" stroke="#333333" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
