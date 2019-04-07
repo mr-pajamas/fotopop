@@ -16,6 +16,49 @@ function generateCode() {
   return times(6, () => random(9)).join('');
 }
 
+export const createRoom = new ValidatedMethod({
+  name: 'game.createRoom',
+  validate: new SimpleSchema({}).validator({ clean: true }),
+  mixins: [LoggedInMixin],
+  checkLoggedInError: {
+    error: '403',
+    reason: 'You need to be logged in to call this method',
+  },
+  applyOptions: {
+    wait: true,
+    throwStubExceptions: true,
+  },
+  run() {
+    const { userId } = this;
+    // 1. 检查是否已经在房间里
+    const currentRoom = Rooms.findOne({ 'users.id': userId });
+    if (currentRoom) throw new Meteor.Error(409, `用户已经在房间（${currentRoom._id}）中`);
+
+    Rooms.insert({
+      type: 1,
+      categoryId: '1',
+      categoryName: '80后专属',
+      searchId: generateCode(),
+      // userCount: 1,
+      users: [{ id: userId }, { id: 'bot1', botLevel: 1 }, { id: 'bot3', botLevel: 3 }],
+      questions: times(10, i => ({
+        id: `${i}`,
+        type: i % 2,
+        audio: `/audio/${i + 1}.mp3`,
+        choices: ['你', '我', '中', '发', '白', '爱', '说',
+          '笑', '哭', '瓷', '奇', '花', '草', '树',
+          '叶', '青', '东', '南', '西', '北', '快'],
+        hints: times(3, j => `提示${j}`),
+        answerHash: '135a2dc49169a5513bf8f42658713dd6',
+        answerFormat: '...',
+      })),
+      // TODO: push create message?
+      messages: [],
+    });
+  },
+});
+
+// TODO: 应该有type和category
 export const enterRoom = new ValidatedMethod({
   name: 'game.enterRoom',
   validate: new SimpleSchema({}).validator({ clean: true }),
@@ -73,6 +116,64 @@ export const enterRoom = new ValidatedMethod({
         })),
         // TODO: push create message?
         messages: [],
+      });
+    }
+  },
+});
+
+export const leaveRoom = new ValidatedMethod({
+  name: 'game.leaveRoom',
+  validate: new SimpleSchema({
+    roomId: {
+      type: String,
+    },
+  }).validator({ clean: true }),
+  mixins: [LoggedInMixin],
+  checkLoggedInError: {
+    error: '403',
+    reason: 'You need to be logged in to call this method',
+  },
+  applyOptions: {
+    wait: true,
+    noRetry: true,
+    throwStubExceptions: true,
+  },
+  run({ roomId }) {
+    const { userId } = this;
+
+    const currentRoom = Rooms.findOne({
+      _id: roomId,
+      'users.id': userId,
+    });
+
+    if (!currentRoom) throw new Meteor.Error(400, '用户不在指定房间中');
+
+    if (currentRoom.inGame()) throw new Meteor.Error(409, '当前房间正在游戏中，无法退出');
+
+    // TODO: 和后端讨论
+    // if (currentRoom.fastMatching) throw new Meteor.Error(409, '当前房间正在进行快速匹配');
+
+    // 如果退出的是lastWinner那么要清空
+    Rooms.update({
+      _id: roomId,
+      'users.id': userId,
+      rounds: null,
+    }, Object.assign(
+      { $pull: { users: { id: userId } } },
+      currentRoom.lastWinner === userId && { $unset: { lastWinner: '' } },
+    ));
+
+    if (!this.isSimulation) {
+      Meteor.defer(() => {
+        const affected = Rooms.remove({
+          _id: roomId,
+          // 没有一个活人
+          users: { $not: { $elemMatch: { botLevel: null, offline: false } } },
+        });
+
+        if (affected) {
+          // TODO: 发送请求通知
+        }
       });
     }
   },

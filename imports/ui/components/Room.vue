@@ -1,5 +1,5 @@
 <template>
-  <div class="room">
+  <div class="room filler">
     <template v-if="room.questions">
       <audio v-for="(question, index) in room.questions" :src="question.audio" preload="auto" :class="{ playing: index === room.currentRoundNumber() - 1 }"></audio>
     </template>
@@ -7,7 +7,7 @@
     <div class="room-top">
       <div class="room-head-bar">
         <template v-if="!room.inGame()">
-          <button class="btn rounded-circle inflexible leave-btn" style="background-image: url(/images/leave.svg);"></button>
+          <button class="btn rounded-circle inflexible leave-btn" style="background-image: url(/images/leave.svg);" @click="leaveRoom"></button>
           <div class="room-title flexible">
             <p class="room-name">{{ room.typeName() }} - {{ room.categoryName }}</p>
             <p class="small">房间ID：{{ room.searchId }}</p>
@@ -348,7 +348,10 @@
           roundNumber: this.room.currentRoundNumber(),
           answer,
         });
-      }
+      },
+      async leaveRoom() {
+        await GameMethods.leaveRoom.callAsync({ roomId: this.room._id });
+      },
     },
   };
 </script>
@@ -356,13 +359,15 @@
 <style lang="scss" scoped>
 
   .room {
+    /*
     height: 100%;
     width: 100%;
+    position: relative;
+    */
     display: flex;
     flex-direction: column;
     background-color: #2d2c66;
     justify-content: center;
-    position: relative;
 
     audio {
       display: none;

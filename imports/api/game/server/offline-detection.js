@@ -53,10 +53,10 @@ Accounts.onLogin(({ user: { _id: userId }, connection: { onClose } }) => {
           _id: currentRoom._id,
           'users.id': userId,
           rounds: null,
-        }, {
-          $pull: { users: { id: userId } },
-          // $inc: { userCount: -1 },
-        });
+        }, Object.assign(
+          { $pull: { users: { id: userId } } },
+          currentRoom.lastWinner === userId && { $unset: { lastWinner: '' } },
+        ));
 
         // 为了以防万一游戏在期间开始
         Rooms.rawUpdateOne({
@@ -121,10 +121,10 @@ Accounts.onLogin(({ user: { _id: userId }, connection: { onClose } }) => {
           _id: currentRoom._id,
           'users.id': userId,
           rounds: null,
-        }, {
-          $pull: { users: { id: userId } },
-          // $inc: { userCount: -1 },
-        });
+        }, Object.assign(
+          { $pull: { users: { id: userId } } },
+          currentRoom.lastWinner === userId && { $unset: { lastWinner: '' } },
+        ));
       }
 
       // TODO: 发送请求通知

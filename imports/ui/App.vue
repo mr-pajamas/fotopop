@@ -6,17 +6,24 @@
     </div>
     -->
     <iframe src="/audio/silence.mp3" allow="autoplay" style="display: none"></iframe>
-    <!--
-    <template v-if="$subReady.ownAccount">
-      <room v-if="$subReady.currentRoom && $meteor.currentRoom" :room="$meteor.currentRoom" :own-account="$meteor.ownAccount" />
+    <template v-if="$subReady.ownAccount && $subReady.currentRoom">
+      <transition :name="$meteor.currentRoom ? 'slide-forward' : 'slide-backward'">
+        <room v-if="$meteor.currentRoom" :room="$meteor.currentRoom" :own-account="$meteor.ownAccount" />
+        <lobby v-else :own-account="$meteor.ownAccount" />
+      </transition>
+<!--      <transition name="slide-right">
+        <lobby v-if="!$meteor.currentRoom" :own-account="$meteor.ownAccount" />
+      </transition>-->
       <transition name="slide-left">
         <result v-if="showResult" :own-account="$meteor.ownAccount" @close="showResult = false" />
       </transition>
     </template>
-    -->
+    <!--
     <template v-if="$subReady.ownAccount">
       <lobby :own-account="$meteor.ownAccount" />
     </template>
+    -->
+    <!--<join-categories />-->
   </div>
 </template>
 
@@ -29,11 +36,10 @@
   import { UserAccounts } from '../api/account/collections.js';
   import { Rooms } from '../api/game/collections.js';
   import '../api/account/client/methods.js';
-  import { enterRoom } from '../api/game/methods.js';
 
   import Lobby from './components/Lobby.vue';
-  import Room from './components/Room';
-  import Result from './components/Result';
+  import Room from './components/Room.vue';
+  import Result from './components/Result.vue';
 
   // import bridge from '../modules/client/js-bridge.js';
 
@@ -62,7 +68,7 @@
       this.$subscribe('currentRoom', { name: 'game.currentRoom' });
 
       // bridge.shit({ a: 1 });
-      await enterRoom.callAsync({});
+      // await enterRoom.callAsync({});
     },
 
     meteor: {
@@ -70,7 +76,7 @@
         return UserAccounts.findOne(Meteor.userId());
       },
       currentRoom() {
-        return Rooms.findOne();
+        return Rooms.findOne({ 'users.id': Meteor.userId() });
       },
     },
   }
@@ -122,6 +128,7 @@
   #app {
     position: relative;
     overflow: hidden;
+    transform: translateZ(0);
   }
 
   .filler {
@@ -362,11 +369,13 @@
   }
 
   .slide-up-enter-active,
-  .slide-left-enter-active {
+  .slide-left-enter-active,
+  .slide-right-enter-active {
     transition: all .3s ease-out;
   }
   .slide-up-leave-active,
-  .slide-left-leave-active {
+  .slide-left-leave-active,
+  .slide-right-leave-active {
     transition: all .2s ease-in;
   }
 
@@ -379,9 +388,38 @@
     transform: translateX(100%);
   }
 
+  .slide-right-enter, .slide-right-leave-to {
+    transform: translateX(-100%);
+  }
+
   .inc-enter-active {
     animation: inc 1.2s ease-in;
     backface-visibility: hidden;
+  }
+
+  .slide-forward-enter-active,
+  .slide-forward-leave-active {
+    transition: all .3s ease-out;
+  }
+  .slide-backward-enter-active,
+  .slide-backward-leave-active {
+    transition: all .2s ease-in;
+  }
+
+  .slide-forward-enter {
+    transform: translateX(100%);
+  }
+  .slide-forward-leave-to {
+    transform: translateX(-100%);
+    /*opacity: .4;*/
+  }
+
+  .slide-backward-enter {
+    transform: translateX(-100%);
+    /*opacity: .4;*/
+  }
+  .slide-backward-leave-to {
+    transform: translateX(100%);
   }
 
   @keyframes inc {

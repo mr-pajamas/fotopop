@@ -31,14 +31,51 @@ function decideRoundEnd(roomId) {
   if (room && room.inGame() && room.currentRoundOver()) {
     // 终局检查
     if (room.lastRound()) {
-      const { userId: lastWinner } = reduce(room.scores(), (result, score, uid) => {
+
+      // 如果第一名是个掉线的？
+
+      let { userId: lastWinner } = reduce(room.scores(), (result, score, uid) => {
         if (score > result.score) {
           return { userId: uid, score };
         }
         return result;
       }, { score: -1 });
 
-      const affected = Rooms.update({
+      if (lastWinner) {
+        lastWinner = !room.user(lastWinner).offline && lastWinner;
+      }
+
+      let affected = false;
+
+      if (lastWinner) {
+        affected = Rooms.update({
+          _id: roomId,
+          session: room.session,
+          rounds: { $size: 10 },
+          users: { $elemMatch: { id: lastWinner, offline: false } },
+        }, {
+          $inc: { session: 1 },
+          $unset: { questions: '', rounds: '' },
+          $set: { fastMatching: false, lastWinner },
+          $pull: { users: { offline: true } },
+        });
+      }
+
+      if (!affected) {
+        affected = Rooms.update({
+          _id: roomId,
+          session: room.session,
+          rounds: { $size: 10 },
+        }, {
+          $inc: { session: 1 },
+          $unset: { questions: '', rounds: '' },
+          $set: { fastMatching: false },
+          $pull: { users: { offline: true } },
+        });
+      }
+
+      /*
+      affected = Rooms.update({
         _id: roomId,
         session: room.session,
         rounds: { $size: 10 },
@@ -48,6 +85,7 @@ function decideRoundEnd(roomId) {
         $set: Object.assign({ fastMatching: false }, lastWinner && { lastWinner }),
         $pull: { users: { offline: true } },
       });
+      */
 
       // TODO: 发送请求
       // 发送报告

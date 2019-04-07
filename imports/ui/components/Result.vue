@@ -1,5 +1,5 @@
 <template>
-  <div class="result d-flex flex-column">
+  <div class="result filler d-flex flex-column">
     <div class="winner-section flexible d-flex flex-column">
       <img src="/images/beam.svg" class="beam beam-left">
       <img src="/images/beam.svg" class="beam beam-center">
@@ -188,11 +188,6 @@
 <style lang="scss" scoped>
 
   .result {
-    height: 100%;
-    width: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
     background-image: linear-gradient(rgb(81,77,207), rgb(171,90,252));
     perspective: 1000px;
     overflow: hidden;

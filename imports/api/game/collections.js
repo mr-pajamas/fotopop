@@ -347,6 +347,9 @@ Rooms.helpers({
       return result;
     }, {});
   },
+  user(userId) {
+    return find(this.users, ({ id }) => id === userId);
+  },
 });
 
 export { Rooms };
