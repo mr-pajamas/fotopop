@@ -65,7 +65,7 @@ Accounts.onLogin(({ user: { _id: userId }, connection: { onClose } }) => {
           rounds: { $exists: true, $ne: null },
         }, {
           $set: { 'users.$[u].offline': true },
-          $unset: { 'users.$[u].roundElapsedTime': '' },
+          $unset: { 'users.$[u].elapsedTime': '' },
         }, {
           arrayFilters: [{
             'u.id': userId,
@@ -109,7 +109,7 @@ Accounts.onLogin(({ user: { _id: userId }, connection: { onClose } }) => {
           rounds: { $exists: true, $ne: null },
         }, {
           $set: { 'users.$[u].offline': true },
-          $unset: { 'users.$[u].roundElapsedTime': '' },
+          $unset: { 'users.$[u].elapsedTime': '' },
         }, {
           arrayFilters: [{
             'u.id': userId,

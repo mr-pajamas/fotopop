@@ -197,14 +197,14 @@
         if (users) { // 如果是inGame
           // 看看是别人还是自己
           if (this.elapsedTime === undefined) { // 自己恢复计时
-            const { roundElapsedTime } = find(users, user => user.id === this.ownAccount._id);
-            if (roundElapsedTime !== undefined) {
-              this.elapsedTime = roundElapsedTime;
+            const { elapsedTime } = find(users, user => user.id === this.ownAccount._id);
+            if (elapsedTime !== undefined) {
+              this.elapsedTime = elapsedTime;
               if (this.elapsedTime < 23) this.startCountdown();
             } else {
               // 如果没人知道时间，就假定该回合结束
               const user = find(users, (user) => {
-                return user.id !== this.ownAccount._id && !user.botLevel && user.roundElapsedTime !== undefined;
+                return user.id !== this.ownAccount._id && !user.botLevel && user.elapsedTime !== undefined;
               });
               if (!user) {
                 await GameMethods.tellElapsedTime.callAsync({
@@ -221,7 +221,7 @@
           // 看别人
           // assert this.timeRemaining !== undefined
           const user = find(users, (user) => {
-            return user.id !== this.ownAccount._id && !user.offline && user.roundElapsedTime === undefined;
+            return user.id !== this.ownAccount._id && !user.offline && user.elapsedTime === undefined;
           });
           if (user) {
             await GameMethods.tellElapsedTime.callAsync({
@@ -263,9 +263,10 @@
     },
 
     watch: {
-      'room.session'(session) {
+      'room.session'(session, oldSession) {
         this.incs = {};
         forEach(this.bots, bot => bot.init(session));
+        if (oldSession) this.$emit('session-over', oldSession); // TODO: 这里有个疑点，oldSession会是undefined
       },
       'room.rounds.length'(val) {
         this.stopCountdown();

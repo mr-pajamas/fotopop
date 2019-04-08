@@ -117,8 +117,8 @@
       </styled-rounded-card>
     </div>
     <div class="button-bar inflexible d-flex">
-      <styled-pill-button class="btn-md" bottom-color="rgb(166,165,229)">返回大厅</styled-pill-button>
-      <styled-pill-button class="btn-md" bg-color="rgb(250,75,127)" @click.native="$emit('close')">再玩一局</styled-pill-button>
+      <styled-pill-button class="btn-md" bottom-color="rgb(166,165,229)" @click.native="leaveAndClose">返回大厅</styled-pill-button>
+      <styled-pill-button class="btn-md" bg-color="rgb(250,75,127)" @click.native="close">再玩一局</styled-pill-button>
       <styled-pill-button class="btn-md" bg-color="rgb(255,207,37)">分享战绩</styled-pill-button>
       <!--<div class="prompt">今日首次分享可得奖励</div>-->
     </div>
@@ -127,6 +127,9 @@
 
 <script>
   import { TweenMax, Sine, Linear } from 'gsap/umd/TweenMax';
+
+  import { leaveRoom, ready } from '../../api/game/methods.js';
+
   import StyledRoundedCard from './general/StyledRoundedCard.vue';
   import Avatar from './user/Avatar.vue';
   import StyledPillButton from './general/StyledPillButton';
@@ -171,7 +174,7 @@
   export default {
     name: "result",
     components: { StyledPillButton, Avatar, StyledRoundedCard },
-    props: ['ownAccount'],
+    props: ['ownAccount', 'room'],
     mounted() {
       this.$el.querySelectorAll('.ribbon').forEach((e) => {
         TweenMax.set(e, {
@@ -182,7 +185,21 @@
         fallAnimate(e);
       });
     },
-  }
+    methods: {
+      async close() {
+        if (this.room) {
+          await ready.callAsync({ roomId: this.room._id, session: this.room.session });
+        }
+        this.$emit('close');
+      },
+      async leaveAndClose() {
+        if (this.room) {
+          await leaveRoom.callAsync({ roomId: this.room._id });
+        }
+        this.$emit('close');
+      },
+    },
+  };
 </script>
 
 <style lang="scss" scoped>

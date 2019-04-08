@@ -8,14 +8,14 @@
     <iframe src="/audio/silence.mp3" allow="autoplay" style="display: none"></iframe>
     <template v-if="$subReady.ownAccount && $subReady.currentRoom">
       <transition :name="$meteor.currentRoom ? 'slide-forward' : 'slide-backward'">
-        <room v-if="$meteor.currentRoom" :room="$meteor.currentRoom" :own-account="$meteor.ownAccount" />
+        <room v-if="$meteor.currentRoom" :room="$meteor.currentRoom" :own-account="$meteor.ownAccount" @session-over="showResult = true" />
         <lobby v-else :own-account="$meteor.ownAccount" />
       </transition>
 <!--      <transition name="slide-right">
         <lobby v-if="!$meteor.currentRoom" :own-account="$meteor.ownAccount" />
       </transition>-->
       <transition name="slide-left">
-        <result v-if="showResult" :own-account="$meteor.ownAccount" @close="showResult = false" />
+        <result v-if="showResult" :own-account="$meteor.ownAccount" :room="$meteor.currentRoom" @close="showResult = false" />
       </transition>
     </template>
     <!--

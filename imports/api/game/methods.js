@@ -179,6 +179,56 @@ export const leaveRoom = new ValidatedMethod({
   },
 });
 
+export const ready = new ValidatedMethod({
+  name: 'game.ready',
+  validate: new SimpleSchema({
+    roomId: {
+      type: String,
+    },
+    session: {
+      type: SimpleSchema.Integer,
+      min: 1,
+    },
+  }).validator({ clean: true }),
+  mixins: [LoggedInMixin],
+  checkLoggedInError: {
+    error: '403',
+    reason: 'You need to be logged in to call this method',
+  },
+  applyOptions: {
+    wait: true,
+    noRetry: true,
+    throwStubExceptions: true,
+  },
+  run({ roomId, session }) {
+    const { userId } = this;
+
+    const currentRoom = Rooms.findOne({
+      _id: roomId,
+      'users.id': userId,
+    });
+
+    if (!currentRoom) throw new Meteor.Error(400, '用户不在指定房间中');
+
+    if (currentRoom.inGame()) throw new Meteor.Error(409, '当前房间正在游戏中');
+
+    if (currentRoom.session !== session) {
+      throw new Meteor.Error(400, '指定的场次非当前场次');
+    }
+
+    if (currentRoom.user(userId).ready) throw new Meteor.Error(409, '用户已经准备');
+
+    Rooms.update({
+      _id: roomId,
+      'users.id': userId,
+      session,
+      rounds: null,
+    }, {
+      $set: { 'users.$.ready': true },
+    });
+  },
+});
+
 // TODO: 这里需要房间ID和session
 export const startGame = new ValidatedMethod({
   name: 'game.startGame',
@@ -230,7 +280,7 @@ export const startGame = new ValidatedMethod({
         $push: { rounds: { winners: [] } },
         // $inc: { roundCount: 1 },
         $set: {
-          'users.$[].roundElapsedTime': 0,
+          'users.$[].elapsedTime': 0,
           // 'users.$[].score': 0,
           // roundCount: 1,
         },
@@ -304,7 +354,7 @@ export const tellElapsedTime = new ValidatedMethod({
 
     const user = find(currentRoom.users, u => u.id === userId);
 
-    if (elapsedTime < user.roundElapsedTime) throw new Meteor.Error(400, '计时早于之前的值');
+    if (elapsedTime < user.elapsedTime) throw new Meteor.Error(400, '计时早于之前的值');
 
     if (!this.isSimulation) {
       // 设置elapsedTime
@@ -316,15 +366,15 @@ export const tellElapsedTime = new ValidatedMethod({
         rounds: { $size: roundNumber },
       }, {
         $set: {
-          'users.$[u].roundElapsedTime': elapsedTime,
-          'users.$[o].roundElapsedTime': elapsedTime,
+          'users.$[u].elapsedTime': elapsedTime,
+          'users.$[o].elapsedTime': elapsedTime,
         },
       }, {
         arrayFilters: [{
           'u.id': userId,
         }, {
           'o.offline': false,
-          'o.roundElapsedTime': null,
+          'o.elapsedTime': null,
         }],
       });
       // 至此方法应该返回

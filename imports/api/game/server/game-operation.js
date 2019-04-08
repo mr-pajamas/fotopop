@@ -31,7 +31,6 @@ function decideRoundEnd(roomId) {
   if (room && room.inGame() && room.currentRoundOver()) {
     // 终局检查
     if (room.lastRound()) {
-
       // 如果第一名是个掉线的？
 
       let { userId: lastWinner } = reduce(room.scores(), (result, score, uid) => {
@@ -92,7 +91,9 @@ function decideRoundEnd(roomId) {
       // 返回题目
       if (affected) { // TODO: 应该可以重复请求，就不需要affected了
         Meteor.defer(() => {
-          Rooms.update(roomId, {
+          Rooms.rawUpdateOne({
+            _id: roomId
+          }, {
             $set: {
               questions: times(10, i => ({
                 id: `${i}`,
@@ -105,9 +106,11 @@ function decideRoundEnd(roomId) {
                 answerHash: '135a2dc49169a5513bf8f42658713dd6',
                 answerFormat: '...',
               })),
-              'users.$[].ready': false,
+              'users.$[u].ready': false,
             },
-          }, { bypassCollection2: true });
+          }, {
+            arrayFilters: [{ 'u.botLevel': null }],
+          });
         });
       }
     } else { // 进入下一回合
@@ -122,7 +125,7 @@ function decideRoundEnd(roomId) {
             $position: 0,
           },
         },
-        $set: { 'users.$[].roundElapsedTime': 0 },
+        $set: { 'users.$[].elapsedTime': 0 },
         $unset: { 'users.$[].supporters': '' },
       }, { bypassCollection2: true });
     }

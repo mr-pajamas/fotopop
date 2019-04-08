@@ -64,7 +64,7 @@ Rooms.attachSchema(new SimpleSchema({
     type: Boolean,
     defaultValue: false,
   },
-  'users.$.roundElapsedTime': {
+  'users.$.elapsedTime': {
     type: SimpleSchema.Integer,
     optional: true,
     max: 23,
@@ -256,7 +256,7 @@ const isHuman = user => !user.botLevel;
 
 const isBot = user => !isHuman(user);
 
-const isVoter = user => isActiveUser(user) && isHuman(user) && user.roundElapsedTime !== undefined;
+const isVoter = user => isActiveUser(user) && isHuman(user) && user.elapsedTime !== undefined;
 
 const majorities = [0, 1, 2, 2, 3, 3, 4];
 const scoreMap = [6, 5, 4, 3, 2, 1];
@@ -299,7 +299,7 @@ Rooms.helpers({
     if (!difference(map(activeUsers, 'id'), currentRound.winners).length) return true;
 
     const voters = this.voters();
-    const supporters = filter(voters, ({ roundElapsedTime }) => roundElapsedTime === 23);
+    const supporters = filter(voters, ({ elapsedTime }) => elapsedTime === 23);
     return supporters.length >= majorities[voters.length];
   },
 
@@ -352,4 +352,19 @@ Rooms.helpers({
   },
 });
 
-export { Rooms };
+const Results = new Mongo.Collection('results');
+
+Results.attachSchema(new SimpleSchema({
+  roomId: {
+    type: String,
+  },
+  session: {
+    type: SimpleSchema.Integer,
+    min: 1,
+  },
+  rankings: {
+    type: Array,
+  },
+}));
+
+export { Rooms, Results };
