@@ -131,4 +131,15 @@ Meteor.users.attachSchema(new SimpleSchema({
   },
 }));
 
-export { UserAccounts };
+const Tokens = new Meteor.Collection('tokens');
+
+Tokens.attachSchema(new SimpleSchema({
+  userId: {
+    type: String,
+  },
+  createdAt: {
+    type: Date,
+  },
+}));
+
+export { UserAccounts, Tokens };

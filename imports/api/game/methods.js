@@ -509,7 +509,7 @@ export const tellWinningBots = new ValidatedMethod({
   }) {
     const { userId } = this;
 
-    console.log(`${userId} is telling winning bots: ${bots}`);
+    // console.log(`${userId} is telling winning bots: ${bots}`);
 
     const currentRoom = Rooms.findOne({
       _id: roomId,

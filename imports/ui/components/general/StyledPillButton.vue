@@ -1,7 +1,7 @@
 <template>
   <button class="styled-pill-button" :style="{ backgroundColor: computedBottomColor }">
     <div class="button-layer" :style="{ backgroundColor: bgColor }"></div>
-    <div class="button-content" :class="{ textShadow: textShadow }" :style="{ color: fontColor }">
+    <div class="button-content" :class="{ 'text-shadow': textShadow }" :style="{ color: fontColor }">
       <slot></slot>
     </div>
   </button>

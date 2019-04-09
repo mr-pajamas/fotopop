@@ -4,12 +4,14 @@
       <button class="btn btn-rounded">
         <div>除&nbsp;&nbsp;&nbsp;错</div>
         <div class="small">200钻石</div>
-        <img src="/images/exclude.svg" class="btn-append-icon">
+        <!--<img src="/images/exclude.svg" class="btn-append-icon">-->
+        <svg class="btn-append-icon" width="40" height="58" viewBox="0 0 40 58" xmlns="http://www.w3.org/2000/svg"><g transform="translate(4 2)" stroke="#030303" stroke-width="4" fill="none" fill-rule="evenodd"><path d="M13 33.757v16.422a3.667 3.667 0 0 0 3.667 3.667h1.416a3.667 3.667 0 0 0 3.667-3.667V33.757c-1.684.964-3.12 1.455-4.375 1.455s-2.69-.491-4.375-1.455z" fill="#FFF"/><ellipse fill="#EB5A6B" cx="17" cy="17.231" rx="17" ry="17.231"/><path d="M9 22.848L26 12" stroke-linecap="round"/></g></svg>
       </button>
       <button class="btn btn-rounded">
         <div>提&nbsp;&nbsp;示</div>
         <div class="small">50钻石</div>
-        <img src="/images/tip.svg" class="btn-append-icon">
+        <!--<img src="/images/tip.svg" class="btn-append-icon">-->
+        <svg class="btn-append-icon" width="40" height="58" viewBox="0 0 40 58" xmlns="http://www.w3.org/2000/svg"><g transform="translate(2 2)" stroke-width="4" fill="none" fill-rule="evenodd"><path d="M7.667 33.059v17.274A3.667 3.667 0 0 0 11.333 54h12.75a3.667 3.667 0 0 0 3.667-3.667V33.06c-4.234 1.533-7.56 2.307-10.042 2.307-2.48 0-5.807-.774-10.041-2.307z" stroke="#030303" fill="#FFF"/><path d="M8 41h17M8 47h17" stroke="#030303" stroke-linecap="square"/><ellipse stroke="#030303" fill="#FFCF25" cx="17" cy="17.231" rx="17" ry="17.231"/><path d="M18.271 5.53c5.803 1.408 8.704 4.391 8.704 8.949" stroke="#FFF" stroke-linecap="round"/></g></svg>
       </button>
     </div>
     <div class="answer-area d-flex" :style="{ flexWrap: !!type ? 'nowrap' : 'wrap' }">
@@ -33,7 +35,8 @@
 
       <div class="grid inflexible d-flex clear-grid">
         <button class="btn" @click="reset" :disabled="answerCorrect">
-          <img src="/images/clear.svg" class="w-100 d-block">
+          <!--<img src="/images/clear.svg" class="w-100 d-block">-->
+          <svg width="56" height="56" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M10 1.5A8.5 8.5 0 0 0 1.5 10v36a8.5 8.5 0 0 0 8.5 8.5h36a8.5 8.5 0 0 0 8.5-8.5V10A8.5 8.5 0 0 0 46 1.5H10z" stroke="#030303" stroke-width="3" fill-opacity=".1" fill="#FFF"/><g stroke="#FFF" stroke-linecap="round" stroke-width="4"><path d="M17.26 20.61h16.957c5.043 0 9.13 3.975 9.13 8.878 0 4.903-4.087 8.878-9.13 8.878H17.261"/><path d="M22.02 27.976l-7.378-7.378 7.175-7.175"/></g></g></svg>
         </button>
       </div>
     </div>
@@ -210,6 +213,7 @@
         .btn-append-icon {
           position: absolute;
           height: 110%;
+          width: auto;
           top: -5%;
           right: -13%;
         }

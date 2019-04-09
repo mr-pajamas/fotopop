@@ -1,8 +1,10 @@
 <template>
   <div class="lobby filler">
     <!--<transition :name="transitionName">-->
-      <portal v-if="!currentComponent" :own-account="ownAccount" @join="showSelectRoom" @create="showCreateRoom" />
-      <component v-else :is="currentComponent" v-bind="$props" @back="currentComponent = ''"></component>
+    <!--<keep-alive>-->
+      <!--<portal v-if="!currentPage" :own-account="ownAccount" @show="jump($event)" />-->
+      <component :is="currentPage" :own-account="ownAccount" v-bind="params" @show="jump($event)" @back="jump"></component>
+    <!--</keep-alive>-->
     <!--</transition>-->
   </div>
 </template>
@@ -11,26 +13,26 @@
   import Portal from './Portal.vue';
   import SelectRoom from './SelectRoom.vue';
   import CreateRoom from './CreateRoom.vue';
+  import Leaderboard from './Leaderboard.vue';
   export default {
     name: 'lobby',
-    components: { CreateRoom, SelectRoom, Portal },
+    components: { Leaderboard, CreateRoom, SelectRoom, Portal },
     props: ['ownAccount'],
     data() {
       return {
-        currentComponent: '',
+        currentPage: 'portal',
+        params: {},
       };
     },
     computed: {
       transitionName() {
-        return this.currentComponent ? 'slide-forward' : 'slide-backward';
+        return this.currentPage === 'portal' ? 'slide-backward' : 'slide-forward';
       },
     },
     methods: {
-      showSelectRoom() {
-        this.currentComponent = SelectRoom.name;
-      },
-      showCreateRoom() {
-        this.currentComponent = CreateRoom.name;
+      jump({ page = 'portal', params = {} } = {}) {
+        this.currentPage = page;
+        this.params = params;
       },
     },
   };

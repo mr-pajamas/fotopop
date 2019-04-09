@@ -153,7 +153,13 @@ Rooms.attachSchema(new SimpleSchema({
   'messages.$': {
     type: Object,
   },
-  'messages.$.type': { // 我只需要做提示
+  /*
+   * - 进出房间1
+   * - IM2，
+   * - 送礼3，
+   * - TIP4
+   */
+  'messages.$.type': { // 我只需要做提示4
     type: SimpleSchema.Integer,
   },
   'messages.$.text': {
@@ -354,6 +360,19 @@ Rooms.helpers({
 
 const Results = new Mongo.Collection('results');
 
+const awardSchema = new SimpleSchema({
+  name: {
+    type: String,
+  },
+  amount: {
+    type: SimpleSchema.Integer,
+    min: 1,
+  },
+  icon: {
+    type: String,
+  },
+});
+
 Results.attachSchema(new SimpleSchema({
   roomId: {
     type: String,
@@ -364,6 +383,46 @@ Results.attachSchema(new SimpleSchema({
   },
   rankings: {
     type: Array,
+  },
+  'rankings.$': {
+    type: Object,
+  },
+  'rankings.$.place': {
+    type: SimpleSchema.Integer,
+    min: 1,
+    max: 6,
+  },
+  'rankings.$.userId': {
+    type: String,
+  },
+  'rankings.$.score': {
+    type: SimpleSchema.Integer,
+    min: 1,
+  },
+  'rankings.$.expGain': {
+    type: SimpleSchema.Integer,
+  },
+  'rankings.$.doubleExp': {
+    type: Boolean,
+  },
+  'rankings.$.remainingWins': {
+    type: SimpleSchema.Integer,
+    min: 1,
+  },
+  'rankings.$.awards': {
+    type: Array,
+    minCount: 1,
+    optional: true,
+  },
+  'rankings.$.awards.$': {
+    type: awardSchema,
+  },
+  'rankings.$.nextAwards': {
+    type: Array,
+    minCount: 1,
+  },
+  'rankings.$.nextAwards.$': {
+    type: awardSchema,
   },
 }));
 

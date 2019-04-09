@@ -6,6 +6,7 @@
     </div>
     -->
     <iframe src="/audio/silence.mp3" allow="autoplay" style="display: none"></iframe>
+
     <template v-if="$subReady.ownAccount && $subReady.currentRoom">
       <transition :name="$meteor.currentRoom ? 'slide-forward' : 'slide-backward'">
         <room v-if="$meteor.currentRoom" :room="$meteor.currentRoom" :own-account="$meteor.ownAccount" @session-over="showResult = true" />
@@ -18,6 +19,10 @@
         <result v-if="showResult" :own-account="$meteor.ownAccount" :room="$meteor.currentRoom" @close="showResult = false" />
       </transition>
     </template>
+    <!--
+    <div class="filler" id="lottie"></div>
+    -->
+
     <!--
     <template v-if="$subReady.ownAccount">
       <lobby :own-account="$meteor.ownAccount" />
@@ -32,6 +37,9 @@
   // import UAParser from 'ua-parser-js';
   import queryString from 'query-string';
   import bluebird from 'bluebird';
+  /*
+  import lottie from 'lottie-web';
+  */
 
   import { UserAccounts } from '../api/account/collections.js';
   import { Rooms } from '../api/game/collections.js';
@@ -70,7 +78,17 @@
       // bridge.shit({ a: 1 });
       // await enterRoom.callAsync({});
     },
-
+    /*
+    mounted() {
+      lottie.loadAnimation({
+        container: this.$el.querySelector('#lottie'),
+        renderer: 'svg',
+        loop: true,
+        autoplay: true,
+        path: '/animations/paomian/paomian.json',
+      });
+    },
+    */
     meteor: {
       ownAccount() {
         return UserAccounts.findOne(Meteor.userId());
@@ -139,8 +157,15 @@
     height: 100%;
   }
 
+  svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
   a {
     color: inherit;
+    text-decoration: none;
   }
 
   button:focus {
@@ -403,7 +428,7 @@
   }
   .slide-backward-enter-active,
   .slide-backward-leave-active {
-    transition: all .2s ease-in;
+    transition: all .3s ease-in;
   }
 
   .slide-forward-enter {
