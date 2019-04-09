@@ -8,7 +8,8 @@
     <iframe src="/audio/silence.mp3" allow="autoplay" style="display: none"></iframe>
 
     <template v-if="$subReady.ownAccount && $subReady.currentRoom">
-      <transition :name="$meteor.currentRoom ? 'slide-forward' : 'slide-backward'">
+
+      <transition :name="$meteor.currentRoom ? 'slide-forward' : 'slide-backward'" @before-enter="blockInteractions" @before-leave="blockInteractions" @after-enter="restoreInteractions">
         <room v-if="$meteor.currentRoom" :room="$meteor.currentRoom" :own-account="$meteor.ownAccount" @session-over="showResult = true" />
         <lobby v-else :own-account="$meteor.ownAccount" />
       </transition>
@@ -19,9 +20,8 @@
         <result v-if="showResult" :own-account="$meteor.ownAccount" :room="$meteor.currentRoom" @close="showResult = false" />
       </transition>
     </template>
-    <!--
-    <div class="filler" id="lottie"></div>
-    -->
+
+    <!--<div class="filler" id="lottie"></div>-->
 
     <!--
     <template v-if="$subReady.ownAccount">
@@ -37,9 +37,8 @@
   // import UAParser from 'ua-parser-js';
   import queryString from 'query-string';
   import bluebird from 'bluebird';
-  /*
-  import lottie from 'lottie-web';
-  */
+
+  // import lottie from 'lottie-web';
 
   import { UserAccounts } from '../api/account/collections.js';
   import { Rooms } from '../api/game/collections.js';
@@ -85,7 +84,7 @@
         renderer: 'svg',
         loop: true,
         autoplay: true,
-        path: '/animations/paomian/paomian.json',
+        path: 'https://ks3-cn-beijing.ksyun.com/fpvideo/ap2/190330/yacht_300x300.json',
       });
     },
     */
@@ -97,7 +96,15 @@
         return Rooms.findOne({ 'users.id': Meteor.userId() });
       },
     },
-  }
+    methods: {
+      blockInteractions(el) {
+        el.style.pointerEvents = 'none';
+      },
+      restoreInteractions(el) {
+        el.style.pointerEvents = null;
+      },
+    },
+  };
 </script>
 
 <style lang="scss">
@@ -424,27 +431,31 @@
 
   .slide-forward-enter-active,
   .slide-forward-leave-active {
-    transition: all .3s ease-out;
+    transition: transform .3s ease-out;
   }
   .slide-backward-enter-active,
   .slide-backward-leave-active {
-    transition: all .3s ease-in;
+    transition: transform .2s ease-in;
   }
 
   .slide-forward-enter {
-    transform: translateX(100%);
+    transform: translate3d(100%,0,0);
   }
   .slide-forward-leave-to {
-    transform: translateX(-100%);
+    transform: translate3d(-100%,0,0);
     /*opacity: .4;*/
   }
 
   .slide-backward-enter {
-    transform: translateX(-100%);
+    transform: translate3d(-100%,0,0);
     /*opacity: .4;*/
   }
   .slide-backward-leave-to {
-    transform: translateX(100%);
+    transform: translate3d(100%,0,0);
+  }
+
+  .will-transform {
+    will-change: transform;
   }
 
   @keyframes inc {

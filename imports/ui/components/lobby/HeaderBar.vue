@@ -30,7 +30,7 @@
 
     .back-btn {
       padding: .2rem;
-      margin-left: .2rem;
+      margin-left: .3rem;
       img, svg {
         height: 1.2rem;
         width: auto;

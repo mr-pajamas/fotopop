@@ -23,7 +23,7 @@
           backgroundPosition: 'center',
         };
         const src = this.user && this.user.avatar && this.user.avatar.head;
-        style.backgroundImage = `url("${src || '/images/default-avatar.svg'}")`;
+        style.backgroundImage = `url("${src || '/images/default-avatar.png'}")`;
         if (this.showCrown) style.border = '.1rem rgb(250,197,1) solid';
         return style;
       },
