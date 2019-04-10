@@ -323,6 +323,10 @@ Rooms.helpers({
     return this.users[0];
   },
 
+  humanUsers() {
+    return filter(this.users, isHuman);
+  },
+
   voters() {
     return filter(this.users, isVoter);
   },

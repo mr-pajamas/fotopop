@@ -356,7 +356,7 @@
   }
 
   .btn-lg {
-    padding: .6rem 1rem;
+    padding: .6rem 0;
     font-size: 1.2rem;
     line-height: 1.4;
   }
