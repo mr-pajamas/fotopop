@@ -113,6 +113,7 @@ const sample = {
   streaks: 4,
 };
 */
+/*
 
 Meteor.users.attachSchema(new SimpleSchema({
   createdAt: {
@@ -130,6 +131,8 @@ Meteor.users.attachSchema(new SimpleSchema({
     blackbox: true,
   },
 }));
+*/
+
 
 const Tokens = new Meteor.Collection('tokens');
 

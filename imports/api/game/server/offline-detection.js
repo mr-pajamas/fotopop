@@ -1,15 +1,20 @@
 import { Meteor } from 'meteor/meteor';
+/*
 import { Accounts } from 'meteor/accounts-base';
+*/
 
 import { Rooms } from '../collections.js';
 import { decideBotWins, decideRoundEnd } from './game-operation.js';
 
+/*
 Accounts.validateLoginAttempt(({ type }) => {
   if (type === 'resume') throw new Meteor.Error(403, '"resume" type login is disabled');
   return true;
 });
+*/
 
-Accounts.onLogin(({ user: { _id: userId }, connection: { onClose } }) => {
+
+Meteor.onLogin(({ user: { _id: userId }, connection: { onClose } }) => {
   // 连线，如果用户在房间内，offline要设置回来
   Rooms.update({ 'users.id': userId }, { $set: { 'users.$.offline': false } });
 
