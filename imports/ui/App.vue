@@ -34,15 +34,16 @@
 
 <script>
   import { Meteor } from 'meteor/meteor';
+  import { DDP } from 'meteor/ddp-client';
+
   // import UAParser from 'ua-parser-js';
   import queryString from 'query-string';
-  import bluebird from 'bluebird';
+  // import bluebird from 'bluebird';
 
   // import lottie from 'lottie-web';
 
   import { UserAccounts } from '../api/account/collections.js';
   import { Rooms } from '../api/game/collections.js';
-  import '../api/account/client/methods.js';
 
   import Lobby from './components/Lobby.vue';
   import Room from './components/Room.vue';
@@ -55,7 +56,7 @@
     return navigator.userAgent && new UAParser(navigator.userAgent).getOS();
   }
   */
-  const loginAsync = bluebird.promisify(Meteor.loginWithJwt);
+  // const loginAsync = bluebird.promisify(Meteor.loginWithJwt);
 
   export default {
     name: "app",
@@ -69,7 +70,8 @@
     async created() {
       const { jwt } = queryString.parse(location.search);
 
-      await loginAsync({ jwt });
+      await Meteor.loginWithJwt({ jwt });
+      DDP.onReconnect(async () => Meteor.loginWithJwt({ jwt }));
 
       this.$subscribe('ownAccount', { name: 'account.ownAccount' });
       this.$subscribe('currentRoom', { name: 'game.currentRoom' });
@@ -90,10 +92,11 @@
     */
     meteor: {
       ownAccount() {
-        return UserAccounts.findOne(Meteor.userId());
+        // console.log(Meteor.connection.userId());
+        return UserAccounts.findOne(Meteor.connection.userId());
       },
       currentRoom() {
-        return Rooms.findOne({ 'users.id': Meteor.userId() });
+        return Rooms.findOne({ 'users.id': Meteor.connection.userId() });
       },
     },
     methods: {
