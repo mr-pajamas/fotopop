@@ -7,6 +7,7 @@ import map from 'lodash/map';
 import reduce from 'lodash/reduce';
 
 import { Rooms } from '../collections.js';
+import { report } from './service-methods.js';
 
 function decideBotWins(roomId) {
   const room = Rooms.findOne(roomId);
@@ -90,6 +91,10 @@ function decideRoundEnd(roomId) {
       // 发送报告
       // 返回题目
       if (affected) { // TODO: 应该可以重复请求，就不需要affected了
+
+        report(room);
+
+        /*
         Meteor.defer(() => {
           Rooms.rawUpdateOne({
             _id: roomId
@@ -112,6 +117,7 @@ function decideRoundEnd(roomId) {
             arrayFilters: [{ 'u.botLevel': null }],
           });
         });
+        */
       }
     } else { // 进入下一回合
       Rooms.update({

@@ -3,7 +3,17 @@ import times from 'lodash/times';
 const report = {
   roomId: 'xxxx',
   session: 1, // starts from 1
-  offlineUsers: ['uid1', 'uid2'],
+  humanUsers: [
+    {
+      id: 'uid1',
+      offline: true,
+    },
+    {
+      id: 'uid2',
+      offline: false,
+    },
+  ],
+  // offlineUsers: ['uid1', 'uid2'],
   roundsWinners: [
     ['uid2', 'uid3', 'uid4', 'bot1'],
     ['uid2', 'uid3', 'uid4', 'bot1'],
