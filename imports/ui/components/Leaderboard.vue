@@ -279,7 +279,7 @@
 
         .ranking-list {
           height: 100%;
-          overflow: scroll;
+          overflow: auto;
 
           .rank {
             padding: .5rem 1rem;

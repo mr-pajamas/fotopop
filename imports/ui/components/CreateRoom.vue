@@ -122,7 +122,7 @@
 
     .category-list {
       padding: .8rem;
-      overflow: scroll;
+      overflow: auto;
 
       > a {
         & + a {

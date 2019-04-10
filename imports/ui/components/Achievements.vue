@@ -14,22 +14,95 @@
 
         <div class="summary flexible">
           <h3>我的成就</h3>
-          <p>已获得3/52个成就</p>
+          <p>已获得{{ summary.acquired }}/{{ summary.total }}个成就</p>
         </div>
       </div>
     </categories-header>
 
-
+    <div class="achievement-groups">
+      <!--<div class="unreverse">-->
+        <achievement-group v-for="group in achievementGroups" :key="group.name" :group="group" />
+      <!--</div>-->
+    </div>
   </div>
 </template>
 
 <script>
+  import reduce from 'lodash/reduce';
+
+  import { AchievementStatus } from '../../domain/enums.js';
+
   import CategoriesHeader from './CategoriesHeader.vue';
   import HeaderBar from './lobby/HeaderBar.vue';
   import AspectRatioBox from './general/AspectRatioBox.vue';
+  import AchievementGroup from './lobby/AchievementGroup.vue';
+
   export default {
     name: "achievements",
-    components: { AspectRatioBox, HeaderBar, CategoriesHeader },
+    components: { AchievementGroup, AspectRatioBox, HeaderBar, CategoriesHeader },
+    data() {
+      return {
+        achievementGroups: [{
+          name: '胜场成就',
+          achievements: [{
+            medal: '/images/title.png',
+            name: '常胜将军',
+            description: '用户取得游戏第一名累计10次',
+            status: AchievementStatus.DECORATED,
+          }, {
+            medal: '/images/title.png',
+            name: '超神之旅',
+            description: '用户取得游戏第一名累计10次',
+            status: AchievementStatus.NEWLY_ACQUIRED,
+          }, {
+            medal: '/images/title.png',
+            name: '高处不胜寒',
+            description: '用户取得游戏第一名累计10次',
+            status: AchievementStatus.ACQUIRED,
+          }, {
+            medal: '/images/title.png',
+            name: '常胜将军2',
+            description: '免费使用，点击标签即可体验同款主题模版，让你的作品带上宫廷范，赶快；来试一下吧免费使用，点击标签即可体验同款主题模版。',
+            status: AchievementStatus.NOT_ACQUIRED,
+          }],
+        }, {
+          name: '对局成就',
+          achievements: [{
+            medal: '/images/title.png',
+            name: '常胜将军',
+            description: '用户取得游戏第一名累计10次',
+            status: AchievementStatus.ACQUIRED,
+          }, {
+            medal: '/images/title.png',
+            name: '超神之旅',
+            description: '用户取得游戏第一名累计10次',
+            status: AchievementStatus.ACQUIRED,
+          }, {
+            medal: '/images/title.png',
+            name: '高处不胜寒',
+            description: '用户取得游戏第一名累计10次',
+            status: AchievementStatus.ACQUIRED,
+          }, {
+            medal: '/images/title.png',
+            name: '常胜将军2',
+            description: '免费使用，点击标签即可体验同款主题模版，让你的作品带上宫廷范，赶快；来试一下吧免费使用，点击标签即可体验同款主题模版。',
+            status: AchievementStatus.NOT_ACQUIRED,
+          }],
+        }],
+      };
+    },
+    computed: {
+      summary() {
+        return reduce(this.achievementGroups, (summary, group) => {
+          summary.total += group.achievements.length;
+          summary.acquired += reduce(group.achievements, (sum, { status }) => {
+            if (AchievementStatus.acquired(status)) return sum + 1;
+            return sum;
+          }, 0);
+          return summary;
+        }, { total: 0, acquired: 0 });
+      },
+    },
   };
 </script>
 
@@ -62,6 +135,24 @@
             font-size: .875rem;
             margin: 0;
           }
+        }
+      }
+    }
+
+    .achievement-groups {
+      overflow: auto;
+      /*
+      display: flex;
+      flex-direction: column-reverse;
+      */
+      padding: .8rem;
+
+      .unreverse {
+      }
+
+      .achievement-group {
+        & + .achievement-group {
+          margin-top: .6rem;
         }
       }
     }

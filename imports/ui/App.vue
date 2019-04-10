@@ -454,6 +454,11 @@
     transform: translate3d(100%,0,0);
   }
 
+  .collapse-enter-active,
+  .collapse-leave-active {
+    overflow: hidden;
+  }
+
   .will-transform {
     will-change: transform;
   }
