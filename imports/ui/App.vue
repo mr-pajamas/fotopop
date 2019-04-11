@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" class="d-flex justify-content-center">
     <!--
     <div v-if="$subReady.currentRoom">
       {{ $meteor.ownAccount.name }}
@@ -10,16 +10,17 @@
     <template v-if="$subReady.ownAccount && $subReady.currentRoom">
 
       <transition :name="$meteor.currentRoom ? 'slide-forward' : 'slide-backward'" @before-enter="blockInteractions" @before-leave="blockInteractions" @after-enter="restoreInteractions">
-        <room v-if="$meteor.currentRoom" :room="$meteor.currentRoom" :own-account="$meteor.ownAccount" @session-over="showResult = true" />
+        <room v-if="$meteor.currentRoom" :room="$meteor.currentRoom" :own-account="$meteor.ownAccount" @session-over="resultQuery = $event" />
         <lobby v-else :own-account="$meteor.ownAccount" />
       </transition>
 <!--      <transition name="slide-right">
         <lobby v-if="!$meteor.currentRoom" :own-account="$meteor.ownAccount" />
       </transition>-->
       <transition name="slide-left">
-        <result v-if="showResult" :own-account="$meteor.ownAccount" :room="$meteor.currentRoom" @close="showResult = false" />
+        <result v-if="resultQuery" :own-account="$meteor.ownAccount" v-bind="resultQuery" @close="resultQuery = null" />
       </transition>
     </template>
+    <spinner-box v-else class="app-loader" />
 
     <!--<div class="filler" id="lottie"></div>-->
 
@@ -29,6 +30,10 @@
     </template>
     -->
     <!--<join-categories />-->
+    <!--
+    <printer v-if="content" :content="content" @click.native="content = false" />
+    -->
+
   </div>
 </template>
 
@@ -37,10 +42,11 @@
   import { DDP } from 'meteor/ddp-client';
 
   // import UAParser from 'ua-parser-js';
-  import queryString from 'query-string';
+  // import queryString from 'query-string';
   // import bluebird from 'bluebird';
 
   // import lottie from 'lottie-web';
+  import query from '../modules/client/parsed-query.js';
 
   import { UserAccounts } from '../api/account/collections.js';
   import { Rooms } from '../api/game/collections.js';
@@ -48,6 +54,12 @@
   import Lobby from './components/Lobby.vue';
   import Room from './components/Room.vue';
   import Result from './components/Result.vue';
+
+  import client from '../modules/client/service-client.js';
+  import Printer from './components/Printer.vue';
+  import SpinnerBox from './components/general/SpinnerBox.vue';
+
+  import { getCategories } from '../api/game/client/service-methods.js';
 
   // import bridge from '../modules/client/js-bridge.js';
 
@@ -60,15 +72,17 @@
 
   export default {
     name: "app",
-    components: { Result, Room, Lobby },
+    components: { SpinnerBox, Printer, Result, Room, Lobby },
     data() {
       return {
-        showResult: false,
+        // showResult: false,
+        content: false,
+        resultQuery: null,
       };
     },
 
     async created() {
-      const { jwt } = queryString.parse(location.search);
+      const { jwt } = query;
 
       await Meteor.loginWithJwt({ jwt });
       DDP.onReconnect(async () => Meteor.loginWithJwt({ jwt }));
@@ -78,6 +92,29 @@
 
       // bridge.shit({ a: 1 });
       // await enterRoom.callAsync({});
+      /*
+      try {
+        // const { data, status } = await client.get('/api/game/list/music/cats');
+        const data = await getCategories(0);
+        // const { data, status } = await client.get('/v2/api-docs?group=api');
+        /!*
+        const { status, data } = await client.post('/api/game/room/create', {
+          catId: 1,
+          privated: 0,
+          type: 0,
+        }, {
+          params: {
+            catId: 1,
+            privated: 0,
+            type: 0,
+          },
+        });
+        *!/
+        this.content = { data };
+      } catch (e) {
+        this.content = { e };
+      }
+      */
     },
     /*
     mounted() {
@@ -513,5 +550,10 @@
     100%, 80% {
       transform: rotate(10deg);
     }
+  }
+  .spinner-box {
+    position: absolute;
+    z-index: 2000;
+    align-self: center;
   }
 </style>

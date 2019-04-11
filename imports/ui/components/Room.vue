@@ -283,7 +283,7 @@
       'room.session'(session, oldSession) {
         this.incs = {};
         forEach(this.bots, bot => bot.init(session));
-        if (oldSession) this.$emit('session-over', oldSession); // TODO: 这里有个疑点，oldSession会是undefined
+        if (oldSession) this.$emit('session-over', { roomId: this.room._id, session: oldSession }); // TODO: 这里有个疑点，oldSession会是undefined
       },
       'room.rounds.length'(val) {
         this.stopCountdown();

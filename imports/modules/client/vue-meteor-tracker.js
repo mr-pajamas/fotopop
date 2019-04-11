@@ -90,7 +90,7 @@ export default {
               };
             }, function ({ run, result }, { run: oldRun }) {
               if (run === oldRun) {
-                computation.invalidate();
+                computation && computation.invalidate(); // TODO: investigate this!! computation is undefined
               } else {
                 Vue.set(this.$meteor, key, getResult(result));
               }
@@ -143,7 +143,8 @@ export default {
           const { handles, subs, subAutoruns } = this._meteor;
 
           const oldSub = subs[key];
-          const handle = Meteor.subscribe(name, args);
+          // console.log('in tracker', name, args);
+          const handle = Meteor.subscribe(name, ...args);
           handles.push(handle);
           subs[key] = handle;
 

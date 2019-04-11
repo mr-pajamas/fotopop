@@ -117,6 +117,7 @@
         y: 0,
         ease: Sine.easeOut,
         repeat: 0,
+        delay: .5,
       });
     }
   }
@@ -244,7 +245,7 @@
         background-color: #fff;
         background-image: url("/images/bg.png");
         background-repeat: repeat;
-        background-size: 325px;
+        background-size: 20rem;
         position: relative;
 
         > .filler {

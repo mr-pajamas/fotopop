@@ -1,5 +1,5 @@
 <template>
-  <div class="create-room filler d-flex flex-column">
+  <div class="create-room filler d-flex flex-column justify-content-center">
     <categories-header class="inflexible">
       <!--
       <div class="header-bar d-flex align-items-center justify-content-center">
@@ -31,37 +31,84 @@
       </div>
     </categories-header>
     <div class="category-list flexible">
+      <!--
       <a href="#" class="d-block" v-for="i in 3" @click="createRoom">
         <img :src="`/images/cat${i}.png`" class="d-block w-100">
       </a>
+      -->
+      <a href="#" class="d-block" v-for="category in categories" :key="category.id" @click.prevent="createRoom(category.id)">
+        <img :src="category.coverUrl" class="d-block w-100">
+      </a>
     </div>
+    <spinner-box text="创建中" v-if="submitting" />
   </div>
 </template>
 
 <script>
+  import { Meteor } from 'meteor/meteor';
   import { TweenMax, Linear } from 'gsap/umd/TweenMax';
   import { createRoom } from '../../api/game/methods.js';
+
+  import { getCategories } from '../../api/game/client/service-methods.js';
+
   import CategoriesHeader from './CategoriesHeader.vue';
-  import HeaderBar from './lobby/HeaderBar';
+  import HeaderBar from './lobby/HeaderBar.vue';
+  import SpinnerBox from './general/SpinnerBox.vue';
+
+  const tid = Symbol('tid');
+
   export default {
     name: "create-room",
-    components: { HeaderBar, CategoriesHeader },
+    components: { SpinnerBox, HeaderBar, CategoriesHeader },
     data() {
       return {
         privateChecked: false,
         selectedType: 0,
+        categories: [],
+        submitting: false,
       };
+    },
+    async created() {
+      await this.fetchData();
+    },
+    watch: {
+      selectedType() {
+        this.fetchData();
+      },
     },
     mounted() {
       TweenMax.to(this.$el, 10, {
-        backgroundPosition: '-325px 204px',
+        backgroundPosition: '-20rem 12.55rem',
         repeat: -1,
         ease: Linear.easeNone,
       });
     },
+    destroyed() {
+      this.stopTimeout();
+    },
     methods: {
-      async createRoom() {
-        await createRoom.callAsync({});
+      async fetchData() {
+        this.categories = await getCategories(this.selectedType);
+      },
+      stopTimeout() {
+        if (this[tid]) {
+          Meteor.clearTimeout(this[tid]);
+          this[tid] = undefined;
+        }
+      },
+      async createRoom(categoryId) {
+        this.submitting = true;
+        /*
+        this.stopTimeout();
+        this[tid] = Meteor.setTimeout(async () => await createRoom.callAsync({}), 0);
+        */
+        // await createRoom.callAsync({});
+        await createRoom.callAsync({
+          type: this.selectedType,
+          categoryId,
+          p: this.privateChecked,
+        });
+        // await createRoom(this.selectedType, categoryId, this.privateChecked);
       },
     },
   };
@@ -76,7 +123,7 @@
 
     background-image: url("/images/bg.png");
     background-repeat: repeat;
-    background-size: 325px;
+    background-size: 20rem;
 
     .categories-header {
       .header-bar {

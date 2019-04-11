@@ -137,7 +137,7 @@
         -->
         <p>创建房间</p>
       </a>
-      <a href="#">
+      <a href="#" @click.prevent="invite">
         <!--<img src="/images/invite.svg" class="rounded-circle bordered d-block">-->
         <img src="/images/invite.png" class="rounded-circle bordered d-block">
         <!--
@@ -171,14 +171,18 @@
     props: ['ownAccount'],
     mounted() {
       TweenMax.to(this.$el, 10, {
-        backgroundPosition: '-325px 204px',
+        backgroundPosition: '-20rem 12.55rem',
         repeat: -1,
         ease: Linear.easeNone,
       });
     },
     methods: {
       exitGame() {
+        // window.app.gameExit();
         bridge.gameExit();
+      },
+      invite() {
+        bridge.gameInvite();
       },
     },
   };
@@ -199,7 +203,7 @@
     background-image: url("/images/bg.png");
     /*background-image: url("/images/bg.svg");*/
     background-repeat: repeat;
-    background-size: 325px;
+    background-size: 20rem;
 
     .rounded {
       border-radius: .5rem;

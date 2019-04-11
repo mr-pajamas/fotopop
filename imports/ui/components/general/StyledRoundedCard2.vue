@@ -35,7 +35,7 @@
           */
           backgroundImage: 'url("/images/bg.png")',
           backgroundRepeat: 'repeat',
-          backgroundSize: '325px',
+          backgroundSize: '20rem',
         });
       },
     },

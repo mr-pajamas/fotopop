@@ -39,6 +39,15 @@ Meteor.startup(() => {
       },
       diamond: { level: 6, amount: { common: 200, ios: 150, android: 180 } },
     });
+    UserAccounts.insert({
+      _id: '25610358',
+      name: '小纯洁',
+      avatar: {
+        head: 'http://dn.fotoplace.cc/dde77fd9b926493c9b75a6dc56b2f159.jpg',
+      },
+      diamond: { level: 6, amount: { common: 200, ios: 150, android: 180 } },
+    });
+
     Tokens.insert({
       _id: '6c6ec250a25c45a892fccbc7fc1f46f1',
       userId: '13404389',
@@ -56,6 +65,12 @@ Meteor.startup(() => {
     Tokens.insert({
       _id: 'a8ad19aed85c4c19bf77a30d0b3158f7',
       userId: '28883830',
+      createdAt: new Date(),
+    });
+
+    Tokens.insert({
+      _id: 'c2129f08790441a495042811e5f63401',
+      userId: '25610358',
       createdAt: new Date(),
     });
   }

@@ -4,11 +4,13 @@ import SimpleSchema from 'simpl-schema';
 import filter from 'lodash/filter';
 import difference from 'lodash/difference';
 import intersection from 'lodash/intersection';
+import reverse from 'lodash/reverse';
 // import property from 'lodash/property';
 import map from 'lodash/map';
 import reduce from 'lodash/reduce';
 import find from 'lodash/find';
 import forEach from 'lodash/forEach';
+import { UserAccounts } from '../account/collections';
 
 const Rooms = new Mongo.Collection('rooms');
 
@@ -349,7 +351,8 @@ Rooms.helpers({
     };
     */
     if (!this.inGame()) return {};
-    return reduce(this.rounds, (result, { winners = [] }) => {
+    const rounds = reverse([...this.rounds]);
+    return reduce(rounds, (result, { winners = [] }) => {
       forEach(winners, (winner, index) => {
         result[winner] = result[winner] || 0;
         result[winner] += scoreMap[index];

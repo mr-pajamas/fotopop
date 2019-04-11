@@ -11,6 +11,7 @@ import find from 'lodash/find';
 import MD5 from 'crypto-js/md5';
 
 import { Rooms } from './collections.js';
+import Bot from './bot';
 
 function generateCode() {
   return times(6, () => random(9)).join('');
@@ -18,7 +19,14 @@ function generateCode() {
 
 export const createRoom = new ValidatedMethod({
   name: 'game.createRoom',
-  validate: new SimpleSchema({}).validator({ clean: true }),
+  validate: new SimpleSchema({
+    type: SimpleSchema.Integer,
+    categoryId: String,
+    p: {
+      type: Boolean,
+      defaultValue: false,
+    }
+  }).validator({ clean: true }),
   mixins: [LoggedInMixin],
   checkLoggedInError: {
     error: '403',
@@ -28,12 +36,18 @@ export const createRoom = new ValidatedMethod({
     wait: true,
     throwStubExceptions: true,
   },
-  run() {
+  async run({ type, categoryId, p }) {
     const { userId } = this;
     // 1. 检查是否已经在房间里
     const currentRoom = Rooms.findOne({ 'users.id': userId });
     if (currentRoom) throw new Meteor.Error(409, `用户已经在房间（${currentRoom._id}）中`);
 
+    if (!this.isSimulation) {
+      const { createRoom: create } = await import('./server/service-methods.js');
+      await create(userId, type, categoryId, p);
+    }
+
+    /*
     Rooms.insert({
       type: 1,
       categoryId: '1',
@@ -55,13 +69,16 @@ export const createRoom = new ValidatedMethod({
       // TODO: push create message?
       messages: [],
     });
+    */
   },
 });
 
-// TODO: 应该有type和category
 export const enterRoom = new ValidatedMethod({
   name: 'game.enterRoom',
-  validate: new SimpleSchema({}).validator({ clean: true }),
+  validate: new SimpleSchema({
+    type: SimpleSchema.Integer,
+    categoryId: String,
+  }).validator({ clean: true }),
   mixins: [LoggedInMixin],
   checkLoggedInError: {
     error: '403',
@@ -71,7 +88,7 @@ export const enterRoom = new ValidatedMethod({
     wait: true,
     throwStubExceptions: true,
   },
-  run() {
+  async run({ type, categoryId }) {
     const { userId } = this;
     // 1. 检查是否已经在房间里
     const currentRoom = Rooms.findOne({ 'users.id': userId });
@@ -84,6 +101,8 @@ export const enterRoom = new ValidatedMethod({
       users: { $not: { $size: 6 } },
       // questions: { $exists: true, $ne: null },
       rounds: null,
+      type,
+      categoryId,
     });
     if (room) {
       Rooms.update({
@@ -95,11 +114,14 @@ export const enterRoom = new ValidatedMethod({
         $push: { users: { id: userId } },
         // TODO: push join message
       });
-    } else {
+    } else if (!this.isSimulation) {
+      const { createRoom: create } = await import('./server/service-methods.js');
+      await create(userId, type, categoryId);
+      /*
       Rooms.insert({
-        type: 1,
-        categoryId: '1',
-        categoryName: '80后专属',
+        type,
+        categoryId,
+        // categoryName,
         searchId: generateCode(),
         // userCount: 1,
         users: [{ id: userId }, { id: 'bot0', botLevel: 1 }, { id: 'bot2', botLevel: 3 }],
@@ -117,6 +139,7 @@ export const enterRoom = new ValidatedMethod({
         // TODO: push create message?
         messages: [],
       });
+      */
     }
   },
 });
@@ -270,7 +293,7 @@ export const startGame = new ValidatedMethod({
     if (find(currentRoom.users, user => !user.ready)) throw new Meteor.Error(409, '当前房间有人未准备好，无法开始游戏');
 
     if (!this.isSimulation) {
-      Rooms.update({
+      Rooms.rawUpdateOne({
         _id: currentRoom._id,
         $or: [
           { rounds: null },
@@ -283,9 +306,12 @@ export const startGame = new ValidatedMethod({
           'users.$[].elapsedTime': 0,
           // 'users.$[].score': 0,
           // roundCount: 1,
+          'users.$[u].ready': false, // TODO: 临时方案
         },
         $unset: { 'users.$[].supporters': '' },
-      }, { bypassCollection2: true });
+      }, {
+        arrayFilters: [{ 'u.botLevel': null }],
+      });
     }
   },
 });

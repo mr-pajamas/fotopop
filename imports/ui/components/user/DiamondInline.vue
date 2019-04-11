@@ -6,8 +6,8 @@
       -->
       <img src="/images/diamond.png" class="d-block mx-auto">
     </span>
-    <span class="diamond-inline-content d-flex align-items-center justify-content-right" :style="spanStyle"><span>{{ amount }}</span></span>
-    <button class="btn rounded-circle diamond-inline-append">
+    <span class="diamond-inline-content d-flex align-items-center justify-content-end" :style="spanStyle"><span>{{ amount }}</span></span>
+    <button class="btn rounded-circle diamond-inline-append" @click="purchaseDiamonds">
       <!--<img src="/images/add.png" class="d-block w-100">-->
       <svg width="37" height="37" viewBox="0 0 37 37" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><circle stroke="#333" fill="#FFF" cx="18.5" cy="18.5" r="18"/><rect fill="#FA4B7F" x="9" y="16" width="20" height="4" rx="2"/><rect fill="#FA4B7F" transform="rotate(90 18.5 18.5)" x="8.5" y="16.5" width="20" height="4" rx="2"/></g></svg>
     </button>
@@ -15,7 +15,8 @@
 </template>
 
 <script>
-  import ua from '../../../modules/client/ua.js';
+  import query from '../../../modules/client/parsed-query.js';
+  import bridge from '../../../modules/client/js-bridge.js';
 
   export default {
     name: 'diamond-inline',
@@ -23,8 +24,8 @@
     computed: {
       amount() {
         const { amount } = this.diamond;
-        if (ua.isAndroid) return amount.common + amount.android;
-        if (ua.isIOS) return amount.common + amount.ios;
+        if (query.isAndroid) return amount.common + amount.android;
+        if (query.isIOS) return amount.common + amount.ios;
         return amount.common;
       },
       style() {
@@ -36,6 +37,11 @@
       spanStyle() {
         if (this.bgColor) return { backgroundColor: this.bgColor };
         return {};
+      },
+    },
+    methods: {
+      purchaseDiamonds() {
+        bridge.gameFastRecharge();
       },
     },
   };

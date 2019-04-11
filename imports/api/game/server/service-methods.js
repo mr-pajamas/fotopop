@@ -1,4 +1,5 @@
 import map from 'lodash/map';
+import reverse from 'lodash/reverse';
 
 import agent from '../../../modules/server/service-agent.js';
 /*
@@ -30,6 +31,14 @@ const report = {
   ],
 };
 */
+export const createRoom = async function (userId, type, categoryId, p = false) {
+  await agent.post('/ws/game/room/create', {
+    uid: +userId,
+    catId: +categoryId,
+    privated: +p,
+    type,
+  });
+};
 
 export const report = async function (room) {
   const {
@@ -40,7 +49,7 @@ export const report = async function (room) {
 
   const humanUsers = map(room.humanUsers(), ({ id, offline }) => ({ id, offline }));
 
-  const roundsWinners = map(rounds, round => round.winners);
+  const roundsWinners = reverse(map(rounds, round => round.winners));
 
   await agent.post('/ws/game/room/round/settlement', {
     roomId, session, humanUsers, roundsWinners,
