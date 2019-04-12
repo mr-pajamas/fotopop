@@ -36,7 +36,7 @@
         <img :src="`/images/cat${i}.png`" class="d-block w-100">
       </a>
       -->
-      <a href="#" class="d-block" v-for="category in categories" :key="category.id" @click.prevent="createRoom(category.id)">
+      <a href="#" class="d-block" v-for="category in categories" :key="category.id" @click.prevent="createRoom(category.id, category.name)">
         <img :src="category.coverUrl" class="d-block w-100">
       </a>
     </div>
@@ -96,7 +96,7 @@
           this[tid] = undefined;
         }
       },
-      async createRoom(categoryId) {
+      async createRoom(categoryId, categoryName) {
         this.submitting = true;
         /*
         this.stopTimeout();
@@ -106,7 +106,8 @@
         await createRoom.callAsync({
           type: this.selectedType,
           categoryId,
-          p: this.privateChecked,
+          categoryName,
+          pvt: this.privateChecked,
         });
         // await createRoom(this.selectedType, categoryId, this.privateChecked);
       },

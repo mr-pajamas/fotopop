@@ -9,10 +9,10 @@ export const getCategories = async function (gameType) {
   return map(list, ({ id, name, coverUrl }) => ({ id: `${id}`, name, coverUrl }));
 };
 
-export const createRoom = async function (type, categoryId, p = false) {
+export const createRoom = async function (type, categoryId, pvt = false) {
   const { data } = await client.post('/api/game/room/create', {
     catId: +categoryId,
-    privated: +p,
+    privated: +pvt,
     type,
   });
   return data;

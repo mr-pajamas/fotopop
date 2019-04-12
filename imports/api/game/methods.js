@@ -7,11 +7,14 @@ import { LoggedInMixin } from 'meteor/tunifight:loggedin-mixin';
 import times from 'lodash/times';
 import random from 'lodash/random';
 import find from 'lodash/find';
+import map from 'lodash/map';
+import take from 'lodash/take';
+import reduce from 'lodash/reduce';
 
 import MD5 from 'crypto-js/md5';
 
-import { Rooms } from './collections.js';
-import Bot from './bot';
+import { Rooms, JoinQueues } from './collections.js';
+import { UserAccounts } from '../account/collections.js';
 
 function generateCode() {
   return times(6, () => random(9)).join('');
@@ -22,10 +25,11 @@ export const createRoom = new ValidatedMethod({
   validate: new SimpleSchema({
     type: SimpleSchema.Integer,
     categoryId: String,
-    p: {
+    categoryName: String,
+    pvt: {
       type: Boolean,
       defaultValue: false,
-    }
+    },
   }).validator({ clean: true }),
   mixins: [LoggedInMixin],
   checkLoggedInError: {
@@ -36,16 +40,156 @@ export const createRoom = new ValidatedMethod({
     wait: true,
     throwStubExceptions: true,
   },
-  async run({ type, categoryId, p }) {
+  async run({
+    type,
+    categoryId,
+    categoryName,
+    pvt,
+  }) {
     const { userId } = this;
     // 1. 检查是否已经在房间里
     const currentRoom = Rooms.findOne({ 'users.id': userId });
     if (currentRoom) throw new Meteor.Error(409, `用户已经在房间（${currentRoom._id}）中`);
 
     if (!this.isSimulation) {
+      const { fetchQuestions } = await import('./server/service-methods.js');
+
+      // 先异步拉题目
+      const fetchPromise = fetchQuestions(type, categoryId);
+
+      // 看看有没有等待的人
+      // 移除同分类下至多5个人，并获取这5个人的ID信息
+      let waitingUsers;
+      if (!pvt) {
+        while (!waitingUsers) {
+          const { _id, waitingUsers: users = [], version } = JoinQueues.findOne({
+            type,
+            categoryId,
+          })
+          || {};
+
+          if (users.length === 0) {
+            waitingUsers = [];
+          } else {
+            const takenUsers = take(users, 5);
+            const affected = JoinQueues.update({
+              _id,
+              version,
+            }, {
+              $push: {
+                users: {
+                  $each: [],
+                  $slice: takenUsers.length - users.length,
+                },
+              },
+            });
+            if (affected) waitingUsers = takenUsers;
+          }
+        }
+      }
+
+      try {
+        const users = pvt ? [{ id: userId }] : take(
+          [
+            { id: userId },
+            ...map(waitingUsers, wu => ({ id: wu })),
+            { id: '100011', botLevel: 1 },
+            { id: '100012', botLevel: 3 },
+          ],
+          6,
+        );
+        /*
+        const users = take(
+          [
+            { id: userId },
+            ...map(waitingUsers, wu => ({ id: wu })),
+            { id: 'bot1', botLevel: 1 },
+            { id: 'bot3', botLevel: 3 },
+          ],
+          6,
+        );
+        */
+
+        const userIds = map(users, 'id');
+
+        const userNames = reduce(
+          UserAccounts.find({ _id: { $in: userIds } }).fetch(),
+          (map, { _id, name }) => {
+            map[_id] = name;
+            return map;
+          },
+          {},
+        );
+
+        const messages = map(userIds, (uid, index) => {
+          if (index === 0) {
+            /*
+            XXX创建了房间
+            XXX进入了房间
+            XXX离开了房间
+            XXX被XXX踢出了房间
+            XXX成为新房主
+            */
+            return {
+              type: 1,
+              text: `${userNames[uid] || '足记用户'}创建了房间`,
+            };
+          }
+          return {
+            type: 1,
+            text: `${userNames[uid] || '足记用户'}进入了房间`,
+          };
+        });
+
+        const questions = await fetchPromise;
+
+        let needRetry = true;
+        while (needRetry) {
+          try {
+            Rooms.insert({
+              type,
+              categoryId,
+              categoryName,
+              searchId: generateCode(),
+              pvt,
+              userCount: users.length,
+              users,
+              questions,
+              // push create message?
+              messages,
+            });
+
+            needRetry = false;
+          } catch (e) {
+            if (e.code !== 11000) throw e;
+          }
+        }
+      } catch (e) {
+        // 把拉出来的人塞回等待队列
+        if (waitingUsers && waitingUsers.length > 0) {
+          JoinQueues.update({
+            type, categoryId,
+          }, {
+            $push: {
+              users: {
+                $each: waitingUsers,
+                $position: 0,
+              },
+            },
+          });
+        }
+
+        throw e;
+      }
+      //
+    }
+
+    /*
+    if (!this.isSimulation) {
       const { createRoom: create } = await import('./server/service-methods.js');
       await create(userId, type, categoryId, p);
     }
+    */
 
     /*
     Rooms.insert({
@@ -73,8 +217,8 @@ export const createRoom = new ValidatedMethod({
   },
 });
 
-export const enterRoom = new ValidatedMethod({
-  name: 'game.enterRoom',
+export const findAndJoinRoom = new ValidatedMethod({
+  name: 'game.findAndJoinRoom',
   validate: new SimpleSchema({
     type: SimpleSchema.Integer,
     categoryId: String,
@@ -94,15 +238,52 @@ export const enterRoom = new ValidatedMethod({
     const currentRoom = Rooms.findOne({ 'users.id': userId });
     if (currentRoom) throw new Meteor.Error(409, `用户已经在房间（${currentRoom._id}）中`);
 
-    // 2. 寻找有空房间
+    // 2. 寻找有空房间。要排序
     // 3. 若无，则创建一个新房间，房主为本人
+
+    if (!this.isSimulation) {
+      const user = UserAccounts.findOne(userId);
+      const { value: affected } = Rooms.rawFindOneAndUpdate({
+        type,
+        categoryId,
+        pvt: false,
+        userCount: { $lt: 6 },
+        users: { $not: { $elemMatch: { id: userId } } }, // 自己与自己竞争概率不高
+        rounds: null,
+      }, {
+        $inc: { userCount: 1 },
+        $push: {
+          users: { id: userId },
+          messages: {
+            type: 1,
+            text: `${user.name || '足记用户'}进入了房间`,
+          },
+        },
+      }, {
+        sort: { fastMatching: -1, userCount: -1 },
+      });
+
+      // 3 若无，则加入等待队列
+      if (!affected) {
+        JoinQueues.upsert({
+          type,
+          categoryId,
+        }, {
+          $addToSet: { waitingUsers: userId },
+        });
+      }
+    }
+
+    /*
     const room = Rooms.findOne({
-      // userCount: { $lt: 6 },
-      users: { $not: { $size: 6 } },
+      // users: { $not: { $size: 6 } },
+      userCount: { $lt: 6 },
       // questions: { $exists: true, $ne: null },
       rounds: null,
       type,
       categoryId,
+    }, {
+      sort: { fastMatching: -1, userCount: -1 },
     });
     if (room) {
       Rooms.update({
@@ -117,7 +298,7 @@ export const enterRoom = new ValidatedMethod({
     } else if (!this.isSimulation) {
       const { createRoom: create } = await import('./server/service-methods.js');
       await create(userId, type, categoryId);
-      /*
+      /!*
       Rooms.insert({
         type,
         categoryId,
@@ -139,8 +320,9 @@ export const enterRoom = new ValidatedMethod({
         // TODO: push create message?
         messages: [],
       });
-      */
+      *!/
     }
+    */
   },
 });
 

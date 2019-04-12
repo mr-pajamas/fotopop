@@ -402,7 +402,7 @@
   }
 
   .btn-md {
-    padding: .6rem .8rem;
+    padding: .6rem 0;
     font-size: 1.125rem;
     line-height: 1.2;
   }

@@ -16,7 +16,12 @@ Accounts.validateLoginAttempt(({ type }) => {
 
 Meteor.onLogin(({ user: { _id: userId }, connection: { onClose } }) => {
   // 连线，如果用户在房间内，offline要设置回来
-  Rooms.update({ 'users.id': userId }, { $set: { 'users.$.offline': false } });
+  Rooms.update({
+    users: { $elemMatch: { id: userId, offline: true } },
+  }, {
+    $set: { 'users.$.offline': false },
+    $inc: { userCount: 1 },
+  });
 
   onClose(() => {
     // 如果用户在房间内
@@ -59,7 +64,10 @@ Meteor.onLogin(({ user: { _id: userId }, connection: { onClose } }) => {
           'users.id': userId,
           rounds: null,
         }, Object.assign(
-          { $pull: { users: { id: userId } } },
+          {
+            $pull: { users: { id: userId } },
+            $inc: { userCount: -1 },
+          },
           currentRoom.lastWinner === userId && { $unset: { lastWinner: '' } },
         ));
 
@@ -71,6 +79,7 @@ Meteor.onLogin(({ user: { _id: userId }, connection: { onClose } }) => {
         }, {
           $set: { 'users.$[u].offline': true },
           $unset: { 'users.$[u].elapsedTime': '' },
+          $inc: { userCount: -1 },
         }, {
           arrayFilters: [{
             'u.id': userId,
@@ -115,6 +124,7 @@ Meteor.onLogin(({ user: { _id: userId }, connection: { onClose } }) => {
         }, {
           $set: { 'users.$[u].offline': true },
           $unset: { 'users.$[u].elapsedTime': '' },
+          $inc: { userCount: -1 },
         }, {
           arrayFilters: [{
             'u.id': userId,
@@ -127,7 +137,10 @@ Meteor.onLogin(({ user: { _id: userId }, connection: { onClose } }) => {
           'users.id': userId,
           rounds: null,
         }, Object.assign(
-          { $pull: { users: { id: userId } } },
+          {
+            $pull: { users: { id: userId } },
+            $inc: { userCount: -1 },
+          },
           currentRoom.lastWinner === userId && { $unset: { lastWinner: '' } },
         ));
       }

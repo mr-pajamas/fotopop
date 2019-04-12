@@ -276,15 +276,21 @@
     methods: {
       async close() {
         // if (this.room) {
+        try {
           await ready.callAsync({ roomId: this.roomId, session: this.session });
+        } finally {
+          this.$emit('close');
+        }
         // }
-        this.$emit('close');
       },
       async leaveAndClose() {
         // if (this.room) {
+        try {
           await leaveRoom.callAsync({ roomId: this.roomId });
+        } finally {
+          this.$emit('close');
+        }
         // }
-        this.$emit('close');
       },
       share() {
         bridge.gameShare({ roomId: this.roomId, session: this.session });

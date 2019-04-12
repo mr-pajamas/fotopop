@@ -10,7 +10,6 @@ import map from 'lodash/map';
 import reduce from 'lodash/reduce';
 import find from 'lodash/find';
 import forEach from 'lodash/forEach';
-import { UserAccounts } from '../account/collections';
 
 const Rooms = new Mongo.Collection('rooms');
 
@@ -26,15 +25,20 @@ Rooms.attachSchema(new SimpleSchema({
   },
   searchId: {
     type: String,
+    index: true,
+    unique: true,
   },
-  /*
+  pvt: {
+    type: Boolean,
+    defaultValue: false,
+  },
   userCount: {
     type: SimpleSchema.Integer,
     defaultValue: 1,
     // TODO: auto value here
     max: 6,
+    min: 0,
   },
-  */
   users: {
     type: Array,
     minCount: 1,
@@ -433,4 +437,36 @@ Results.attachSchema(new SimpleSchema({
   },
 }));
 
-export { Rooms, Results };
+const JoinQueues = new Mongo.Collection('join-queues');
+
+JoinQueues.attachSchema(new SimpleSchema({
+  type: {
+    type: SimpleSchema.Integer,
+  },
+  categoryId: {
+    type: String,
+  },
+  /*
+  userCount: {
+    type: SimpleSchema.Integer,
+    // TODO: auto value here
+    min: 0,
+    defaultValue: 0,
+  },
+  */
+  waitingUsers: {
+    type: Array,
+    defaultValue: [],
+  },
+  'waitingUsers.$': {
+    type: String,
+  },
+  version: {
+    type: SimpleSchema.Integer,
+    autoValue() {
+      return { $inc: 1 };
+    },
+  },
+}));
+
+export { Rooms, Results, JoinQueues };

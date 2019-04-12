@@ -16,7 +16,7 @@
       </div>
     </categories-header>
     <div class="category-list flexible">
-      <a href="#" class="d-block" v-for="category in categories" :key="category.id" @click.prevent="joinRoom(category.id)">
+      <a href="#" class="d-block" v-for="category in categories" :key="category.id" @click.prevent="findAndJoinRoom(category.id)">
         <img :src="category.coverUrl" class="d-block w-100">
       </a>
       <!--
@@ -37,7 +37,7 @@
   import { Meteor } from 'meteor/meteor';
   import { TweenMax, Linear } from 'gsap/umd/TweenMax';
 
-  import { enterRoom } from '../../api/game/methods.js';
+  import { findAndJoinRoom } from '../../api/game/methods.js';
 
   import { getCategories } from '../../api/game/client/service-methods.js';
 
@@ -88,11 +88,11 @@
           this[tid] = undefined;
         }
       },
-      async joinRoom(categoryId) {
+      async findAndJoinRoom(categoryId) {
         this.submitting = true;
         this.stopTimeout();
         this[tid] = Meteor.setTimeout(async () => {
-          await enterRoom.callAsync({ type: this.type, categoryId });
+          await findAndJoinRoom.callAsync({ type: this.type, categoryId });
           /*
           if (!joined) {
             await createRoom(this.type, categoryId);

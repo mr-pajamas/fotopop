@@ -513,6 +513,10 @@
             display: inline-block;
           }
         }
+
+        > p {
+          font-size: .625rem;
+        }
       }
     }
 
