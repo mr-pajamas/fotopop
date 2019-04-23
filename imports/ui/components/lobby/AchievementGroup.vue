@@ -2,15 +2,17 @@
   <div class="achievement-group">
     <div class="group-head d-flex align-items-center">
       <h5 class="flexible">{{ group.name }}</h5>
+      <!--
       <button class="btn collapse-btn inflexible" @click="show = !show">
-        <!-- collapse -->
+        &lt;!&ndash; collapse &ndash;&gt;
         <svg v-if="show" width="25" height="19" viewBox="0 0 25 19" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><rect fill="#545454" width="24" height="2" rx="1"/><path stroke="#545454" stroke-width="2" d="M1 18.314L12.314 7l11.313 11.314"/></g></svg>
-        <!-- expand -->
+        &lt;!&ndash; expand &ndash;&gt;
         <svg v-else width="25" height="19" viewBox="0 0 25 19" xmlns="http://www.w3.org/2000/svg"><g transform="translate(0 -5)" fill="none" fill-rule="evenodd"><rect fill="#545454" y="5" width="24" height="2" rx="1"/><path stroke="#545454" stroke-width="2" d="M1 11.314l11.314 11.313 11.313-11.313"/></g></svg>
       </button>
+      -->
     </div>
     <transition name="collapse" @before-enter="beforeEnter" @enter="enter" @before-leave="beforeLeave" @leave="leave">
-      <div class="group-body" v-show="show">
+      <div class="group-body" v-show="true">
         <div class="group-body-content">
           <div class="achievement" v-for="achievement in group.achievements" :key="achievement.name" :class="{ acquired: acquired(achievement) }">
             <div class="medal-bar d-flex align-items-center">
@@ -18,7 +20,9 @@
               <div v-else class="medal d-flex align-items-center"><span>{{ achievement.name }}</span></div>
 
               <span v-if="!acquired(achievement)" class="status">未获得</span>
-              <span v-else-if="newlyAcquired(achievement)" class="status" style="color: rgb(250,75,127)">NEW</span>
+              <img v-else-if="newlyAcquired(achievement)" class="status" style="color: rgb(250,75,127)" src="/images/new.png">
+              <!-- decorated -->
+
             </div>
             <p>{{ achievement.description }}</p>
           </div>
@@ -143,6 +147,10 @@
           .status {
             margin-left: auto;
             line-height: 1;
+          }
+
+          img.status {
+            height: 1rem;
           }
         }
 

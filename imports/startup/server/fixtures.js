@@ -1,14 +1,15 @@
 import { Meteor } from 'meteor/meteor';
 // import { Random } from 'meteor/random';
 import times from 'lodash/times';
+import forEach from 'lodash/forEach';
 
 import { UserAccounts, Tokens } from '../../api/account/collections.js';
 
 Meteor.startup(() => {
   if (UserAccounts.find().count() === 0) {
-    times(10, (i) => {
+    times(9, (i) => {
       UserAccounts.insert({
-        _id: `bot${i}`,
+        _id: `10001${i}`,
         name: `机器人${i}`,
         diamond: { level: 8, amount: { common: 250, ios: 150, android: 80 } },
       });
@@ -72,6 +73,18 @@ Meteor.startup(() => {
       _id: 'c2129f08790441a495042811e5f63401',
       userId: '25610358',
       createdAt: new Date(),
+    });
+  }
+
+  const botIds = times(3, i => `10001${i}`);
+
+  if (UserAccounts.find({ _id: { $in: botIds } }).fetch().length === 0) {
+    forEach(botIds, (_id, i) => {
+      UserAccounts.insert({
+        _id,
+        name: `机器人${i}`,
+        diamond: { level: 8, amount: { common: 250, ios: 150, android: 80 } },
+      });
     });
   }
   /*

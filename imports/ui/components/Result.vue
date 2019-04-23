@@ -113,7 +113,7 @@
               <span class="score inflexible lead">6分</span>
             </div>
             -->
-            <rank :user="ownAccount" />
+            <rank :user="ownAccount" :rank="ownRank" unit="分" />
             <div class="exp-gain">
               <p>经验值</p>
               <p class="lead"><span>+{{ ownRank.expGain }}</span></p>
@@ -143,9 +143,9 @@
         </styled-rounded-card>
       </div>
       <div class="button-bar inflexible d-flex">
-        <styled-pill-button class="btn-md" bottom-color="rgb(166,165,229)" @click.native="leaveAndClose">返回大厅</styled-pill-button>
-        <styled-pill-button class="btn-md" bg-color="rgb(250,75,127)" @click.native="close">再玩一局</styled-pill-button>
-        <styled-pill-button class="btn-md" bg-color="rgb(255,207,37)" @click.native="share">分享战绩</styled-pill-button>
+        <styled-pill-button bottom-color="rgb(166,165,229)" @click.native="leaveAndClose">返回大厅</styled-pill-button>
+        <styled-pill-button bg-color="rgb(250,75,127)" @click.native="close">再玩一局</styled-pill-button>
+        <styled-pill-button bg-color="rgb(255,207,37)" @click.native="share">分享战绩</styled-pill-button>
         <!--<div class="prompt">今日首次分享可得奖励</div>-->
       </div>
     </template>
@@ -166,9 +166,9 @@
 
   import StyledRoundedCard from './general/StyledRoundedCard2.vue';
   import Avatar from './user/Avatar.vue';
-  import StyledPillButton from './general/StyledPillButton';
+  import StyledPillButton from './general/StyledPillButton2.vue';
   import Rank from './lobby/Rank.vue';
-  import SpinnerBox from './general/SpinnerBox';
+  import SpinnerBox from './general/SpinnerBox.vue';
 
   function random(min = 0, max = 1) {
     return min + Math.random() * (max - min);
@@ -277,7 +277,7 @@
       async close() {
         // if (this.room) {
         try {
-          await ready.callAsync({ roomId: this.roomId, session: this.session });
+          await ready.callAsync({ roomId: this.roomId, session: this.session + 1 });
         } finally {
           this.$emit('close');
         }
@@ -487,6 +487,9 @@
       position: relative;
       > button {
         flex: 1 1 0;
+        height: 2.8rem;
+        font-size: 1.125rem;
+        line-height: 1.2;
         & + button {
           margin-left: .5rem;
         }

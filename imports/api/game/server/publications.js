@@ -14,10 +14,13 @@ Meteor.publishComposite('game.currentRoom', function () {
   return {
     find() {
       if (!userId) return null;
-      return Rooms.find({ 'users.id': userId });
+      return Rooms.find({
+        searchId: { $exists: true, $ne: null },
+        'users.id': userId,
+      });
     },
     children: [{
-      find({ users, messages }) {
+      find({ users, messages }) { // TODO: gifts
         const ids = union(
           map(users, user => user.id),
           map(filter(messages, m => !!m.sender), m => m.sender),
@@ -54,5 +57,5 @@ Meteor.publishComposite('game.result', function ({ roomId, session }) {
         return null;
       },
     }],
-  }
+  };
 });

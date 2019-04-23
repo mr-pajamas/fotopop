@@ -1,5 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 import { Meteor } from 'meteor/meteor';
+import { Random } from 'meteor/random';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import SimpleSchema from 'simpl-schema';
 import { LoggedInMixin } from 'meteor/tunifight:loggedin-mixin';
@@ -10,10 +11,12 @@ import find from 'lodash/find';
 import map from 'lodash/map';
 import take from 'lodash/take';
 import reduce from 'lodash/reduce';
+import reject from 'lodash/reject';
+import attempt from 'lodash/attempt';
 
 import MD5 from 'crypto-js/md5';
 
-import { Rooms, JoinQueues } from './collections.js';
+import { Rooms } from './collections.js';
 import { UserAccounts } from '../account/collections.js';
 
 function generateCode() {
@@ -48,8 +51,13 @@ export const createRoom = new ValidatedMethod({
   }) {
     const { userId } = this;
     // 1. 检查是否已经在房间里
-    const currentRoom = Rooms.findOne({ 'users.id': userId });
-    if (currentRoom) throw new Meteor.Error(409, `用户已经在房间（${currentRoom._id}）中`);
+    const currentRoom = Rooms.findOne({
+      searchId: { $exists: true, $ne: null },
+      'users.id': userId,
+    });
+    if (currentRoom) throw new Meteor.Error(409, `用户已经在房间（${currentRoom.searchId}）中`);
+
+    // 此处不保证用户又进入一个房间
 
     if (!this.isSimulation) {
       const { fetchQuestions } = await import('./server/service-methods.js');
@@ -57,89 +65,143 @@ export const createRoom = new ValidatedMethod({
       // 先异步拉题目
       const fetchPromise = fetchQuestions(type, categoryId);
 
-      // 看看有没有等待的人
-      // 移除同分类下至多5个人，并获取这5个人的ID信息
-      let waitingUsers;
-      if (!pvt) {
-        while (!waitingUsers) {
-          const { _id, waitingUsers: users = [], version } = JoinQueues.findOne({
+      // 如果用户有在任何分类中等待加入房间，则从队列中移除
+      // 用户同步加入房间，会被误删（没事）
+      Rooms.update({
+        searchId: null,
+        'users.id': userId,
+      }, {
+        $pull: { users: { id: userId } },
+      });
+
+      // 此处无法保证用户是否在等待还是在房间中
+
+      // 一步步来，先独自建好房间，方法返回，再从等待队列中一个个拿用户一个个加
+
+      const { name: userName } = UserAccounts.findOne(userId);
+      const questions = await fetchPromise;
+
+      let needRetry = true;
+      let roomId;
+      while (needRetry) {
+        const searchId = generateCode();
+        try {
+          roomId = Rooms.insert({
             type,
             categoryId,
-          })
-          || {};
-
-          if (users.length === 0) {
-            waitingUsers = [];
-          } else {
-            const takenUsers = take(users, 5);
-            const affected = JoinQueues.update({
-              _id,
-              version,
-            }, {
-              $push: {
-                users: {
-                  $each: [],
-                  $slice: takenUsers.length - users.length,
-                },
+            categoryName,
+            searchId,
+            pvt,
+            userCount: 1,
+            /*
+            users: [
+              {
+                id: userId,
+                ready: true,
+                offline: false,
               },
-            });
-            if (affected) waitingUsers = takenUsers;
+              ...(!pvt
+                ? times(2, i => ({
+                  id: `10001${i}`,
+                  ready: true,
+                  offline: false,
+                  botLevel: 3 - i,
+                }))
+                : []),
+            ],
+            */
+            users: [{ id: userId, ready: true, offline: false }],
+            session: 1,
+            questions,
+            messages: [{
+              type: 1,
+              text: `${userName}创建了房间`,
+            }],
+            fastMatching: false,
+          });
+
+          needRetry = false;
+        } catch (e) {
+          if (e.code !== 11000 || !Rooms.findOne({ searchId })) {
+            throw e;
           }
         }
       }
+
+      // 加等待的人，一个一个来
+      if (!pvt) {
+        Meteor.defer(async () => {
+          // 此处不保证房间还在
+          // 于是此处不保证房主不出现在等待队列中，只要房间还在，房主必然不会出现在队列中
+          // 先拉人，再加房间，如果加房间失败，退回去
+
+          const { fillRoom } = await import('./server/game-operation.js');
+          fillRoom(roomId);
+        });
+      }
+
+
+      /*
+      // 看看有没有等待的人
+      // 移除同分类下至多5个人，并获取这5个人的ID信息
+      let waitingUsers = !pvt && [];
+      while (!waitingUsers) {
+        const { _id, users = [], version } = Rooms.findOne({
+          type,
+          categoryId,
+          searchId: null,
+        }) || {};
+
+        if (users.length === 0) {
+          waitingUsers = [];
+        } else {
+          if (find(users, ({ id }) => id === userId)) throw new Meteor.Error(409, '状态错误：用户仍在等待队列');
+          const takenUsers = take(users, 5);
+          const affected = Rooms.update({
+            _id,
+            version,
+          }, {
+            $push: {
+              users: {
+                $each: [],
+                $slice: takenUsers.length - users.length,
+              },
+            },
+          });
+          if (affected) waitingUsers = takenUsers;
+        }
+      }
+
+
+      // 在此处无法保证这些用户不再出现在等待队列中，或者出现在房间里
 
       try {
         const users = pvt ? [{ id: userId }] : take(
           [
             { id: userId },
-            ...map(waitingUsers, wu => ({ id: wu })),
-            { id: '100011', botLevel: 1 },
-            { id: '100012', botLevel: 3 },
+            ...waitingUsers,
+            { id: '100011', botLevel: 3 },
+            { id: '100012', botLevel: 2 },
+            { id: '100013', botLevel: 1 },
           ],
           6,
         );
-        /*
-        const users = take(
-          [
-            { id: userId },
-            ...map(waitingUsers, wu => ({ id: wu })),
-            { id: 'bot1', botLevel: 1 },
-            { id: 'bot3', botLevel: 3 },
-          ],
-          6,
-        );
-        */
 
         const userIds = map(users, 'id');
 
         const userNames = reduce(
           UserAccounts.find({ _id: { $in: userIds } }).fetch(),
-          (map, { _id, name }) => {
-            map[_id] = name;
-            return map;
+          (nameMap, { _id, name }) => {
+            nameMap[_id] = name;
+            return nameMap;
           },
           {},
         );
 
-        const messages = map(userIds, (uid, index) => {
-          if (index === 0) {
-            /*
-            XXX创建了房间
-            XXX进入了房间
-            XXX离开了房间
-            XXX被XXX踢出了房间
-            XXX成为新房主
-            */
-            return {
-              type: 1,
-              text: `${userNames[uid] || '足记用户'}创建了房间`,
-            };
-          }
-          return {
-            type: 1,
-            text: `${userNames[uid] || '足记用户'}进入了房间`,
-          };
-        });
+        const messages = map(userIds, (uid, index) => ({
+          type: 1,
+          text: `${userNames[uid] || '足记用户'}${index === 0 ? '创建' : '进入'}了房间`,
+        }));
 
         const questions = await fetchPromise;
 
@@ -155,7 +217,6 @@ export const createRoom = new ValidatedMethod({
               userCount: users.length,
               users,
               questions,
-              // push create message?
               messages,
             });
 
@@ -165,10 +226,13 @@ export const createRoom = new ValidatedMethod({
           }
         }
       } catch (e) {
-        // 把拉出来的人塞回等待队列
+        // 把拉出来的人塞回等待队列 TODO: 注意重复
+        // TODO: 一个个塞？
         if (waitingUsers && waitingUsers.length > 0) {
-          JoinQueues.update({
-            type, categoryId,
+          Rooms.update({
+            type,
+            categoryId,
+            searchId: null,
           }, {
             $push: {
               users: {
@@ -181,39 +245,8 @@ export const createRoom = new ValidatedMethod({
 
         throw e;
       }
-      //
+      */
     }
-
-    /*
-    if (!this.isSimulation) {
-      const { createRoom: create } = await import('./server/service-methods.js');
-      await create(userId, type, categoryId, p);
-    }
-    */
-
-    /*
-    Rooms.insert({
-      type: 1,
-      categoryId: '1',
-      categoryName: '80后专属',
-      searchId: generateCode(),
-      // userCount: 1,
-      users: [{ id: userId }, { id: 'bot1', botLevel: 1 }, { id: 'bot3', botLevel: 3 }],
-      questions: times(10, i => ({
-        id: `${i}`,
-        type: i % 2,
-        audio: `/audio/${i + 1}.mp3`,
-        choices: ['你', '我', '中', '发', '白', '爱', '说',
-          '笑', '哭', '瓷', '奇', '花', '草', '树',
-          '叶', '青', '东', '南', '西', '北', '快'],
-        hints: times(3, j => `提示${j}`),
-        answerHash: '135a2dc49169a5513bf8f42658713dd6',
-        answerFormat: '...',
-      })),
-      // TODO: push create message?
-      messages: [],
-    });
-    */
   },
 });
 
@@ -235,13 +268,27 @@ export const findAndJoinRoom = new ValidatedMethod({
   async run({ type, categoryId }) {
     const { userId } = this;
     // 1. 检查是否已经在房间里
-    const currentRoom = Rooms.findOne({ 'users.id': userId });
-    if (currentRoom) throw new Meteor.Error(409, `用户已经在房间（${currentRoom._id}）中`);
+    // const currentRoom = Rooms.findOne({ 'users.id': userId });
+    const currentRoom = Rooms.findOne({
+      searchId: { $exists: true, $ne: null },
+      'users.id': userId,
+    });
+    if (currentRoom) throw new Meteor.Error(409, `用户已经在房间（${currentRoom.searchId}）中`);
 
-    // 2. 寻找有空房间。要排序
-    // 3. 若无，则创建一个新房间，房主为本人
+    // 如果用户有在任何分类中等待加入房间，则从队列中移除
+    // 用户同步加入房间，会被误删（没事）
+    Rooms.update({
+      searchId: null,
+      'users.id': userId,
+    }, {
+      $pull: { users: { id: userId } },
+    });
 
     if (!this.isSimulation) {
+      const { findAndJoin } = await import('./server/game-operation.js');
+      findAndJoin(userId, type, categoryId);
+
+      /*
       const user = UserAccounts.findOne(userId);
       const { value: affected } = Rooms.rawFindOneAndUpdate({
         type,
@@ -272,6 +319,7 @@ export const findAndJoinRoom = new ValidatedMethod({
           $addToSet: { waitingUsers: userId },
         });
       }
+      */
     }
 
     /*
@@ -348,6 +396,7 @@ export const leaveRoom = new ValidatedMethod({
 
     const currentRoom = Rooms.findOne({
       _id: roomId,
+      searchId: { $exists: true, $ne: null },
       'users.id': userId,
     });
 
@@ -355,7 +404,6 @@ export const leaveRoom = new ValidatedMethod({
 
     if (currentRoom.inGame()) throw new Meteor.Error(409, '当前房间正在游戏中，无法退出');
 
-    // TODO: 和后端讨论
     // if (currentRoom.fastMatching) throw new Meteor.Error(409, '当前房间正在进行快速匹配');
 
     // 如果退出的是lastWinner那么要清空
@@ -364,20 +412,25 @@ export const leaveRoom = new ValidatedMethod({
       'users.id': userId,
       rounds: null,
     }, Object.assign(
-      { $pull: { users: { id: userId } } },
+      {
+        $pull: { users: { id: userId } },
+        $inc: { userCount: -1 },
+      },
       currentRoom.lastWinner === userId && { $unset: { lastWinner: '' } },
     ));
 
     if (!this.isSimulation) {
-      Meteor.defer(() => {
+      Meteor.defer(async () => {
         const affected = Rooms.remove({
           _id: roomId,
           // 没有一个活人
           users: { $not: { $elemMatch: { botLevel: null, offline: false } } },
         });
 
-        if (affected) {
-          // TODO: 发送请求通知
+        if (!affected) {
+          const { fillRoom, decideBigGiftEnd } = await import('./server/game-operation.js');
+          fillRoom(roomId);
+          decideBigGiftEnd(roomId);
         }
       });
     }
@@ -410,6 +463,7 @@ export const ready = new ValidatedMethod({
 
     const currentRoom = Rooms.findOne({
       _id: roomId,
+      searchId: { $exists: true, $ne: null },
       'users.id': userId,
     });
 
@@ -462,15 +516,21 @@ export const startGame = new ValidatedMethod({
     // 7. 添加round 1
 
     // TODO: 发送请求通知服务端，还是这事情彻底服务端做（自己做）？
-
-    const currentRoom = Rooms.findOne({ 'users.id': userId });
+    const currentRoom = Rooms.findOne({
+      searchId: { $exists: true, $ne: null },
+      'users.id': userId,
+    });
+    // const currentRoom = Rooms.findOne({ 'users.id': userId });
     if (!currentRoom) throw new Meteor.Error(409, '用户不在房间中');
 
     if (currentRoom.inGame()) throw new Meteor.Error(409, '当前房间游戏已经开始');
 
     if (currentRoom.host().id !== userId) throw new Meteor.Error(403, '用户不是房主，无权开始游戏');
 
+    // TODO: 可能需要删除
     if (currentRoom.fastMatching) throw new Meteor.Error(409, '当前房间正在进行快速匹配');
+
+    if (!currentRoom.questions || currentRoom.questions.length === 0) throw new Meteor.Error(409, '当前房间题目尚未准备好');
 
     if (find(currentRoom.users, user => !user.ready)) throw new Meteor.Error(409, '当前房间有人未准备好，无法开始游戏');
 
@@ -548,6 +608,7 @@ export const tellElapsedTime = new ValidatedMethod({
 
     const currentRoom = Rooms.findOne({
       _id: roomId,
+      searchId: { $exists: true, $ne: null },
       'users.id': userId,
     });
 
@@ -636,6 +697,7 @@ export const submitAnswer = new ValidatedMethod({
 
     const currentRoom = Rooms.findOne({
       _id: roomId,
+      searchId: { $exists: true, $ne: null },
       'users.id': userId,
     });
 
@@ -656,19 +718,19 @@ export const submitAnswer = new ValidatedMethod({
       throw new Meteor.Error(400, '猜题回答错误');
     }
 
-    // 加winner
-    // TODO: 这里有竞争可能：在提交答案后，终局流程走了一半，将会遗漏统计该人的分数，问题不大
-    Rooms.update({
-      _id: roomId,
-      // 'users.id': userId,
-      session,
-      // roundCount: roundNumber,
-      rounds: { $size: roundNumber },
-    }, { $addToSet: { 'rounds.0.winners': userId } });
-
-    // 至此方法应该返回
-
     if (!this.isSimulation) {
+      // 加winner
+      // TODO: 这里有竞争可能：在提交答案后，终局流程走了一半，将会遗漏统计该人的分数，问题不大
+      Rooms.update({
+        _id: roomId,
+        // 'users.id': userId,
+        session,
+        // roundCount: roundNumber,
+        rounds: { $size: roundNumber },
+      }, { $addToSet: { 'rounds.0.winners': userId } });
+
+
+      // 至此方法应该返回
       Meteor.defer(async () => {
         const { decideRoundEnd } = await import('./server/game-operation.js');
         decideRoundEnd(roomId);
@@ -721,6 +783,7 @@ export const tellWinningBots = new ValidatedMethod({
 
     const currentRoom = Rooms.findOne({
       _id: roomId,
+      searchId: { $exists: true, $ne: null },
       'users.id': userId,
     });
 
@@ -762,6 +825,214 @@ export const tellWinningBots = new ValidatedMethod({
         decideBotWins(roomId);
         decideRoundEnd(roomId);
       });
+    }
+  },
+});
+
+export const sendBigGift = new ValidatedMethod({
+  name: 'game.sendBigGift',
+  validate: new SimpleSchema({
+    roomId: {
+      type: String,
+    },
+    giftId: {
+      type: String,
+    },
+    receiver: {
+      type: String,
+    },
+    packId: {
+      type: String,
+      optional: true,
+    },
+  }).validator({ clean: true }),
+  mixins: [LoggedInMixin],
+  checkLoggedInError: {
+    error: '403',
+    reason: 'You need to be logged in to call this method',
+  },
+  applyOptions: {
+    wait: false,
+    noRetry: true,
+    throwStubExceptions: true,
+  },
+  run({
+    roomId,
+    giftId,
+    receiver,
+    packId,
+  }) {
+    const { userId } = this;
+
+    const currentRoom = Rooms.findOne({
+      _id: roomId,
+      searchId: { $exists: true, $ne: null },
+      'users.id': userId,
+    });
+
+    if (!currentRoom) throw new Meteor.Error(400, '用户不在指定房间中');
+
+    if (!currentRoom.user(receiver)) throw new Meteor.Error(400, '指定用户不在房间中');
+
+    // TODO: 发送验证请求
+
+    // 先看是不是后面的再看是不是第一个
+
+    // 模拟请求返回
+    let affected = false;
+    if (packId) {
+      affected = Rooms.update({
+        _id: roomId,
+        'bigGifts.0.id': { $ne: packId },
+        'bigGifts.id': packId,
+      }, {
+        $inc: { 'bigGifts.$.combo': 1 },
+      });
+
+      if (!affected) {
+        affected = Rooms.update({
+          _id: roomId,
+          'bigGifts.0.id': packId,
+        }, {
+          $inc: { 'bigGifts.0.combo': 1 },
+          // $set: { 'users.$[u].bgElapsedTime': 0 },
+        });
+      }
+    }
+
+    if (!affected) {
+      const id = Random.id();
+
+      affected = Rooms.update({
+        _id: roomId,
+        bigGifts: { $exists: true, $not: { $size: 0 } },
+      }, {
+        $push: {
+          bigGifts: {
+            id,
+            giftId,
+            sender: userId,
+            receiver,
+            combo: 1,
+          },
+        },
+      });
+
+      if (!affected) {
+        Rooms.rawUpdateOne({
+          _id: roomId,
+          $or: [
+            { bigGifts: null },
+            { bigGifts: { $size: 0 } },
+          ],
+        }, {
+          $push: {
+            bigGifts: {
+              id,
+              giftId,
+              sender: userId,
+              receiver,
+              combo: 1,
+            },
+          },
+          $set: { 'users.$[u].bgElapsedTime': 0 },
+        }, {
+          arrayFilters: [{ 'u.offline': false }],
+        });
+      }
+
+      return id;
+      /*
+      Rooms.rawUpdateOne({
+        _id: roomId,
+      }, {
+        $push: {
+          bigGifts: {
+            id: Random.id(),
+            giftId,
+            sender: userId,
+            receiver,
+            combo: 1,
+          },
+        },
+        $set: { 'users.$[u].bgElapsedTime': 0 },
+      }, {
+        arrayFilters: [{ 'u.offline': false }],
+      });
+      */
+    }
+
+    return packId;
+  },
+});
+
+export const tellBigGiftElapsedTime = new ValidatedMethod({
+  name: 'game.tellBigGiftElapsedTime',
+  validate: new SimpleSchema({
+    roomId: {
+      type: String,
+    },
+    packId: {
+      type: String,
+    },
+    elapsedTime: {
+      type: Number,
+    },
+  }).validator({ clean: true }),
+  mixins: [LoggedInMixin],
+  checkLoggedInError: {
+    error: '403',
+    reason: 'You need to be logged in to call this method',
+  },
+  applyOptions: {
+    noRetry: true,
+    throwStubExceptions: true,
+  },
+  run({
+    roomId,
+    packId,
+    elapsedTime,
+  }) {
+    const { userId } = this;
+
+    const currentRoom = Rooms.findOne({
+      _id: roomId,
+      searchId: { $exists: true, $ne: null },
+      'users.id': userId,
+    });
+
+    if (!currentRoom) throw new Meteor.Error(400, '用户不在指定房间中');
+
+    if (packId !== currentRoom.currentBigGift().id) throw new Meteor.Error(400, '指定礼物ID非当前礼物');
+
+    const user = currentRoom.user(userId);
+
+    if (elapsedTime >= 0 && elapsedTime < user.bgElapsedTime) throw new Meteor.Error(400, '计时早于之前的值');
+
+    if (!this.isSimulation) {
+      Rooms.rawUpdateOne({
+        _id: roomId,
+        'bigGifts.0.id': packId,
+      }, {
+        $set: {
+          'users.$[u].bgElapsedTime': elapsedTime,
+          'users.$[o].bgElapsedTime': elapsedTime,
+        },
+      }, {
+        arrayFilters: [{
+          'u.id': userId,
+        }, {
+          'o.offline': false,
+          'o.bgElapsedTime': null,
+        }],
+      });
+
+      if (elapsedTime === -1) {
+        Meteor.defer(async () => {
+          const { decideBigGiftEnd } = await import('./server/game-operation.js');
+          decideBigGiftEnd(roomId);
+        });
+      }
     }
   },
 });

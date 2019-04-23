@@ -57,7 +57,7 @@
       </transition>
 
       <div v-if="!room.inGame()" class="button-group inflexible d-flex">
-        <styled-pill-button class="btn-lg fast-match-btn" bg-color="rgb(64,197,255)" color="#fff" :text-shadow="true">
+        <styled-pill-button class="fast-match-btn" bg-color="rgb(64,197,255)" color="#fff" :text-shadow="true">
           <span>快速匹配</span>
           <span class="fast-match-price">
             <img src="/images/diamond.png" class="d-block">
@@ -67,7 +67,7 @@
             <span>10</span>
           </span>
         </styled-pill-button>
-        <styled-pill-button class="btn-lg" v-if="room.host().id === ownAccount._id" bg-color="rgb(250,75,127)" color="#fff" :text-shadow="true" @click.native="startGame">开始游戏</styled-pill-button>
+        <styled-pill-button v-if="room.host().id === ownAccount._id" bg-color="rgb(250,75,127)" color="#fff" :text-shadow="true" @click.native="startGame" :disabled="!room.questions">开始游戏</styled-pill-button>
       </div>
 
       <bottom-bar class="inflexible" />
@@ -105,7 +105,7 @@
   import DiamondInline from './user/DiamondInline.vue';
   import Avatar from './user/Avatar.vue';
   import EmptySlot from './user/EmptySlot.vue';
-  import StyledPillButton from './general/StyledPillButton.vue';
+  import StyledPillButton from './general/StyledPillButton2.vue';
   import BottomBar from './room/BottomBar.vue';
   import SoundIcon from './room/SoundIcon.vue';
   import AnswerSheet from './room/AnswerSheet';
@@ -539,6 +539,12 @@
         & + * {
           margin-left: .5rem;
         }
+      }
+
+      > button {
+        height: 3rem;
+        font-size: 1.2rem;
+        line-height: 1.4;
       }
 
       .fast-match-btn {

@@ -7,3 +7,7 @@ Meteor.publish('account.ownAccount', function () {
   if (!this.userId) return this.ready();
   return UserAccounts.find({ _id: this.userId });
 });
+
+Meteor.publish('account.accounts', function (userIds = []) {
+  return UserAccounts.find({ _id: { $in: userIds } });
+});

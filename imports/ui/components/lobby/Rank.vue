@@ -1,18 +1,18 @@
 <template>
   <div class="rank d-flex align-items-center">
-    <div class="rounded-circle rank-number inflexible d-flex justify-content-center align-items-center"><span>4</span></div>
+    <div class="rounded-circle rank-number inflexible d-flex justify-content-center align-items-center"><span>{{ rank.place }}</span></div>
     <avatar :user="user" :show-vip="true" class="inflexible" />
     <span class="user-name flexible">{{ user.name }}</span>
-    <span class="score inflexible">48240</span>
+    <span class="score inflexible">{{ rank.score }}{{ unit || '' }}</span>
   </div>
 </template>
 
 <script>
-  import Avatar from '../user/Avatar';
+  import Avatar from '../user/Avatar.vue';
   export default {
     name: "rank",
     components: { Avatar },
-    props: ['user'],
+    props: ['user', 'rank', 'unit'],
   };
 </script>
 

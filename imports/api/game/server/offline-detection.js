@@ -4,7 +4,12 @@ import { Accounts } from 'meteor/accounts-base';
 */
 
 import { Rooms } from '../collections.js';
-import { decideBotWins, decideRoundEnd } from './game-operation.js';
+import {
+  decideBotWins,
+  decideRoundEnd,
+  fillRoom,
+  decideBigGiftEnd,
+} from './game-operation.js';
 
 /*
 Accounts.validateLoginAttempt(({ type }) => {
@@ -17,6 +22,7 @@ Accounts.validateLoginAttempt(({ type }) => {
 Meteor.onLogin(({ user: { _id: userId }, connection: { onClose } }) => {
   // 连线，如果用户在房间内，offline要设置回来
   Rooms.update({
+    searchId: { $exists: true, $ne: null },
     users: { $elemMatch: { id: userId, offline: true } },
   }, {
     $set: { 'users.$.offline': false },
@@ -24,11 +30,29 @@ Meteor.onLogin(({ user: { _id: userId }, connection: { onClose } }) => {
   });
 
   onClose(() => {
+    const current = Rooms.findOne({ 'users.id': userId });
+
+    const currentQueue = current && !current.searchId && current;
+    const currentRoom = current && current.searchId && current;
+
     // 如果用户在房间内
     // 1、如果房间在准备阶段，直接离开(发送服务器请求)
     // 2、如果房间已经开始游戏，设置为offline
-    const currentRoom = Rooms.findOne({ 'users.id': userId });
-    if (currentRoom) {
+    // const currentRoom = Rooms.findOne({ 'users.id': userId });
+    /*
+    const currentRoom = Rooms.findOne({
+      searchId: { $exists: true, $ne: null },
+      'users.id': userId,
+    });
+    */
+    if (currentQueue) {
+      Rooms.update({
+        _id: currentQueue._id,
+        'users.id': userId,
+      }, {
+        $pull: { users: { id: userId } },
+      });
+    } else if (currentRoom) {
       if (!currentRoom.inGame()) {
         // TODO: 发送请求（只是通知？还是后端来？）
         // 如果房间里没活人了，要删除房间
@@ -78,7 +102,10 @@ Meteor.onLogin(({ user: { _id: userId }, connection: { onClose } }) => {
           rounds: { $exists: true, $ne: null },
         }, {
           $set: { 'users.$[u].offline': true },
-          $unset: { 'users.$[u].elapsedTime': '' },
+          $unset: {
+            'users.$[u].elapsedTime': '',
+            'users.$[u].bgElapsedTime': '',
+          },
           $inc: { userCount: -1 },
         }, {
           arrayFilters: [{
@@ -123,7 +150,10 @@ Meteor.onLogin(({ user: { _id: userId }, connection: { onClose } }) => {
           rounds: { $exists: true, $ne: null },
         }, {
           $set: { 'users.$[u].offline': true },
-          $unset: { 'users.$[u].elapsedTime': '' },
+          $unset: {
+            'users.$[u].elapsedTime': '',
+            'users.$[u].bgElapsedTime': '',
+          },
           $inc: { userCount: -1 },
         }, {
           arrayFilters: [{
@@ -145,6 +175,8 @@ Meteor.onLogin(({ user: { _id: userId }, connection: { onClose } }) => {
         ));
       }
 
+      // fillRoom(currentRoom._id);
+
       // TODO: 发送请求通知
       // TODO: 如果期间有断线用户回来，直接假定该轮结束
       const affected = Rooms.remove({
@@ -155,6 +187,9 @@ Meteor.onLogin(({ user: { _id: userId }, connection: { onClose } }) => {
 
 
       if (!affected) {
+        fillRoom(currentRoom._id);
+        decideBigGiftEnd(currentRoom._id);
+
         decideBotWins(currentRoom._id);
         decideRoundEnd(currentRoom._id);
       }

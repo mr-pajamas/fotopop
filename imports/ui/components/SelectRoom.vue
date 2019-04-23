@@ -16,7 +16,7 @@
       </div>
     </categories-header>
     <div class="category-list flexible">
-      <a href="#" class="d-block" v-for="category in categories" :key="category.id" @click.prevent="findAndJoinRoom(category.id)">
+      <a href="#" class="d-block" v-for="category in categories" :key="category.id" @click.prevent="findAndJoinRoom(category.id, category.name)">
         <img :src="category.coverUrl" class="d-block w-100">
       </a>
       <!--
@@ -29,7 +29,9 @@
       -->
     </div>
 
-    <spinner-box text="匹配中" v-if="submitting" />
+    <div class="filler d-flex justify-content-center align-items-center" v-if="submitting">
+      <spinner-box text="匹配中" />
+    </div>
   </div>
 </template>
 
@@ -37,7 +39,7 @@
   import { Meteor } from 'meteor/meteor';
   import { TweenMax, Linear } from 'gsap/umd/TweenMax';
 
-  import { findAndJoinRoom } from '../../api/game/methods.js';
+  import { findAndJoinRoom, createRoom } from '../../api/game/methods.js';
 
   import { getCategories } from '../../api/game/client/service-methods.js';
 
@@ -88,10 +90,14 @@
           this[tid] = undefined;
         }
       },
-      async findAndJoinRoom(categoryId) {
+      async findAndJoinRoom(categoryId, categoryName) {
         this.submitting = true;
         this.stopTimeout();
         this[tid] = Meteor.setTimeout(async () => {
+          this[tid] = Meteor.setTimeout(
+            async () => await createRoom.callAsync({ type: this.type, categoryId, categoryName }),
+            5000,
+          );
           await findAndJoinRoom.callAsync({ type: this.type, categoryId });
           /*
           if (!joined) {

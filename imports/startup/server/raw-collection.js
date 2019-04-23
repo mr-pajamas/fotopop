@@ -15,3 +15,8 @@ Mongo.Collection.prototype.rawFindOneAndUpdate = function (filter, update, optio
   const rawCollection = this.rawCollection();
   return Meteor.wrapAsync(rawCollection.findOneAndUpdate, rawCollection)(filter, update, options);
 };
+
+Mongo.Collection.prototype.rawCreateIndexes = function (specs, options) {
+  const rawCollection = this.rawCollection();
+  return Meteor.wrapAsync(rawCollection.createIndexes(specs, options));
+};

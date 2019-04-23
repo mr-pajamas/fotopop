@@ -1,126 +1,169 @@
 <template>
   <div class="leaderboard filler d-flex flex-column">
 
-    <header-bar class="inflexible" name="排行榜" v-on="$listeners" />
-    <div class="winner-section inflexible d-flex flex-column align-items-center">
+    <template v-if="!loading">
+      <header-bar class="inflexible" name="排行榜" v-on="$listeners" />
+      <div class="winner-section inflexible d-flex flex-column align-items-center">
 
-      <div class="winner flexible">
-        <div class="filler d-flex flex-column justify-content-start align-items-center">
+        <div class="winner flexible">
+          <div class="filler d-flex flex-column justify-content-start align-items-center">
 
-          <svg class="beam beam-left" width="539" height="704" viewBox="0 0 539 704" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient x1="56.086%" y1="95.93%" x2="56.086%" y2="-3.835%" id="a"><stop stop-color="#FFF" stop-opacity="0" offset="0%"/><stop stop-color="#FDDAE0" offset="100%"/></linearGradient></defs><path transform="matrix(1 0 0 -1 -2314 2359)" d="M2517.043 1656L2305 2389h557l-219.485-733z" fill="url(#a)" fill-rule="evenodd" opacity=".127"/></svg>
+            <svg class="beam beam-left" width="539" height="704" viewBox="0 0 539 704" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient x1="56.086%" y1="95.93%" x2="56.086%" y2="-3.835%" id="a"><stop stop-color="#FFF" stop-opacity="0" offset="0%"/><stop stop-color="#FDDAE0" offset="100%"/></linearGradient></defs><path transform="matrix(1 0 0 -1 -2314 2359)" d="M2517.043 1656L2305 2389h557l-219.485-733z" fill="url(#a)" fill-rule="evenodd" opacity=".127"/></svg>
 
-          <!--<svg class="beam beam-left" width="539px" height="704px" viewBox="0 0 539 704" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-            &lt;!&ndash; Generator: Sketch 51.2 (57519) - http://www.bohemiancoding.com/sketch &ndash;&gt;
-            <title>Path 17 Copy</title>
-            <desc>Created with Sketch.</desc>
-            <defs>
-              <linearGradient x1="56.0857562%" y1="95.9296756%" x2="56.0857562%" y2="-3.83470133%" id="linearGradient-1">
-                <stop stop-color="#FFFFFF" stop-opacity="0" offset="0%"></stop>
-                <stop stop-color="#FDDAE0" offset="100%"></stop>
-              </linearGradient>
-            </defs>
-            <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.126897321">
-              <g id="足记游戏切图" transform="translate(-2314.000000, -1686.000000)" fill="url(#linearGradient-1)">
-                <polygon id="Path-17-Copy" transform="translate(2583.500000, 2022.500000) scale(1, -1) translate(-2583.500000, -2022.500000) " points="2517.04312 1656 2305 2389 2862 2389 2642.51478 1656"></polygon>
-              </g>
-            </g>
-          </svg>-->
+            <svg class="beam beam-center" width="539" height="704" viewBox="0 0 539 704" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient x1="56.086%" y1="95.93%" x2="56.086%" y2="-3.835%" id="a"><stop stop-color="#FFF" stop-opacity="0" offset="0%"/><stop stop-color="#FDDAE0" offset="100%"/></linearGradient></defs><path transform="matrix(1 0 0 -1 -2314 2359)" d="M2517.043 1656L2305 2389h557l-219.485-733z" fill="url(#a)" fill-rule="evenodd" opacity=".127"/></svg>
+            <svg class="beam beam-right" width="539" height="704" viewBox="0 0 539 704" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient x1="56.086%" y1="95.93%" x2="56.086%" y2="-3.835%" id="a"><stop stop-color="#FFF" stop-opacity="0" offset="0%"/><stop stop-color="#FDDAE0" offset="100%"/></linearGradient></defs><path transform="matrix(1 0 0 -1 -2314 2359)" d="M2517.043 1656L2305 2389h557l-219.485-733z" fill="url(#a)" fill-rule="evenodd" opacity=".127"/></svg>
 
-          <svg class="beam beam-center" width="539" height="704" viewBox="0 0 539 704" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient x1="56.086%" y1="95.93%" x2="56.086%" y2="-3.835%" id="a"><stop stop-color="#FFF" stop-opacity="0" offset="0%"/><stop stop-color="#FDDAE0" offset="100%"/></linearGradient></defs><path transform="matrix(1 0 0 -1 -2314 2359)" d="M2517.043 1656L2305 2389h557l-219.485-733z" fill="url(#a)" fill-rule="evenodd" opacity=".127"/></svg>
-          <svg class="beam beam-right" width="539" height="704" viewBox="0 0 539 704" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient x1="56.086%" y1="95.93%" x2="56.086%" y2="-3.835%" id="a"><stop stop-color="#FFF" stop-opacity="0" offset="0%"/><stop stop-color="#FDDAE0" offset="100%"/></linearGradient></defs><path transform="matrix(1 0 0 -1 -2314 2359)" d="M2517.043 1656L2305 2389h557l-219.485-733z" fill="url(#a)" fill-rule="evenodd" opacity=".127"/></svg>
+            <img :src="winner && winner.user.dressedMedal" class="title" :style="{ opacity: (winner && winner.user.dressedMedal) ? '1' :  '0' }">
 
-          <img src="/images/title.png" class="title">
-          <img src="/images/avatar-full.png" class="winner-avatar">
-        </div>
-      </div>
-      <styled-rounded-card class="w-100 inflexible winner-card" bottom-color="rgba(82,40,167,.4)" :bg="false">
-        <div class="winner-card-body">
-          <!--
-          <div class="rank d-flex align-items-center">
-            <div class="rounded-circle rank-number inflexible d-flex justify-content-center align-items-center"><span>4</span></div>
-            <avatar :user="ownAccount" :show-vip="true" class="inflexible" />
-            <span class="user-name flexible">{{ ownAccount.name }}</span>
-            <span class="score inflexible">48240</span>
+            <img :src="(winner && winner.user.avatar && winner.user.avatar.full) || '/images/avatar-full.png'" class="winner-avatar" :style="{ opacity: (winner && winner.user.avatar && winner.user.avatar.full) ? '1' : '0' }">
           </div>
-          -->
-          <rank :user="ownAccount" />
         </div>
-      </styled-rounded-card>
-    </div>
-
-    <div class="ranking-lists flexible d-flex flex-column">
-      <div class="tabs d-flex align-items-end inflexible">
-        <a href="#" class="tab selected">土豪榜</a>
-        <a href="#" class="tab">魅力榜</a>
-        <a href="#" class="tab">等级榜</a>
-      </div>
-      <div class="rounded-card flexible">
-        <div class="filler">
-          <div class="sub-tabs d-flex align-items-stretch">
-            <div class="grid flexible d-flex justify-content-center">
-              <a href="#" class="sub-tab selected">今日</a>
-            </div>
-            <div class="grid flexible d-flex justify-content-center align-items-stretch">
-              <a href="#" class="sub-tab">昨日</a>
-            </div>
+        <styled-rounded-card class="w-100 inflexible winner-card" bottom-color="rgba(82,40,167,.4)" :bg="false">
+          <div class="winner-card-body">
             <!--
-            <div class="grid flexible d-flex justify-content-center align-items-stretch">
-              <a href="#" class="sub-tab">本月</a>
-            </div>
-            <div class="grid flexible d-flex justify-content-center align-items-stretch">
-              <a href="#" class="sub-tab">总榜</a>
+            <div class="rank d-flex align-items-center">
+              <div class="rounded-circle rank-number inflexible d-flex justify-content-center align-items-center"><span>4</span></div>
+              <avatar :user="ownAccount" :show-vip="true" class="inflexible" />
+              <span class="user-name flexible">{{ ownAccount.name }}</span>
+              <span class="score inflexible">48240</span>
             </div>
             -->
+            <rank :user="winner.user" :rank="winner.rank" v-if="winner" />
           </div>
+        </styled-rounded-card>
+      </div>
 
-          <div class="ranking-list">
-            <rank :user="ownAccount" />
-            <rank :user="ownAccount" />
-            <rank :user="ownAccount" />
-            <rank :user="ownAccount" />
-            <rank :user="ownAccount" />
-            <rank :user="ownAccount" />
-            <rank :user="ownAccount" />
-            <rank :user="ownAccount" />
-            <rank :user="ownAccount" />
+      <div class="ranking-lists flexible d-flex flex-column">
+        <div class="tabs d-flex align-items-end inflexible">
+          <a href="#" class="tab" @click.prevent="type = 0" :class="{ selected: type === 0 }">土豪榜</a>
+          <a href="#" class="tab" @click.prevent="type = 1" :class="{ selected: type === 1 }">魅力榜</a>
+          <a href="#" class="tab" @click.prevent="type = 2" :class="{ selected: type === 2 }">等级榜</a>
+        </div>
+        <div class="rounded-card flexible">
+          <div class="filler">
+            <div class="sub-tabs d-flex align-items-stretch">
+              <div class="grid flexible d-flex justify-content-center">
+                <a href="#" class="sub-tab" :class="{ selected: scope === 0 }" @click.prevent="scope = 0">今日</a>
+              </div>
+              <div class="grid flexible d-flex justify-content-center align-items-stretch">
+                <a href="#" class="sub-tab" :class="{ selected: scope === 1 }" @click.prevent="scope = 1">昨日</a>
+              </div>
+              <div class="grid flexible d-flex justify-content-center align-items-stretch">
+                <a href="#" class="sub-tab" :class="{ selected: scope === 2 }" @click.prevent="scope = 2">本月</a>
+              </div>
+              <div class="grid flexible d-flex justify-content-center align-items-stretch">
+                <a href="#" class="sub-tab" :class="{ selected: scope === 3 }" @click.prevent="scope = 3">总榜</a>
+              </div>
+            </div>
+
+            <div class="ranking-list">
+              <rank v-for="rank in remainingRankList" :key="rank.rank.place" :user="rank.user" :rank="rank.rank" />
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <div class="my-rank">
-      <div class="my-rank-content d-flex align-items-center">
-        <avatar :user="ownAccount" :show-vip="true" class="inflexible" />
-        <div class="name-and-rank flexible">
-          <p class="name">{{ ownAccount.name }}</p>
-          <p class="rank">第50名</p>
+      <div class="my-rank">
+        <div class="my-rank-content d-flex align-items-center">
+          <avatar :user="ownAccount" :show-vip="true" class="inflexible" />
+          <div class="name-and-rank flexible">
+            <p class="name">{{ ownAccount.name }}</p>
+            <p class="rank" v-if="myRank.place">第{{ myRank.place }}名</p>
+            <p class="rank" v-else>你未上榜</p>
+          </div>
+          <span class="score inflexible">{{ myRank.score }}</span>
         </div>
-        <span class="score inflexible">48240</span>
       </div>
+
+    </template>
+
+    <div class="filler d-flex justify-content-center align-items-center" v-else>
+      <spinner-box text="加载中" />
     </div>
   </div>
 </template>
 
 <script>
   import { TweenMax, Sine } from 'gsap/umd/TweenMax';
+  import map from 'lodash/map';
+  import tail from 'lodash/tail';
 
-  import HeaderBar from './lobby/HeaderBar';
+  import HeaderBar from './lobby/HeaderBar.vue';
   import StyledRoundedCard from './general/StyledRoundedCard2.vue';
   import Avatar from './user/Avatar.vue';
   import Rank from './lobby/Rank.vue';
+  import SpinnerBox from './general/SpinnerBox.vue';
+  import { getRankings } from '../../api/game/client/service-methods.js';
+  import { UserAccounts } from '../../api/account/collections.js';
   export default {
     name: "leaderboard",
-    components: { Rank, Avatar, StyledRoundedCard, HeaderBar },
+    components: { SpinnerBox, Rank, Avatar, StyledRoundedCard, HeaderBar },
     props: ['ownAccount'],
+    data() {
+      return {
+        loading: true,
+        type: 0,
+        scope: 0,
+        myRank: {},
+        rankList: [],
+      };
+    },
+    computed: {
+      winner() {
+        return this.$meteor.userRankList && this.$meteor.userRankList[0];
+      },
+      remainingRankList() {
+        return tail(this.$meteor.userRankList);
+      },
+    },
+    watch: {
+      async type() {
+        await this.fetchData();
+      },
+      async scope() {
+        await this.fetchData();
+      },
+      '$subReady.accounts'(val) {
+        if (val) {
+          this.loading = false;
+        }
+      },
+    },
+    async created() {
+      await this.fetchData();
+    },
+
+    meteor: {
+      userRankList() {
+        if (this.rankList && this.rankList.length > 0) {
+          return map(this.rankList,
+            ({ userId, place, score }) => ({ rank: { place, score }, user: UserAccounts.findOne(userId) || {} }));
+        }
+        return [];
+      },
+    },
+
     mounted() {
-      TweenMax.to(this.$el.querySelector('.my-rank'), .3, {
-        y: 0,
-        ease: Sine.easeOut,
-        repeat: 0,
-        delay: .5,
+      this.$watch('loading', function (val) {
+        if (!val) {
+          TweenMax.to(this.$el.querySelector('.my-rank'), .3, {
+            y: 0,
+            ease: Sine.easeOut,
+            repeat: 0,
+            delay: .5,
+          });
+        }
       });
-    }
-  }
+    },
+    methods: {
+      async fetchData() {
+        this.loading = true;
+        Object.assign(this, await getRankings(this.type, this.scope));
+        const userIds = map(this.rankList, ({ userId }) => userId);
+        this.$subscribe('accounts', { name: 'account.accounts', args: [userIds] });
+      },
+    },
+  };
 </script>
 
 <style lang="scss" scoped>

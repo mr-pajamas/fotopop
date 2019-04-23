@@ -1,4 +1,5 @@
 /* eslint-disable import/prefer-default-export */
+import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
 import filter from 'lodash/filter';
@@ -10,6 +11,7 @@ import map from 'lodash/map';
 import reduce from 'lodash/reduce';
 import find from 'lodash/find';
 import forEach from 'lodash/forEach';
+import last from 'lodash/last';
 
 const Rooms = new Mongo.Collection('rooms');
 
@@ -22,33 +24,41 @@ Rooms.attachSchema(new SimpleSchema({
   },
   categoryName: {
     type: String,
+    optional: true,
   },
   searchId: {
     type: String,
+    optional: true,
     index: true,
     unique: true,
+    sparse: true,
   },
   pvt: {
     type: Boolean,
-    defaultValue: false,
+    // defaultValue: false,
+    optional: true,
   },
   userCount: {
     type: SimpleSchema.Integer,
-    defaultValue: 1,
+    // defaultValue: 1,
     // TODO: auto value here
     max: 6,
     min: 0,
+    optional: true,
   },
   users: {
     type: Array,
-    minCount: 1,
-    maxCount: 6,
+    minCount: 0,
+    // maxCount: 6,
   },
   'users.$': {
     type: Object,
   },
   'users.$.id': {
     type: String,
+    index: true,
+    unique: true,
+    sparse: true,
   },
   /*
   'users.$.name': {
@@ -58,7 +68,8 @@ Rooms.attachSchema(new SimpleSchema({
   */
   'users.$.ready': {
     type: Boolean,
-    defaultValue: true,
+    // defaultValue: true,
+    optional: true,
   },
   /*
   'users.$.score': {
@@ -68,13 +79,18 @@ Rooms.attachSchema(new SimpleSchema({
   */
   'users.$.offline': {
     type: Boolean,
-    defaultValue: false,
+    // defaultValue: false,
+    optional: true,
   },
   'users.$.elapsedTime': {
     type: SimpleSchema.Integer,
     optional: true,
     max: 23,
     min: 0,
+  },
+  'users.$.bgElapsedTime': {
+    type: Number,
+    optional: true,
   },
   'users.$.botLevel': {
     type: SimpleSchema.Integer,
@@ -98,7 +114,8 @@ Rooms.attachSchema(new SimpleSchema({
   */
   session: {
     type: SimpleSchema.Integer,
-    defaultValue: 1,
+    // defaultValue: 1,
+    optional: true,
   },
   questions: {
     type: Array,
@@ -154,7 +171,8 @@ Rooms.attachSchema(new SimpleSchema({
   },
   messages: {
     type: Array,
-    defaultValue: [],
+    // defaultValue: [],
+    optional: true,
   },
   'messages.$': {
     type: Object,
@@ -189,7 +207,8 @@ Rooms.attachSchema(new SimpleSchema({
   */
   fastMatching: {
     type: Boolean,
-    defaultValue: false,
+    // defaultValue: false,
+    optional: true,
   },
   /*
   isStarted: {
@@ -260,7 +279,53 @@ Rooms.attachSchema(new SimpleSchema({
     type: String,
   },
   */
+  /*
+  version: {
+    type: String,
+    autoValue() {
+      return Random.id();
+      // return { $inc: 1 };
+    },
+  },
+  */
+  bigGifts: {
+    type: Array,
+    optional: true,
+  },
+  'bigGifts.$': {
+    type: new SimpleSchema({
+      id: {
+        type: String,
+      },
+      giftId: {
+        type: String,
+      },
+      sender: {
+        type: String,
+      },
+      receiver: {
+        type: String,
+      },
+      combo: {
+        type: SimpleSchema.Integer,
+        defaultValue: 1,
+      },
+      /*
+      comboEnded: {
+        type: Boolean,
+        defaultValue: false,
+      },
+      */
+    }),
+  },
 }));
+
+if (Meteor.isServer) {
+  Rooms.rawCreateIndexes([{
+    key: { searchId: 1, type: 1, categoryId: 1 },
+    unique: true,
+  }]);
+}
 
 const isActiveUser = user => !user.offline;
 
@@ -270,10 +335,15 @@ const isBot = user => !isHuman(user);
 
 const isVoter = user => isActiveUser(user) && isHuman(user) && user.elapsedTime !== undefined;
 
+const isBgVoter = user => isActiveUser(user) && isHuman(user) && user.bgElapsedTime !== undefined;
+
 const majorities = [0, 1, 2, 2, 3, 3, 4];
 const scoreMap = [6, 5, 4, 3, 2, 1];
 
 Rooms.helpers({
+  queue() {
+    return !this.searchId;
+  },
   typeName() {
     return this.type === 0 ? '猜歌名' : '猜电影';
   },
@@ -337,6 +407,10 @@ Rooms.helpers({
     return filter(this.users, isVoter);
   },
 
+  bgVoters() {
+    return filter(this.users, isBgVoter);
+  },
+
   bots() {
     return filter(this.users, isBot);
   },
@@ -366,6 +440,18 @@ Rooms.helpers({
   },
   user(userId) {
     return find(this.users, ({ id }) => id === userId);
+  },
+
+  currentBigGift() {
+    return this.bigGifts && this.bigGifts[0];
+  },
+
+  currentBigGiftOver() {
+    if (!this.currentBigGift()) return false;
+
+    const voters = this.bgVoters();
+    const supporters = filter(voters, ({ bgElapsedTime }) => bgElapsedTime === -1);
+    return supporters.length >= majorities[voters.length];
   },
 });
 
@@ -437,6 +523,7 @@ Results.attachSchema(new SimpleSchema({
   },
 }));
 
+/*
 const JoinQueues = new Mongo.Collection('join-queues');
 
 JoinQueues.attachSchema(new SimpleSchema({
@@ -446,14 +533,14 @@ JoinQueues.attachSchema(new SimpleSchema({
   categoryId: {
     type: String,
   },
-  /*
+  /!*
   userCount: {
     type: SimpleSchema.Integer,
     // TODO: auto value here
     min: 0,
     defaultValue: 0,
   },
-  */
+  *!/
   waitingUsers: {
     type: Array,
     defaultValue: [],
@@ -468,5 +555,8 @@ JoinQueues.attachSchema(new SimpleSchema({
     },
   },
 }));
+*/
 
-export { Rooms, Results, JoinQueues };
+
+// export { Rooms, Results, JoinQueues };
+export { Rooms, Results };

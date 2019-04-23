@@ -21,7 +21,7 @@ UserAccounts.attachSchema(new SimpleSchema({
   },
   'avatar.full': {
     type: String,
-    defaultValue: 'someUrl',
+    optional: true,
   },
   diamond: {
     type: Object,
@@ -49,16 +49,20 @@ UserAccounts.attachSchema(new SimpleSchema({
   },
   exp: {
     type: Object,
-    optional: true,
+    // optional: true,
+    defaultValue: {},
   },
   'exp.level': {
     type: SimpleSchema.Integer,
+    defaultValue: 1,
   },
   'exp.levelPoints': {
     type: SimpleSchema.Integer,
+    defaultValue: 0,
   },
   'exp.maxLevelPoints': {
     type: SimpleSchema.Integer,
+    defaultValue: 0,
   },
   dressedMedal: {
     type: String,
@@ -81,6 +85,21 @@ UserAccounts.attachSchema(new SimpleSchema({
   },
   */
   streaks: {
+    type: SimpleSchema.Integer,
+    defaultValue: 0,
+  },
+
+  gifts: {
+    type: Array,
+    defaultValue: [],
+  },
+  'gifts.$': {
+    type: Object,
+  },
+  'gifts.$.id': {
+    type: String,
+  },
+  'gifts.$.amount': {
     type: SimpleSchema.Integer,
     defaultValue: 0,
   },

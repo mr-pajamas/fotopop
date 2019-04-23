@@ -7,7 +7,7 @@
     -->
     <iframe src="/audio/silence.mp3" allow="autoplay" style="display: none"></iframe>
 
-    <template v-if="$subReady.ownAccount && $subReady.currentRoom">
+    <template v-if="ready">
 
       <transition :name="$meteor.currentRoom ? 'slide-forward' : 'slide-backward'" @before-enter="blockInteractions" @before-leave="blockInteractions" @after-enter="restoreInteractions">
         <room v-if="$meteor.currentRoom" :room="$meteor.currentRoom" :own-account="$meteor.ownAccount" @session-over="resultQuery = $event" />
@@ -58,8 +58,9 @@
   import client from '../modules/client/service-client.js';
   import Printer from './components/Printer.vue';
   import SpinnerBox from './components/general/SpinnerBox.vue';
+  import bridge from '../modules/client/js-bridge.js';
 
-  import { getCategories } from '../api/game/client/service-methods.js';
+  // import { getCategories } from '../api/game/client/service-methods.js';
 
   // import bridge from '../modules/client/js-bridge.js';
 
@@ -118,15 +119,34 @@
     },
     /*
     mounted() {
-      lottie.loadAnimation({
+      console.log(lottie.loadAnimation({
+              container: this.$el.querySelector('#lottie'),
+              renderer: 'svg',
+              loop: false,
+              autoplay: true,
+              path: 'https://ks3-cn-beijing.ksyun.com/fpvideo/ap2/190330/yacht_300x300.json',
+            }));
+/!*      lottie.loadAnimation({
         container: this.$el.querySelector('#lottie'),
         renderer: 'svg',
         loop: true,
-        autoplay: true,
+        autoplay: false,
         path: 'https://ks3-cn-beijing.ksyun.com/fpvideo/ap2/190330/yacht_300x300.json',
-      });
+      }).goToAndPlay(100, true);*!/
     },
     */
+    computed: {
+      ready() {
+        return this.$subReady.ownAccount && this.$subReady.currentRoom;
+      },
+    },
+    watch: {
+      ready(val) {
+        if (val) {
+          bridge.removeGamePlaceHolder();
+        }
+      },
+    },
     meteor: {
       ownAccount() {
         // console.log(Meteor.connection.userId());

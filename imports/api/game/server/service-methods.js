@@ -42,8 +42,11 @@ export const createRoom = async function (userId, type, categoryId, pvt = false)
 };
 
 export const report = async function (room) {
+  // TODO: uncomment this
   const {
     _id: roomId,
+    type,
+    categoryId,
     session,
     rounds,
   } = room;
@@ -53,19 +56,18 @@ export const report = async function (room) {
   const roundsWinners = reverse(map(rounds, round => round.winners));
 
   await agent.post('/ws/game/room/round/settlement', {
-    roomId, session, humanUsers, roundsWinners,
+    roomId, type, categoryId, session, humanUsers, roundsWinners,
   });
 };
 
 export const fetchQuestions = async function (type, categoryId) {
-  /*
   const { data: { data: { questions = [] } = {} } = {} } = await agent.get(
-    '/ws/game/room/subjects',
+    '/ws/game/type/subjects',
     { params: { type, catId: +categoryId } },
   );
   if (!questions.length) throw new Error('获取题目失败');
   return questions;
-  */
+  /*
   return times(10, i => ({
     id: `${i}`,
     type: i % 2,
@@ -77,4 +79,5 @@ export const fetchQuestions = async function (type, categoryId) {
     answerHash: '135a2dc49169a5513bf8f42658713dd6',
     answerFormat: '...',
   }));
+  */
 };

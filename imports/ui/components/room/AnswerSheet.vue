@@ -62,7 +62,7 @@
   import { submitAnswer } from '../../../api/game/methods.js';
 
   import AspectRatioBox from '../general/AspectRatioBox.vue';
-  import StyledRoundedButton from '../general/StyledRoundedButton.vue';
+  import StyledRoundedButton from '../general/StyledRoundedButton2.vue';
 
   const tid = Symbol('tid');
 
@@ -250,10 +250,10 @@
 
       .input-grid button {
         height: 2.6rem;
-        padding-left: .4rem;
-        padding-right: .4rem;
 
         .input {
+          padding-left: .4rem;
+          padding-right: .4rem;
           text-align: left;
         }
       }
