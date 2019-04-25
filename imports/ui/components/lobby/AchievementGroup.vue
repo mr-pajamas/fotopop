@@ -14,7 +14,7 @@
     <transition name="collapse" @before-enter="beforeEnter" @enter="enter" @before-leave="beforeLeave" @leave="leave">
       <div class="group-body" v-show="true">
         <div class="group-body-content">
-          <div class="achievement" v-for="achievement in group.achievements" :key="achievement.name" :class="{ acquired: acquired(achievement) }">
+          <a href="#" class="achievement d-block" v-for="achievement in group.achievements" :key="achievement.name" :class="{ acquired: acquired(achievement) }">
             <div class="medal-bar d-flex align-items-center">
               <img v-if="acquired(achievement)" :src="achievement.medal" class="medal">
               <div v-else class="medal d-flex align-items-center"><span>{{ achievement.name }}</span></div>
@@ -25,7 +25,7 @@
 
             </div>
             <p>{{ achievement.description }}</p>
-          </div>
+          </a>
         </div>
       </div>
     </transition>
@@ -150,7 +150,7 @@
           }
 
           img.status {
-            height: 1rem;
+            height: 1.2rem;
           }
         }
 

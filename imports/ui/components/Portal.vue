@@ -12,11 +12,14 @@
     <div class="account-section inflexible d-flex align-items-center justify-content-start">
       <big-head :user="ownAccount" />
       <div class="account-details">
-        <h3>{{ ownAccount.name }}</h3>
+        <h3 class="text-truncate">{{ ownAccount.name }}</h3>
         <div class="exp">
-          <p class="d-flex align-items-center"><span class="mr-auto">LV1</span><span class="small">差49经验升级</span></p>
-          <div class="progress-bar">
-            <div class="progress" :style="{ width: '40%' }"></div>
+          <p class="d-flex align-items-center"><span class="mr-auto">LV{{ (ownAccount.exp && ownAccount.exp.level) || '?' }}</span><span class="small" v-if="ownAccount.exp">差{{ ownAccount.exp.maxLevelPoints - ownAccount.exp.levelPoints }}经验升级</span></p>
+          <div class="progress-bar" v-if="ownAccount.exp">
+            <div class="progress" :style="{ width: `${ownAccount.exp.levelPoints / (ownAccount.exp.maxLevelPoints || ownAccount.exp.levelPoints || 1 )}%` }"></div>
+          </div>
+          <div class="progress-bar" v-else>
+            <div class="progress" :style="{ width: '0' }"></div>
           </div>
         </div>
         <diamond-inline :diamond="ownAccount.diamond" :bordered="true" />
@@ -32,7 +35,7 @@
           <!--<img src="/images/leaderboard.svg" class="d-block w-100">-->
           <img src="/images/leaderboard.png" class="d-block w-100">
         </a>
-        <a class="nav-link d-block rounded bordered" href="#" @click.prevent="$emit('show', { page: 'achievements' })">
+        <a class="nav-link d-block rounded bordered disabled" href="#" @click.prevent="$emit('show', { page: 'achievements' })">
           <!--<svg width="366" height="124" viewBox="0 0 366 124" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><path id="a" d="M0 0h40v41.25l-20-7.387L0 41.25z"/><linearGradient x1="90.834%" y1="59.484%" x2="-11.984%" y2="19.88%" id="c"><stop stop-color="#FFE200" offset="0%"/><stop stop-color="#FFAB00" offset="100%"/></linearGradient><path id="d" d="M21.429 33.52L8.185 40.424l2.53-14.626L0 15.44l14.807-2.134L21.429 0l6.621 13.307 14.807 2.134-10.714 10.358 2.53 14.626z"/><filter x="-3.5%" y="-3.7%" width="107%" height="107.4%" filterUnits="objectBoundingBox" id="e"><feOffset dx="-3" dy="-3" in="SourceAlpha" result="shadowOffsetInner1"/><feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"/><feColorMatrix values="0 0 0 0 1 0 0 0 0 0.870588235 0 0 0 0 0.533333333 0 0 0 1 0" in="shadowInnerInner1"/></filter></defs><g fill="none" fill-rule="evenodd"><path fill="#FF5E72" fill-rule="nonzero" d="M0 0h366v124H0z"/><path fill="#FFF" fill-rule="nonzero" opacity=".115" d="M331.768 0h16.79l-50.767 124H281zM361.977 0h-3.21L308 124h3.209z"/><path fill="#302E73" fill-rule="nonzero" opacity=".5" d="M34 41h154v60H34z"/><path stroke="#333" stroke-width="6" fill="#FFF" fill-rule="nonzero" d="M30 37h148v54H30z"/><path d="M84.2 58.92c-.107-.32-.307-.527-.6-.62a2.662 2.662 0 0 0-.8-.14h-8.2l2.88 6.12 6.36-2.72v5.12c-.107-.32-.307-.533-.6-.64a2.364 2.364 0 0 0-.8-.16l-3.52 1.52 2.64 5.6 4.36-.04v3.52c-.133-.347-.347-.567-.64-.66a2.662 2.662 0 0 0-.8-.14l-1.6.04h-1.76l-3.36.04v-.04h-.84L74 69.52l-6.16 2.68v-5l1.2.68 3.52-1.48-3.88-8.24h-12.6l-.4 3.6h10.2v14.76c-.107-.32-.313-.527-.62-.62a2.855 2.855 0 0 0-.82-.14H56v-3.4l1.2.68h3.56v-8.56h-5.4l-1.24 11.28H49l1.8-17.6.36-3.84 1.28.68H67.2l-1-2.16-.72-.8h6.24l1.4 2.96h3.44v-1.64l-.72-.8h5.84V55h2.52v3.92zm73.88-.6v3.12a1.113 1.113 0 0 0-.62-.56c-.28-.107-.54-.16-.78-.16h-4.88l-.52 1.92h5.32v10.4h1.8v3.52c-.133-.32-.347-.527-.64-.62a2.662 2.662 0 0 0-.8-.14h-4.36v-.04h-.84V63.4l-.52-.56-3.56 12.84h-5.12l4.2-14.96h-4.68v-3l1.6.6H147v-5.56l-.72-.76h5.88v6.32h5.92zm-30.56 17.52l1-1.12v-9.88h-7.44v-5.92l-.56-.88h20.52v6.8h-7.4v11h-6.12zm14.12-22.16v3.52a1.16 1.16 0 0 0-.68-.62c-.32-.12-.613-.18-.88-.18h-19.32V53l1.6.68h6.8v-.88l-.76-.76h5.88v1.64h7.36zm-1.32 12.76l-.64.72 1.36 8.6h-4.16l-1.44-9.32h4.88zm-13.76-.16l-1.44 9.28h-4.16l1.36-8.56-.64-.72h4.88zm-.08-3.24h9.24v-3.16h-9.24v3.16zm31.72-6.76h-4.04l-.48-3.32-.72-.92h4.68l.56 4.24z" fill="#333" fill-rule="nonzero"/><g transform="translate(254 18)"><path stroke="#35A875" stroke-width="3" d="M30 79.557L8.5 87.5V42.595h43V87.5z"/><g transform="translate(10 44.095)"><mask id="b" fill="#fff"><use xlink:href="#a"/></mask><use fill="#4FBB8B" xlink:href="#a"/><path stroke="#FFF" stroke-width="5.709" mask="url(#b)" d="M14.283 4.277h11.434v35.542H14.283z"/></g><ellipse stroke="#FF9B00" stroke-width="3" fill="url(#c)" fill-rule="nonzero" cx="30" cy="29.871" rx="30" ry="29.871"/><ellipse fill="#FFCF1E" fill-rule="nonzero" cx="30" cy="29.871" rx="24.286" ry="24.181"/><g><path d="M30 42.054l-13.244 6.905 2.53-14.626L8.57 23.975l14.807-2.133L30 8.535l6.622 13.307 14.807 2.133-10.715 10.358 2.53 14.626z" fill="#FFF"/><g transform="translate(9 9)"><use fill="#FFF" xlink:href="#d"/><use fill="#000" filter="url(#e)" xlink:href="#d"/></g></g></g><g fill-rule="nonzero"><path d="M325 43.153l2.77-2.77a1.306 1.306 0 0 1 1.847 1.847l-2.77 2.77 2.77 2.77a1.306 1.306 0 0 1-1.847 1.847l-2.77-2.77-2.77 2.77a1.306 1.306 0 1 1-1.847-1.847l2.77-2.77-2.77-2.77a1.306 1.306 0 1 1 1.847-1.847l2.77 2.77zM232 55.153l2.77-2.77a1.306 1.306 0 1 1 1.847 1.847l-2.77 2.77 2.77 2.77a1.306 1.306 0 1 1-1.847 1.847l-2.77-2.77-2.77 2.77a1.306 1.306 0 1 1-1.847-1.847l2.77-2.77-2.77-2.77a1.306 1.306 0 1 1 1.847-1.847l2.77 2.77z" fill="#FFEBB2"/><path d="M244.47 81c.831 2.055 1.71 3.5 2.633 4.338.924.837 2.536 1.646 4.836 2.428-2.253 1.074-3.865 2.051-4.836 2.931-.97.88-1.849 2.158-2.634 3.835-1.05-1.753-2.019-3.031-2.906-3.835-.887-.804-2.408-1.78-4.563-2.93 2.098-.765 3.62-1.574 4.563-2.429.944-.855 1.913-2.301 2.906-4.338z" fill="#FFCB2B"/><path d="M312.5 18c1.058 2.614 2.175 4.453 3.35 5.517 1.175 1.065 3.225 2.094 6.15 3.089-2.865 1.366-4.915 2.609-6.15 3.727-1.235 1.12-2.352 2.745-3.35 4.878-1.336-2.23-2.568-3.856-3.696-4.878-1.128-1.022-3.063-2.264-5.804-3.727 2.669-.972 4.603-2.001 5.804-3.089 1.2-1.087 2.432-2.926 3.696-5.517z" fill="#FFE7E7"/></g></g></svg>
           -->
           <!--<svg width="366" height="124" viewBox="0 0 366 124" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><path id="a" d="M0 0h40v41.25l-20-7.387L0 41.25z"/><linearGradient x1="90.834%" y1="59.484%" x2="-11.984%" y2="19.88%" id="c"><stop stop-color="#FFE200" offset="0%"/><stop stop-color="#FFAB00" offset="100%"/></linearGradient><path id="d" d="M21.429 33.52L8.185 40.424l2.53-14.626L0 15.44l14.807-2.134L21.429 0l6.621 13.307 14.807 2.134-10.714 10.358 2.53 14.626z"/><filter x="-3.5%" y="-3.7%" width="107%" height="107.4%" filterUnits="objectBoundingBox" id="e"><feOffset dx="-3" dy="-3" in="SourceAlpha" result="shadowOffsetInner1"/><feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"/><feColorMatrix values="0 0 0 0 1 0 0 0 0 0.870588235 0 0 0 0 0.533333333 0 0 0 1 0" in="shadowInnerInner1"/></filter></defs><g fill="none" fill-rule="evenodd"><path fill="#FF5E72" fill-rule="nonzero" d="M0 0h366v124H0z"/><path fill="#FFF" fill-rule="nonzero" opacity=".115" d="M331.768 0h16.79l-50.767 124H281zM361.977 0h-3.21L308 124h3.209z"/><path fill="#302E73" fill-rule="nonzero" opacity=".5" d="M34 41h154v60H34z"/><path stroke="#333" stroke-width="6" fill="#FFF" fill-rule="nonzero" d="M30 37h148v54H30z"/><path d="M84.2 58.92c-.107-.32-.307-.527-.6-.62a2.662 2.662 0 0 0-.8-.14h-8.2l2.88 6.12 6.36-2.72v5.12c-.107-.32-.307-.533-.6-.64a2.364 2.364 0 0 0-.8-.16l-3.52 1.52 2.64 5.6 4.36-.04v3.52c-.133-.347-.347-.567-.64-.66a2.662 2.662 0 0 0-.8-.14l-1.6.04h-1.76l-3.36.04v-.04h-.84L74 69.52l-6.16 2.68v-5l1.2.68 3.52-1.48-3.88-8.24h-12.6l-.4 3.6h10.2v14.76c-.107-.32-.313-.527-.62-.62a2.855 2.855 0 0 0-.82-.14H56v-3.4l1.2.68h3.56v-8.56h-5.4l-1.24 11.28H49l1.8-17.6.36-3.84 1.28.68H67.2l-1-2.16-.72-.8h6.24l1.4 2.96h3.44v-1.64l-.72-.8h5.84V55h2.52v3.92zm73.88-.6v3.12a1.113 1.113 0 0 0-.62-.56c-.28-.107-.54-.16-.78-.16h-4.88l-.52 1.92h5.32v10.4h1.8v3.52c-.133-.32-.347-.527-.64-.62a2.662 2.662 0 0 0-.8-.14h-4.36v-.04h-.84V63.4l-.52-.56-3.56 12.84h-5.12l4.2-14.96h-4.68v-3l1.6.6H147v-5.56l-.72-.76h5.88v6.32h5.92zm-30.56 17.52l1-1.12v-9.88h-7.44v-5.92l-.56-.88h20.52v6.8h-7.4v11h-6.12zm14.12-22.16v3.52a1.16 1.16 0 0 0-.68-.62c-.32-.12-.613-.18-.88-.18h-19.32V53l1.6.68h6.8v-.88l-.76-.76h5.88v1.64h7.36zm-1.32 12.76l-.64.72 1.36 8.6h-4.16l-1.44-9.32h4.88zm-13.76-.16l-1.44 9.28h-4.16l1.36-8.56-.64-.72h4.88zm-.08-3.24h9.24v-3.16h-9.24v3.16zm31.72-6.76h-4.04l-.48-3.32-.72-.92h4.68l.56 4.24z" fill="#333" fill-rule="nonzero"/><g transform="translate(254 18)"><path stroke="#35A875" stroke-width="3" d="M30 79.557L8.5 87.5V42.595h43V87.5z"/><g transform="translate(10 44.095)"><mask id="b" fill="#fff"><use xlink:href="#a"/></mask><use fill="#4FBB8B" xlink:href="#a"/><path stroke="#FFF" stroke-width="5.709" mask="url(#b)" d="M14.283 4.277h11.434v35.542H14.283z"/></g><ellipse stroke="#FF9B00" stroke-width="3" fill="url(#c)" fill-rule="nonzero" cx="30" cy="29.871" rx="30" ry="29.871"/><ellipse fill="#FFCF1E" fill-rule="nonzero" cx="30" cy="29.871" rx="24.286" ry="24.181"/><g><path d="M30 42.054l-13.244 6.905 2.53-14.626L8.57 23.975l14.807-2.133L30 8.535l6.622 13.307 14.807 2.133-10.715 10.358 2.53 14.626z" fill="#FFF"/><g transform="translate(9 9)"><use fill="#FFF" xlink:href="#d"/><use fill="#000" filter="url(#e)" xlink:href="#d"/></g></g></g><g fill-rule="nonzero"><path d="M325 43.153l2.77-2.77a1.306 1.306 0 0 1 1.847 1.847l-2.77 2.77 2.77 2.77a1.306 1.306 0 0 1-1.847 1.847l-2.77-2.77-2.77 2.77a1.306 1.306 0 1 1-1.847-1.847l2.77-2.77-2.77-2.77a1.306 1.306 0 1 1 1.847-1.847l2.77 2.77zM232 55.153l2.77-2.77a1.306 1.306 0 1 1 1.847 1.847l-2.77 2.77 2.77 2.77a1.306 1.306 0 1 1-1.847 1.847l-2.77-2.77-2.77 2.77a1.306 1.306 0 1 1-1.847-1.847l2.77-2.77-2.77-2.77a1.306 1.306 0 1 1 1.847-1.847l2.77 2.77z" fill="#FFEBB2"/><path d="M244.47 81c.831 2.055 1.71 3.5 2.633 4.338.924.837 2.536 1.646 4.836 2.428-2.253 1.074-3.865 2.051-4.836 2.931-.97.88-1.849 2.158-2.634 3.835-1.05-1.753-2.019-3.031-2.906-3.835-.887-.804-2.408-1.78-4.563-2.93 2.098-.765 3.62-1.574 4.563-2.429.944-.855 1.913-2.301 2.906-4.338z" fill="#FFCB2B"/><path d="M312.5 18c1.058 2.614 2.175 4.453 3.35 5.517 1.175 1.065 3.225 2.094 6.15 3.089-2.865 1.366-4.915 2.609-6.15 3.727-1.235 1.12-2.352 2.745-3.35 4.878-1.336-2.23-2.568-3.856-3.696-4.878-1.128-1.022-3.063-2.264-5.804-3.727 2.669-.972 4.603-2.001 5.804-3.089 1.2-1.087 2.432-2.926 3.696-5.517z" fill="#FFE7E7"/></g></g></svg>
@@ -114,14 +117,8 @@
       </div>
     </div>
 
-    <div class="games-section inflexible d-flex">
-      <a href="#" class="d-block rounded bordered flexible" @click.prevent="$emit('show', { page: 'select-room', params: { type: 0 } })">
-        <img src="/images/game1.png" class="w-100 d-block">
-      </a>
-    </div>
-
     <div class="actions-section inflexible d-flex">
-      <a href="#">
+      <a href="#" @click.prevent="showSearchRoom = true">
         <!--<img src="/images/search.svg" class="rounded-circle bordered d-block">-->
         <img src="/images/search.png" class="rounded-circle bordered d-block">
         <!--
@@ -145,7 +142,7 @@
         -->
         <p>邀请好友</p>
       </a>
-      <a href="#">
+      <a href="#" class="disabled">
         <!--<img src="/images/broadcast.svg" class="rounded-circle bordered d-block">-->
         <img src="/images/broadcast.png" class="rounded-circle bordered d-block">
         <!--
@@ -154,6 +151,17 @@
         <p>全服喇叭</p>
       </a>
     </div>
+
+    <div class="games-section inflexible d-flex">
+      <a href="#" class="d-block flexible" @click.prevent="$emit('show', { page: 'select-room', params: { type: 0 } })">
+        <img src="/images/game1.png" class="w-100 d-block">
+      </a>
+      <a href="#" class="d-block flexible" @click.prevent="$emit('show', { page: 'select-room', params: { type: 1 } })">
+        <img src="/images/game2.png" class="w-100 d-block">
+      </a>
+    </div>
+
+    <search-room-modal v-if="showSearchRoom" @close="showSearchRoom = false" />
   </div>
 </template>
 
@@ -164,11 +172,17 @@
 
   import BigHead from './user/BigHead.vue';
   import DiamondInline from './user/DiamondInline.vue';
+  import SearchRoomModal from './SearchRoomModal.vue';
 
   export default {
     name: 'portal',
-    components: { DiamondInline, BigHead },
+    components: { SearchRoomModal, DiamondInline, BigHead },
     props: ['ownAccount'],
+    data() {
+      return {
+        showSearchRoom: false,
+      };
+    },
     mounted() {
       TweenMax.to(this.$el, 10, {
         backgroundPosition: '-20rem 12.55rem',
@@ -271,7 +285,7 @@
 
     .achievements-section {
       padding: 0 .6rem;
-      margin-bottom: .5rem;
+      /*margin-bottom: .5rem;*/
       .nav {
         width: 52%;
         margin-right: .6rem;
@@ -307,12 +321,18 @@
     }
 
     .games-section {
-      padding: 0 .6rem;
+      padding: 0 .6rem 1rem;
+      margin-bottom: auto;
+      margin-left: -.6rem;
+
+      > a {
+        padding-left: .6rem;
+      }
     }
 
     .actions-section {
-      padding: 1rem .6rem 1rem;
-      margin-bottom: auto;
+      padding: 1.125rem .6rem 1.125rem;
+      /*margin-bottom: auto;*/
       > * {
         flex: 1 1 0;
         & + * {
@@ -332,11 +352,25 @@
         p {
           margin: 0;
           color: rgb(48,46,115);
-          letter-spacing: .2rem;
+          /*letter-spacing: .2rem;*/
           font-size: .875rem;
           text-align: center;
         }
       }
     }
+
+    /*
+    .search-room-dialog {
+      top: 20vh;
+      input {
+        margin-bottom: .875rem;
+      }
+
+      button {
+        background-color: rgb(36,165,229);
+        color: #fff;
+      }
+    }
+    */
   }
 </style>

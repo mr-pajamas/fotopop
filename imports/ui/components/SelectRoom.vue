@@ -11,7 +11,8 @@
       -->
       <header-bar name="加入房间" v-on="$listeners" />
       <div class="type-name d-flex align-items-center">
-        <img src="/images/song.svg" class="inflexible">
+        <img src="/images/song.svg" class="inflexible" v-if="type === 0">
+        <img src="/images/film.png" class="inflexible" v-if="type === 1">
         <p class="flexible">{{ typeName }}分类</p>
       </div>
     </categories-header>

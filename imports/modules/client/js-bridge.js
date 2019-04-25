@@ -35,4 +35,32 @@ function createBridge() {
   });
 }
 
-export default createBridge();
+const funcNames = ['gameExit', 'gameInvite', 'gameFastRecharge', 'removeGamePlaceHolder', 'gameShare'];
+
+function createOldBridge() {
+  if (query.isAndroid && window.app) {
+    return funcNames.reduce((bridge, name) => {
+      bridge[name] = function (args) {
+        if (args) return window.app[name](JSON.stringify(args));
+        return window.app[name]();
+      };
+      return bridge;
+    }, {});
+  }
+  if (query.isIOS && window.webkit && window.webkit.messageHandlers) {
+    return funcNames.reduce((bridge, name) => {
+      bridge[name] = function (args) {
+        return window.webkit.messageHandlers[name].postMessage(args);
+      };
+      return bridge;
+    }, {});
+  }
+  return funcNames.reduce((bridge, name) => {
+    bridge[name] = function (args) {
+      console.log(`Calling bridge function "${name}" with options: ${JSON.stringify(args)}`);
+    };
+    return bridge;
+  }, {});
+}
+
+export default (window.Proxy !== undefined) ? createBridge() : createOldBridge();

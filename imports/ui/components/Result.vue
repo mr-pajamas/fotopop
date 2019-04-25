@@ -1,7 +1,7 @@
 <template>
   <div class="result filler d-flex flex-column justify-content-center">
     <template v-if="$subReady.result && $meteor.result">
-      <div class="winner-section flexible d-flex flex-column">
+      <div class="winner-section flexible d-flex flex-column" v-if="$meteor.winner">
         <!--
         <img src="/images/beam.svg" class="beam beam-left">
         <img src="/images/beam.svg" class="beam beam-center">
@@ -77,30 +77,9 @@
         </template>
       </div>
 
-
-      <!--
-          <div class="ribbon" style="background: url(/images/ribbons.svg) -55px -9px; width: 15px; height: 26px"></div>
-          <div class="ribbon" style="background: url(/images/ribbons.svg) -33px -56px; width: 15px; height: 13px"></div>
-          <div class="ribbon" style="background: url(/images/ribbons.svg) 0 -81px; width: 10px; height: 10px"></div>
-          <div class="ribbon" style="background: url(/images/ribbons.svg) -50px -79px; width: 10px; height: 10px"></div>
-          <div class="ribbon" style="background: url(/images/ribbons.svg) -236px -27px; width: 24px; height: 6px"></div>
-          <div class="ribbon" style="background: url(/images/ribbons.svg) -193px -57px; width: 12px; height: 12px"></div>
-          <div class="ribbon" style="background: url(/images/ribbons.svg) -263px -72px; width: 10px; height: 17px"></div>
-          <div class="ribbon" style="background: url(/images/ribbons.svg) -207px -111px; width: 23px; height: 6px"></div>
-          <div class="ribbon" style="background: url(/images/ribbons.svg) -212px -174px; width: 7px; height: 7px"></div>
-          <div class="ribbon" style="background: url(/images/ribbons.svg) -60px -133px; width: 15px; height: 13px"></div>
-
-          <div class="ribbon" style="background: url(/images/ribbons.svg) -55px -9px; width: 15px; height: 26px"></div>
-          <div class="ribbon" style="background: url(/images/ribbons.svg) -33px -56px; width: 15px; height: 13px"></div>
-          <div class="ribbon" style="background: url(/images/ribbons.svg) 0 -81px; width: 10px; height: 10px"></div>
-          <div class="ribbon" style="background: url(/images/ribbons.svg) -50px -79px; width: 10px; height: 10px"></div>
-          <div class="ribbon" style="background: url(/images/ribbons.svg) -236px -27px; width: 24px; height: 6px"></div>
-          <div class="ribbon" style="background: url(/images/ribbons.svg) -193px -57px; width: 12px; height: 12px"></div>
-          <div class="ribbon" style="background: url(/images/ribbons.svg) -263px -72px; width: 10px; height: 17px"></div>
-          <div class="ribbon" style="background: url(/images/ribbons.svg) -207px -111px; width: 23px; height: 6px"></div>
-          <div class="ribbon" style="background: url(/images/ribbons.svg) -212px -174px; width: 7px; height: 7px"></div>
-          <div class="ribbon" style="background: url(/images/ribbons.svg) -60px -133px; width: 15px; height: 13px"></div>
-      -->
+      <div class="flexible no-winner" v-else>
+        <div class="prompt-box filler d-flex align-items-center justify-content-center"><img src="/images/no-winner.svg"></div>
+      </div>
 
       <div class="own-result inflexible">
         <styled-rounded-card class="inflexible result-card" bottom-color="rgba(0,0,0,.5)">
@@ -119,9 +98,44 @@
               <p class="lead"><span>+{{ ownRank.expGain }}</span></p>
             </div>
             <hr>
-            <div class="streak">
-              <p>恭喜你当前连胜次数为：{{ ownAccount.streaks }}次</p>
-              <p class="lead">还剩<span class="red">{{ ownRank.remainingWins }}场</span>可获得</p>
+            <div class="streak" v-if="ownRank.place === 1">
+              <p>恭喜你当前连胜次数为：{{ ownRank.wins }}次</p>
+              <template v-if="ownRank.remainingWins">
+                <p class="lead">再胜<span class="red">{{ ownRank.remainingWins }}场</span>可获得</p>
+                <div class="next-awards">
+                  <div v-for="award in ownRank.nextAwards" :key="award.name">
+                    <img :src="award.icon" class="item-icon">
+                    <p class="item-name">{{ award.name }}<wbr><span class="no-break">&times;{{ award.amount }}</span></p>
+                  </div>
+                  <!--
+                  <div>
+                    <img src="/images/diamond.svg" class="item-icon">
+                    <p class="item-name">钻石<wbr><span class="no-break">&times;100</span></p>
+                  </div>
+                  <div>
+                    <img src="/images/diamond.svg" class="item-icon">
+                    <p class="item-name">钻石钻<wbr><span class="no-break">&times;3</span></p>
+                  </div>
+                  -->
+                </div>
+              </template>
+              <p class="lead" style="line-height: 1.4; margin-bottom: 0" v-else>你的连胜将会继续记录<br>敬请期待，下一阶段连胜的奖励</p>
+            </div>
+            <div class="streak" v-else-if="ownRank.wins">
+              <p>很遗憾，你的{{ ownRank.wins }}场连胜被终结！</p>
+              <p class="lead">是否使用<span class="red">败绩抹除卡</span></p>
+              <div class="d-flex align-items-center cancel-defeat">
+                <img src="/images/cancel-defeat.png" class="inflexible">
+                <div class="flexible">
+                  <p>败绩抹除卡</p>
+                  <p class="small">99钻/次</p>
+                </div>
+                <styled-pill-button bg-color="rgb(64,197,255)" class="inflexible disabled">立即使用</styled-pill-button>
+              </div>
+            </div>
+            <div class="streak" v-else>
+              <p>你暂未获得连胜</p>
+              <p class="lead">再胜<span class="red">{{ ownRank.remainingWins }}场</span>可获得</p>
               <div class="next-awards">
                 <div v-for="award in ownRank.nextAwards" :key="award.name">
                   <img :src="award.icon" class="item-icon">
@@ -197,6 +211,7 @@
       yoyo: true,
       ease: Sine.easeInOut,
     });
+    /*
     TweenMax.to(e, random(1, 5), {
       rotationX: random(0, 360),
       rotationY: random(0, 360),
@@ -204,7 +219,8 @@
       yoyo: true,
       ease: Sine.easeInOut,
       delay: -3,
-    })
+    });
+    */
   }
 
   export default {
@@ -244,7 +260,7 @@
             TweenMax.set(e, {
               x: random(vw(15), vw(85)),
               y: random(-vh(50), -50),
-              z: random(0, 100),
+              // z: random(0, 100),
             });
             fallAnimate(e);
           });
@@ -261,6 +277,26 @@
     meteor: {
       result() {
         return Results.findOne({ roomId: this.roomId, session: this.session });
+        /*
+        return {
+          roomId: this.roomId,
+          session: this.session,
+          rankings: [{
+            place: 1,
+            userId: this.ownAccount._id,
+            score: 0,
+            expGain: 0,
+            doubleExp: false,
+            remainingWins: 1,
+            wins: 1,
+            nextAwards: [{
+              name: '屎粑粑',
+              amount: 1,
+              icon: '/images/diamond.png',
+            }],
+          }],
+        };
+        */
       },
       winner() {
         if (this.$meteor.result) {
@@ -388,6 +424,21 @@
       }
     }
 
+    .no-winner {
+      position: relative;
+      background-image: url(/images/no-winner-bg.png);
+      background-repeat: repeat;
+      padding: 4rem .8rem 0;
+      background-clip: content-box;
+      background-position: .8rem 4rem;
+      // background-size: 2rem;
+      background-size: 2.5rem;
+
+      img {
+        width: 75%;
+      }
+    }
+
     .own-result {
       padding: 0 .8rem;
       position: relative;
@@ -448,6 +499,7 @@
         }
 
         .streak {
+          min-height: 7.5rem;
           p.lead {
             margin-bottom: 1.2rem;
           }
@@ -475,6 +527,30 @@
                 text-align: center;
                 line-height: 1.4;
                 margin-bottom: .3rem;
+              }
+            }
+          }
+          .cancel-defeat {
+            height: 3.8rem;
+
+            img {
+              height: 3.6rem;
+              width: auto;
+            }
+
+            > div {
+              padding: 0 .5rem;
+
+              p.small {
+                margin-bottom: 0;
+                color: rgb(91,78,212);
+                font-size: .75rem;
+              }
+            }
+
+            > button {
+              /deep/ .button-content {
+                padding: .3rem 1.2rem;
               }
             }
           }

@@ -36,7 +36,7 @@
       <div class="ranking-lists flexible d-flex flex-column">
         <div class="tabs d-flex align-items-end inflexible">
           <a href="#" class="tab" @click.prevent="type = 0" :class="{ selected: type === 0 }">土豪榜</a>
-          <a href="#" class="tab" @click.prevent="type = 1" :class="{ selected: type === 1 }">魅力榜</a>
+          <!--<a href="#" class="tab" @click.prevent="type = 1" :class="{ selected: type === 1 }">魅力榜</a>-->
           <a href="#" class="tab" @click.prevent="type = 2" :class="{ selected: type === 2 }">等级榜</a>
         </div>
         <div class="rounded-card flexible">
@@ -58,6 +58,7 @@
 
             <div class="ranking-list">
               <rank v-for="rank in remainingRankList" :key="rank.rank.place" :user="rank.user" :rank="rank.rank" />
+              <div class="ranking-list-shim"></div>
             </div>
           </div>
         </div>
@@ -328,9 +329,14 @@
           .rank {
             padding: .5rem 1rem;
 
+            /*
             &:last-child {
               margin-bottom: 4.2rem;
             }
+            */
+          }
+          .ranking-list-shim {
+            height: 4.2rem;
           }
         }
       }

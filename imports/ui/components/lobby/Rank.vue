@@ -1,6 +1,6 @@
 <template>
   <div class="rank d-flex align-items-center">
-    <div class="rounded-circle rank-number inflexible d-flex justify-content-center align-items-center"><span>{{ rank.place }}</span></div>
+    <div class="rounded-circle rank-number inflexible d-flex justify-content-center align-items-center"><span>{{ rank.place || '-' }}</span></div>
     <avatar :user="user" :show-vip="true" class="inflexible" />
     <span class="user-name flexible">{{ user.name }}</span>
     <span class="score inflexible">{{ rank.score }}{{ unit || '' }}</span>

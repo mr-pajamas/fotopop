@@ -46,18 +46,41 @@
     </div>
     <div class="room-bottom d-flex flex-column">
       <div class="broadcast-bar inflexible">
-        <div>测试消息</div>
+        <div>欢迎来到足记游戏</div>
       </div>
-      <div class="messages flexible">
+      <div class="messages flexible" v-chat-scroll="{ always: false, smooth: true }">
+        <template v-for="message in $meteor.userMessages">
+          <message v-if="message.type !== 1" :color="messageColor(message)">
+            <template slot="icon">
+              <avatar class="w-100" v-if="message.type === 2" :user="message.user" :show-vip="false" />
+              <img class="w-100" src="/images/m4.png" v-else-if="message.type === 4">
+              <img class="w-100" src="/images/m3.png" v-else>
+            </template>
+            <template slot="default">{{ message.text }}</template>
+          </message>
+          <p v-else class="message-line">{{ message.text }}</p>
+        </template>
+          <!--
+          <p class="message-line">傻逼进入了房间</p>
 
+          <message />
+          <message />
+          <message />
+          <p class="message-line">傻逼进入了房间傻逼进入了房间傻逼进入了房间傻逼进入了房间傻逼进入了房间傻逼进入了房间</p>
+          <p class="message-line">傻逼进入了房间</p>
+          <p class="message-line">傻逼进入了房间</p>
+          <p class="message-line">傻逼进入了房间</p>
+          <message />
+          <message />
+          -->
       </div>
 
       <transition name="slide-up">
-        <answer-sheet v-if="inQuestion" class="inflexible" v-bind="room.currentQuestion()" @answerCorrect="submitAnswer($event)" />
+        <answer-sheet v-if="inQuestion" class="inflexible" v-bind="room.currentQuestion()" @answer-correct="submitAnswer($event)" />
       </transition>
 
       <div v-if="!room.inGame()" class="button-group inflexible d-flex">
-        <styled-pill-button class="fast-match-btn" bg-color="rgb(64,197,255)" color="#fff" :text-shadow="true">
+        <styled-pill-button class="fast-match-btn disabled" bg-color="rgb(64,197,255)" color="#fff" :text-shadow="true">
           <span>快速匹配</span>
           <span class="fast-match-price">
             <img src="/images/diamond.png" class="d-block">
@@ -67,10 +90,10 @@
             <span>10</span>
           </span>
         </styled-pill-button>
-        <styled-pill-button v-if="room.host().id === ownAccount._id" bg-color="rgb(250,75,127)" color="#fff" :text-shadow="true" @click.native="startGame" :disabled="!room.questions">开始游戏</styled-pill-button>
+        <styled-pill-button v-if="room.host().id === ownAccount._id" bg-color="rgb(250,75,127)" color="#fff" :text-shadow="true" @click.native="startGame" :disabled="!room.sessionReady()">开始游戏</styled-pill-button>
       </div>
 
-      <bottom-bar class="inflexible" />
+      <bottom-bar class="inflexible" @show-snippets="showSnippets = true" />
     </div>
 
     <transition name="countdown">
@@ -84,6 +107,14 @@
       <!--<img v-if="countdown === 1" src="/images/1.svg" class="countdown">-->
       <svg v-if="countdown === 1" class="countdown" width="130" height="130" viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M97.431 12.146l-26.37 108.698H44.075l14.138-58.277c2.04-8.415 3.069-13.473 3.08-15.173.012-1.7-.777-2.988-2.37-3.861-1.592-.874-5.505-1.309-11.74-1.309h-2.67l5.298-21.837c16.088 1.72 22.823.54 31.722-8.241H97.43z" fill="#5542ED"/><path d="M87.431 12.146l-26.37 108.698H34.075l14.138-58.277c2.04-8.415 3.069-13.473 3.08-15.173.012-1.7-.777-2.988-2.37-3.861-1.592-.874-5.505-1.309-11.74-1.309h-2.67l5.298-21.837c16.088 1.72 22.823.54 31.722-8.241H87.43z" fill="#FFF"/><path d="M87.431 12.146l-26.37 108.698H34.075l14.138-58.277c2.04-8.415 3.069-13.473 3.08-15.173.012-1.7-.777-2.988-2.37-3.861-1.592-.874-5.505-1.309-11.74-1.309h-2.67l5.298-21.837c16.088 1.72 22.823.54 31.722-8.241H87.43z" stroke="#333" stroke-width="6.9"/></g></svg>
     </transition>
+
+    <div class="filler d-flex justify-content-center align-items-center dialog-filler" v-if="showSnippets" @click.self="showSnippets = false">
+      <div class="dialog snippets-dialog">
+        <div class="snippet-list d-flex flex-column align-items-stretch">
+          <button class="btn snippet d-block inflexible" v-for="s in snippets" @click="sendMessage(s)">{{ s }}</button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -94,6 +125,7 @@
   import reject from 'lodash/reject';
   import reduce from 'lodash/reduce';
   import forEach from 'lodash/forEach';
+  import map from 'lodash/map';
   import { Meteor } from 'meteor/meteor';
 
   import { UserAccounts } from '../../api/account/collections.js';
@@ -109,19 +141,35 @@
   import BottomBar from './room/BottomBar.vue';
   import SoundIcon from './room/SoundIcon.vue';
   import AnswerSheet from './room/AnswerSheet';
+  import Message from './room/Message.vue';
 
   const tid = Symbol('tid');
   // const atid = Symbol('atid');
+  const snippets = [
+    '稍等下，马上开',
+    '快点答题啊，是不是在挂机啊！',
+    '这是什么鬼！ᓫ(°⌑°)ǃ',
+    '请收下我的膝盖m(_ _)m',
+    '233333333',
+    '加个足记好友吧',
+    '你的衣服好好看阿',
+    '你就是弟弟',
+    '还有谁？',
+    '我不服，再来一局',
+    '6666666',
+    '我要举报，这里有人开挂！',
+  ];
 
   export default {
     name: 'room',
-    components: { AnswerSheet, SoundIcon, BottomBar, StyledPillButton, EmptySlot, Avatar, DiamondInline, MessageBox },
+    components: { Message, AnswerSheet, SoundIcon, BottomBar, StyledPillButton, EmptySlot, Avatar, DiamondInline, MessageBox },
     props: ['ownAccount', 'room'],
     data() {
       return {
         elapsedTime: undefined,
         bots: {},
         incs: {}, // { uid2: { c: 1, value: 5, ttl: 2 } }
+        showSnippets: false,
       };
     },
     computed: {
@@ -143,6 +191,9 @@
       mayLeaveRoom() {
         return !this.room.inGame();
       },
+      snippets() {
+        return snippets;
+      },
     },
     meteor: {
       roomUsers() {
@@ -152,6 +203,25 @@
         return [host, ...reject(users, u => u.id === host.id)]
           .map(user => Object.assign({}, UserAccounts.findOne(user.id), user));
         // return users.map(user => Object.assign({}, UserAccounts.findOne(user.id), user));
+      },
+      disconnected() {
+        return !Meteor.status().connected;
+      },
+      userMessages() {
+        return map(this.room.messages, m => Object.assign({ user: UserAccounts.findOne(m.sender) }, m));
+        /*
+        return [{
+          type: 2,
+          text: '草泥马',
+          sender: this.ownAccount._id,
+          user: this.ownAccount,
+        }, {
+          type: 3,
+          text: '草泥马',
+          sender: this.ownAccount._id,
+          user: this.ownAccount,
+        }];
+        */
       },
     },
 
@@ -293,6 +363,7 @@
         } else {
           this.elapsedTime = undefined;
         }
+        // this.elapsedTime = undefined;
       },
       async elapsedTime(val) { // TODO: 此处还要回收加分动效
         if (val >= 3) {
@@ -315,6 +386,12 @@
             roundNumber: this.room.currentRoundNumber(), // TODO: 这里可能有问题，已经到下一轮
             elapsedTime: 23,
           });
+        }
+      },
+      '$meteor.disconnected'(val) {
+        if (val) {
+          this.stopCountdown();
+          this.elapsedTime = undefined;
         }
       },
     },
@@ -369,6 +446,13 @@
       },
       async leaveRoom() {
         await GameMethods.leaveRoom.callAsync({ roomId: this.room._id });
+      },
+      messageColor({ type }) {
+        return [undefined, 'rgb(48,255,234)', undefined, 'rgb(255,57,98)', 'rgb(255,232,42)'][type];
+      },
+      async sendMessage(text) {
+        await GameMethods.sendMessage.callAsync({ roomId: this.room._id, messageText: text });
+        this.showSnippets = false;
       },
     },
   };
@@ -532,6 +616,29 @@
       }
     }
 
+    .messages {
+      overflow: auto;
+      padding: .5rem 0;
+      /*
+      display: flex;
+      flex-direction: column-reverse;
+      */
+
+      /*
+      .unreverse {
+        min-height: 100%;
+      }
+      */
+
+      .message-line {
+        line-height: 1.4;
+        padding: .3rem .8rem;
+        margin: 0;
+        font-size: .75rem;
+        color: rgb(48,255,234);
+      }
+    }
+
     .button-group {
       padding: .6rem;
       > * {
@@ -576,6 +683,33 @@
       align-self: center;
       margin-top: auto;
       margin-bottom: auto;
+    }
+
+    .snippets-dialog {
+      width: 100%;
+      bottom: 0;
+      height: 45%;
+      background-color: rgb(66,65,117);
+      border-radius: .8rem .8rem 0 0;
+
+      .snippet-list {
+        overflow: auto;
+        height: 100%;
+
+        > button {
+          border-radius: .3rem;
+          background-color: rgba(31,30,72,.48);
+          padding: .4rem .5rem;
+          margin: 0;
+          font-size: .875rem;
+          color: #fff;
+          text-align: left;
+
+          & + button {
+            margin-top: .5rem;
+          }
+        }
+      }
     }
   }
 </style>

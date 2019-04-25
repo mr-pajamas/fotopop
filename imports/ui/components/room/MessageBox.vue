@@ -1,7 +1,5 @@
 <template>
-  <div class="message-box">
-    <slot></slot>
-  </div>
+  <div class="message-box"><slot></slot></div>
 </template>
 
 <script>

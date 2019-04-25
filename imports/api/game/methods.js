@@ -250,6 +250,74 @@ export const createRoom = new ValidatedMethod({
   },
 });
 
+export const searchAndJoinRoom = new ValidatedMethod({
+  name: 'game.searchAndJoinRoom',
+  validate: new SimpleSchema({
+    searchId: {
+      type: String,
+      min: 6,
+      max: 6,
+    },
+  }).validator({ clean: true }),
+  mixins: [LoggedInMixin],
+  checkLoggedInError: {
+    error: '403',
+    reason: 'You need to be logged in to call this method',
+  },
+  applyOptions: {
+    wait: true,
+    throwStubExceptions: true,
+  },
+  run({ searchId }) {
+    const { userId } = this;
+    // 1. 检查是否已经在房间里
+    // const currentRoom = Rooms.findOne({ 'users.id': userId });
+    const currentRoom = Rooms.findOne({
+      searchId: { $exists: true, $ne: null },
+      'users.id': userId,
+    });
+    if (currentRoom) throw new Meteor.Error(409, `用户已经在房间（${currentRoom.searchId}）中`);
+
+    // 如果用户有在任何分类中等待加入房间，则从队列中移除
+    // 用户同步加入房间，会被误删（没事）
+    Rooms.update({
+      searchId: null,
+      'users.id': userId,
+    }, {
+      $pull: { users: { id: userId } },
+    });
+
+    if (!this.isSimulation) {
+      const room = Rooms.findOne({ searchId });
+      if (!room) throw new Meteor.Error(404, '未找到指定的房间');
+      if (room.users.length === 6) throw new Meteor.Error(409, '该房间已经满员');
+      if (room.inGame()) throw new Meteor.Error(409, '该房间已经开始游戏');
+
+      const user = UserAccounts.findOne(userId);
+      const affected = Rooms.update({
+        _id: room._id,
+        userCount: { $lt: 6 },
+        users: { $not: { $elemMatch: { id: userId } } }, // 自己与自己竞争概率不高
+        rounds: null,
+      }, {
+        $inc: { userCount: 1 },
+        $push: {
+          users: {
+            id: userId,
+            ready: true,
+            offline: false,
+          },
+          messages: {
+            type: 1,
+            text: `${user.name || '足记用户'}进入了房间`,
+          },
+        },
+      });
+      if (!affected) throw new Meteor.Error(500, '加入房间失败，请重新尝试');
+    }
+  },
+});
+
 export const findAndJoinRoom = new ValidatedMethod({
   name: 'game.findAndJoinRoom',
   validate: new SimpleSchema({
@@ -1034,5 +1102,54 @@ export const tellBigGiftElapsedTime = new ValidatedMethod({
         });
       }
     }
+  },
+});
+
+export const sendMessage = new ValidatedMethod({
+  name: 'game.sendMessage',
+  validate: new SimpleSchema({
+    roomId: {
+      type: String,
+    },
+    messageText: {
+      type: String,
+    },
+  }).validator({ clean: true }),
+  mixins: [LoggedInMixin],
+  checkLoggedInError: {
+    error: '403',
+    reason: 'You need to be logged in to call this method',
+  },
+  applyOptions: {
+    wait: false,
+    noRetry: false,
+    throwStubExceptions: true,
+  },
+  run({
+    roomId,
+    messageText,
+  }) {
+    const { userId } = this;
+
+    const currentRoom = Rooms.findOne({
+      _id: roomId,
+      searchId: { $exists: true, $ne: null },
+      'users.id': userId,
+    });
+
+    if (!currentRoom) throw new Meteor.Error(400, '用户不在指定房间中');
+
+    Rooms.update({
+      _id: roomId,
+      'users.id': userId,
+    }, {
+      $push: {
+        messages: {
+          type: 2,
+          text: messageText,
+          sender: userId,
+        },
+      },
+    });
   },
 });

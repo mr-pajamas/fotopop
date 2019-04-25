@@ -1,3 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="70 80 320 330">
-  <path fill="none" stroke="rgb(253,72,126)" stroke-width="40" class="check" d="M114 245l80 78 176-183"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 440">
+  <circle class="checkmark-circle" cx="220" cy="220" r="180" fill="none" stroke="rgb(253,72,126)" stroke-width="40" />
+  <path fill="none" stroke="rgb(253,72,126)" stroke-width="40" class="check" d="M114 210l80 78 176-183"/>
 </svg>

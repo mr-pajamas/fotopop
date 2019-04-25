@@ -20,7 +20,7 @@
         <result v-if="resultQuery" :own-account="$meteor.ownAccount" v-bind="resultQuery" @close="resultQuery = null" />
       </transition>
     </template>
-    <spinner-box v-else class="app-loader" />
+    <spinner-box v-else-if="!$meteor.disconnected" class="app-loader" />
 
     <!--<div class="filler" id="lottie"></div>-->
 
@@ -34,6 +34,15 @@
     <printer v-if="content" :content="content" @click.native="content = false" />
     -->
 
+    <div class="filler d-flex justify-content-center align-items-center dialog-filler" style="z-index: 9999" v-if="$meteor.disconnected">
+      <div class="dialog disconnected-dialog d-flex flex-column align-items-center">
+        <div class="wifi-icon d-flex justify-content-center align-items-start">
+          <img alt="wifi" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEYAAAAyCAMAAADWQ11hAAAAgVBMVEUAAACqqrSsrLWqqrSqqrSqqrSurre6usaqqrS1tcO3t/+qqrSqqrSqqrSqqrSqqrWsrLWvr7eqqrSqqrSqqrSqqrSxsb2pqbOqqrSqqrSrq7SsrLWqqrSqqrWpqbSrq7SqqrWqqrWtrbWrq7etrbeqqrSqqrOqqrOpqbWrq7SpqbNZijbaAAAAKnRSTlMA/C7tyGobBvIKAvnklYJXUBHa0tWuFOvAuEole3ZennJjQzsy56eNoooY7ZNuAAACBUlEQVRIx6XV65prMBSA4ZUQ4kzRcWi11XPu/wL3nj41CQmC9+dov1qeFQOjkmsTPszMNzzP8DPzETbXBJaxoiBFTILSILK0G2eTTTDPGiX7UiA2AxUXG6YkhzvTcj8k45EnZdroUx1yicEWMYgLkjZli6Ut9DkBWyVwQIBTtlKKeYV4bIRvlvnrlZemz0Z4pHu2yoFQFkTYEcbGUZAh5WDu53quaJTNHhT2Tako5Q7AXt78HeENuUR28vnYQyn9LXZhkhtLv1zCoL2rQEM1/BbE4rD0aIMW+0gZh2KASJinHn66bskxfIdHUmEHemphsgj+a7pm6PYS1bvwBu8sMeWG3RwNfFzQZ6BW/Ez1oqpdyyNh6pZ+8hf4Ir/7ioVVI7uJNw3fBvy720Q4DbSw+J1cfDaFHv5mswpKQCDc6m3+mPqx6ou9XoiYhlMC4/jRmLXDIBGfmS5aje/mnenzLBjhUCYxsiIv0x8mQTWMiVD/AQSV093oNTT7Fw8AOh3vNPw5603lilrsfSOBavQk7P6XHQE0OhkGNavgldnOyQGJeLDPMO96ijddV3OTxIVtLJL7iDHk58SCtfADCdv2wLCG/USDtX3aK+bJmCRbPtmZKZxhqdpQHNMaFrsZUuUGsKHDK6tgo1fBAFs6vLKlwysbOt+35w+vrOzwyrYOr2zqmOZ85R+tU9md2HBZeQAAAABJRU5ErkJggg==">
+        </div>
+        <p>网络不给力<br>正在为你重连到游戏</p>
+        <button class="btn d-block w-100" @click="exitGame">退出游戏</button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -59,6 +68,7 @@
   import Printer from './components/Printer.vue';
   import SpinnerBox from './components/general/SpinnerBox.vue';
   import bridge from '../modules/client/js-bridge.js';
+  import StyledRoundedCard from './components/general/StyledRoundedCard2.vue';
 
   // import { getCategories } from '../api/game/client/service-methods.js';
 
@@ -73,11 +83,12 @@
 
   export default {
     name: "app",
-    components: { SpinnerBox, Printer, Result, Room, Lobby },
+    components: { StyledRoundedCard, SpinnerBox, Printer, Result, Room, Lobby },
     data() {
       return {
         // showResult: false,
         content: false,
+        // resultQuery: { roomId: 'shit', session: 1 },
         resultQuery: null,
       };
     },
@@ -155,6 +166,9 @@
       currentRoom() {
         return Rooms.findOne({ 'users.id': Meteor.connection.userId() });
       },
+      disconnected() {
+        return !Meteor.status().connected;
+      },
     },
     methods: {
       blockInteractions(el) {
@@ -162,6 +176,9 @@
       },
       restoreInteractions(el) {
         el.style.pointerEvents = null;
+      },
+      exitGame() {
+        bridge.gameExit();
       },
     },
   };
@@ -575,5 +592,98 @@
     position: absolute;
     z-index: 2000;
     align-self: center;
+  }
+
+  .disabled {
+    opacity: .5;
+    pointer-events: none;
+  }
+
+  @keyframes dialogFadeIn {
+    0% {
+      opacity: 0;
+      transform: translateY(80%);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .dialog-filler {
+    background-color: rgba(0,0,0,.5);
+    z-index: 1000;
+  }
+
+  .dialog {
+    animation: dialogFadeIn .5s both .3s;
+    background-color: #fff;
+    position: absolute;
+    border-radius: .8rem;
+    overflow: hidden;
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
+    min-width: 75vw;
+    padding: .875rem;
+
+    input {
+      border: 1px rgb(216,216,216) solid;
+      background-color: rgb(245,245,245);
+      border-radius: 0;
+      box-shadow: none;
+    }
+
+    input[type=text] {
+      padding: .5rem;
+      line-height: 1;
+    }
+
+    button {
+      border-radius: .6rem;
+      padding: .75rem 0;
+    }
+  }
+</style>
+
+<style lang="scss" scoped>
+
+  .disconnected-dialog {
+    overflow: visible;
+    /*padding: .8rem;*/
+    bottom: 25vh;
+    .wifi-icon {
+      position: absolute;
+      margin-left: auto;
+      margin-right: auto;
+      top: -2.5rem;
+      background-color: #fff;
+      border-top-right-radius: 50rem;
+      border-top-left-radius: 50rem;
+      height: 2.5rem;
+      width: 5rem;
+
+      > img {
+        width: 45%;
+        height: auto;
+        position: relative;
+        top: 45%;
+      }
+    }
+
+    > p {
+      color: #0b0b0b;
+      text-align: center;
+      line-height: 1.4;
+      margin: 1.5rem 0;
+    }
+
+    > button {
+      /*background-color: rgb(36,165,229);*/
+      /*color: #fff;*/
+      border: .05rem rgb(169,169,179) solid;
+      /*
+      border-radius: .6rem;
+      padding: .75rem 0;
+      */
+    }
   }
 </style>
