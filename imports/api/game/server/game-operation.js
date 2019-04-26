@@ -5,6 +5,7 @@ import { Meteor } from 'meteor/meteor';
 import times from 'lodash/times';
 import map from 'lodash/map';
 import reduce from 'lodash/reduce';
+import filter from 'lodash/filter';
 
 import { Rooms } from '../collections.js';
 import { report, fetchQuestions } from './service-methods.js';
@@ -159,7 +160,7 @@ function decideRoundEnd(roomId) {
       let affected = false;
 
       if (lastWinner) {
-        affected = Rooms.update({
+        ({ value: affected } = Rooms.rawFindOneAndUpdate({
           _id: roomId,
           session: room.session,
           rounds: { $size: 10 },
@@ -169,11 +170,18 @@ function decideRoundEnd(roomId) {
           $unset: { questions: '', rounds: '' },
           $set: { fastMatching: false, lastWinner },
           $pull: { users: { offline: true } },
-        });
+        }));
+
+        if (affected) {
+          const offlineUserIds = map(filter(affected.users, u => u.offline), 'id');
+          const messages = UserAccounts.find({ _id: { $in: offlineUserIds } })
+            .map(({ name }) => ({ type: 1, text: `${name || '足记用户'}离开了房间` }));
+          Rooms.update(roomId, { $push: { messages: { $each: messages } } });
+        }
       }
 
       if (!affected) {
-        affected = Rooms.update({
+        ({ value: affected } = Rooms.rawFindOneAndUpdate({
           _id: roomId,
           session: room.session,
           rounds: { $size: 10 },
@@ -182,7 +190,14 @@ function decideRoundEnd(roomId) {
           $unset: { questions: '', rounds: '' },
           $set: { fastMatching: false },
           $pull: { users: { offline: true } },
-        });
+        }));
+
+        if (affected) {
+          const offlineUserIds = map(filter(affected.users, u => u.offline), 'id');
+          const messages = UserAccounts.find({ _id: { $in: offlineUserIds } })
+            .map(({ name }) => ({ type: 1, text: `${name || '足记用户'}离开了房间` }));
+          Rooms.update(roomId, { $push: { messages: { $each: messages } } });
+        }
       }
 
       /*

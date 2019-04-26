@@ -474,6 +474,8 @@ export const leaveRoom = new ValidatedMethod({
 
     // if (currentRoom.fastMatching) throw new Meteor.Error(409, '当前房间正在进行快速匹配');
 
+
+    const user = UserAccounts.findOne(userId);
     // 如果退出的是lastWinner那么要清空
     Rooms.update({
       _id: roomId,
@@ -483,6 +485,12 @@ export const leaveRoom = new ValidatedMethod({
       {
         $pull: { users: { id: userId } },
         $inc: { userCount: -1 },
+        $push: {
+          messages: {
+            type: 1,
+            text: `${user.name || '足记用户'}离开了房间`,
+          },
+        },
       },
       currentRoom.lastWinner === userId && { $unset: { lastWinner: '' } },
     ));

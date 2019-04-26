@@ -83,6 +83,8 @@ Meteor.onLogin(({ user: { _id: userId }, connection: { onClose } }) => {
         $pull: { users: { id: userId } },
       });
     } else if (currentRoom) {
+
+      const user = UserAccounts.findOne(userId);
       if (!currentRoom.inGame()) {
         // TODO: 发送请求（只是通知？还是后端来？）
         // 如果房间里没活人了，要删除房间
@@ -121,6 +123,12 @@ Meteor.onLogin(({ user: { _id: userId }, connection: { onClose } }) => {
           {
             $pull: { users: { id: userId } },
             $inc: { userCount: -1 },
+            $push: {
+              messages: {
+                type: 1,
+                text: `${user.name || '足记用户'}离开了房间`,
+              },
+            },
           },
           currentRoom.lastWinner === userId && { $unset: { lastWinner: '' } },
         ));
@@ -200,6 +208,12 @@ Meteor.onLogin(({ user: { _id: userId }, connection: { onClose } }) => {
           {
             $pull: { users: { id: userId } },
             $inc: { userCount: -1 },
+            $push: {
+              messages: {
+                type: 1,
+                text: `${user.name || '足记用户'}离开了房间`,
+              },
+            },
           },
           currentRoom.lastWinner === userId && { $unset: { lastWinner: '' } },
         ));
