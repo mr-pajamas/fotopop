@@ -29,7 +29,7 @@
       <div class="room-users">
         <div v-for="(user, index) in $meteor.roomUsers" :key="user.id">
           <div class="avatar-box">
-            <avatar :user="user" :show-vip="true" />
+            <avatar :user="user" :show-vip="true" :offline="user.offline" />
             <div v-if="index === 0" class="host-label">房主</div>
             <div v-if="!room.inGame() && user.ready" class="avatar-label ready-label"><span>准备</span></div>
             <transition name="inc">

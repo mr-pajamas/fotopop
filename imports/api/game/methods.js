@@ -718,6 +718,7 @@ export const tellElapsedTime = new ValidatedMethod({
         arrayFilters: [{
           'u.id': userId,
         }, {
+          'o.id': { $ne: userId },
           'o.offline': false,
           'o.elapsedTime': null,
         }],
