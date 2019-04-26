@@ -16,7 +16,7 @@
         <div class="exp">
           <p class="d-flex align-items-center"><span class="mr-auto">LV{{ (ownAccount.exp && ownAccount.exp.level) || '?' }}</span><span class="small" v-if="ownAccount.exp">差{{ ownAccount.exp.maxLevelPoints - ownAccount.exp.levelPoints }}经验升级</span></p>
           <div class="progress-bar" v-if="ownAccount.exp">
-            <div class="progress" :style="{ width: `${ownAccount.exp.levelPoints / (ownAccount.exp.maxLevelPoints || ownAccount.exp.levelPoints || 1 )}%` }"></div>
+            <div class="progress" :style="{ width: `${ownAccount.exp.levelPoints * 100 / (ownAccount.exp.maxLevelPoints || ownAccount.exp.levelPoints || 1 )}%` }"></div>
           </div>
           <div class="progress-bar" v-else>
             <div class="progress" :style="{ width: '0' }"></div>
