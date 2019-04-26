@@ -10,8 +10,10 @@
     <template v-if="ready">
 
       <transition :name="$meteor.currentRoom ? 'slide-forward' : 'slide-backward'" @before-enter="blockInteractions" @before-leave="blockInteractions" @after-enter="restoreInteractions">
-        <room v-if="$meteor.currentRoom" :room="$meteor.currentRoom" :own-account="$meteor.ownAccount" @session-over="resultQuery = $event" />
-        <lobby v-else :own-account="$meteor.ownAccount" />
+        <keep-alive include="lobby">
+          <room v-if="$meteor.currentRoom" :room="$meteor.currentRoom" :own-account="$meteor.ownAccount" @session-over="resultQuery = $event" />
+          <lobby v-else :own-account="$meteor.ownAccount" />
+        </keep-alive>
       </transition>
 <!--      <transition name="slide-right">
         <lobby v-if="!$meteor.currentRoom" :own-account="$meteor.ownAccount" />
