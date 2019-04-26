@@ -199,6 +199,9 @@
         bridge.gameInvite();
       },
     },
+    activated() {
+      this.showSearchRoom = false;
+    },
   };
 </script>
 

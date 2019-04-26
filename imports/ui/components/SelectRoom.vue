@@ -80,6 +80,12 @@
     destroyed() {
       this.stopTimeout();
     },
+    activated() {
+      this.submitting = false;
+    },
+    deactivated() {
+      this.stopTimeout();
+    },
     methods: {
       async fetchData() {
         this.categories = await getCategories(this.type);
