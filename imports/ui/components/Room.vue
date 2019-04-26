@@ -48,7 +48,7 @@
       <div class="broadcast-bar inflexible">
         <div>欢迎来到足记游戏</div>
       </div>
-      <div class="messages flexible" v-chat-scroll="{ always: false, smooth: true }">
+      <div class="messages flexible" v-chat-scroll="{ always: false, smooth: true, scrollonremoved: true }">
         <template v-for="message in $meteor.userMessages">
           <message v-if="message.type !== 1" :color="messageColor(message)">
             <template slot="icon">
@@ -73,6 +73,7 @@
           <message />
           <message />
           -->
+        <div style="display: none" v-if="!inQuestion"></div>
       </div>
 
       <transition name="slide-up">
@@ -357,13 +358,15 @@
       },
       'room.rounds.length'(val) {
         this.stopCountdown();
+        /*
         if (val) {
           this.elapsedTime = 0;
           this.startCountdown();
         } else {
           this.elapsedTime = undefined;
         }
-        // this.elapsedTime = undefined;
+        */
+        this.elapsedTime = undefined;
       },
       async elapsedTime(val) { // TODO: 此处还要回收加分动效
         if (val >= 3) {

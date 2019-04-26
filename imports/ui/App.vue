@@ -616,7 +616,7 @@
   }
 
   .dialog {
-    animation: dialogFadeIn .5s both .3s;
+    animation: dialogFadeIn .5s both .1s;
     background-color: #fff;
     position: absolute;
     border-radius: .8rem;

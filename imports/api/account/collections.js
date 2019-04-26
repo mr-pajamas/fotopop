@@ -103,6 +103,11 @@ UserAccounts.attachSchema(new SimpleSchema({
     type: SimpleSchema.Integer,
     defaultValue: 0,
   },
+
+  connection: {
+    type: String,
+    optional: true,
+  },
 }));
 
 /*

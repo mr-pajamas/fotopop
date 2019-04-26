@@ -1,8 +1,10 @@
 import { Meteor } from 'meteor/meteor';
+import { Random } from 'meteor/random';
 /*
 import { Accounts } from 'meteor/accounts-base';
 */
 
+import { UserAccounts } from '../../account/collections.js';
 import { Rooms } from '../collections.js';
 import {
   decideBotWins,
@@ -20,16 +22,44 @@ Accounts.validateLoginAttempt(({ type }) => {
 
 
 Meteor.onLogin(({ user: { _id: userId }, connection: { onClose } }) => {
+  const cid = Random.id();
+  UserAccounts.update(userId, { $set: { connection: cid } });
+
   // 连线，如果用户在房间内，offline要设置回来
-  Rooms.update({
+  const affected = Rooms.update({
     searchId: { $exists: true, $ne: null },
     users: { $elemMatch: { id: userId, offline: true } },
   }, {
     $set: { 'users.$.offline': false },
     $inc: { userCount: 1 },
+    $unset: {
+      'users.$.elapsedTime': '',
+      'users.$.bgElapsedTime': '',
+    },
   });
 
+  if (!affected) { // 可能onClose未来得及调用
+    Rooms.update({
+      searchId: { $exists: true, $ne: null },
+      users: { $elemMatch: { id: userId, offline: false } },
+    }, {
+      $unset: {
+        'users.$.elapsedTime': '',
+        'users.$.bgElapsedTime': '',
+      },
+    });
+  }
+
   onClose(() => {
+    const { value: affected } = UserAccounts.rawFindOneAndUpdate({
+      _id: userId,
+      connection: cid,
+    }, {
+      $unset: { connection: '' },
+    });
+
+    if (!affected) return;
+
     const current = Rooms.findOne({ 'users.id': userId });
 
     const currentQueue = current && !current.searchId && current;
