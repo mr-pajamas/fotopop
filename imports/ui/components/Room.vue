@@ -49,7 +49,7 @@
         <div>欢迎来到足记游戏</div>
       </div>
       <div class="messages flexible" v-chat-scroll="{ always: false, smooth: true, scrollonremoved: true }">
-        <template v-for="message in $meteor.userMessages">
+        <template v-for="message in userMessages">
           <message v-if="message.type !== 1" :color="messageColor(message)">
             <template slot="icon">
               <avatar class="w-100" v-if="message.type === 2" :user="message.user" :show-vip="false" />
@@ -60,19 +60,7 @@
           </message>
           <p v-else class="message-line">{{ message.text }}</p>
         </template>
-          <!--
-          <p class="message-line">傻逼进入了房间</p>
 
-          <message />
-          <message />
-          <message />
-          <p class="message-line">傻逼进入了房间傻逼进入了房间傻逼进入了房间傻逼进入了房间傻逼进入了房间傻逼进入了房间</p>
-          <p class="message-line">傻逼进入了房间</p>
-          <p class="message-line">傻逼进入了房间</p>
-          <p class="message-line">傻逼进入了房间</p>
-          <message />
-          <message />
-          -->
         <div style="display: none" v-if="!inQuestion"></div>
       </div>
 
@@ -127,6 +115,7 @@
   import reduce from 'lodash/reduce';
   import forEach from 'lodash/forEach';
   import map from 'lodash/map';
+  import slice from 'lodash/slice';
   import { Meteor } from 'meteor/meteor';
 
   import { UserAccounts } from '../../api/account/collections.js';
@@ -171,6 +160,8 @@
         bots: {},
         incs: {}, // { uid2: { c: 1, value: 5, ttl: 2 } }
         showSnippets: false,
+        userMessages: [],
+        hintsShown: 0,
       };
     },
     computed: {
@@ -208,9 +199,10 @@
       disconnected() {
         return !Meteor.status().connected;
       },
+      /*
       userMessages() {
         return map(this.room.messages, m => Object.assign({ user: UserAccounts.findOne(m.sender) }, m));
-        /*
+        /!*
         return [{
           type: 2,
           text: '草泥马',
@@ -222,8 +214,9 @@
           sender: this.ownAccount._id,
           user: this.ownAccount,
         }];
-        */
+        *!/
       },
+      */
     },
 
     created() {
@@ -337,6 +330,13 @@
 
         this.incs = Object.assign({}, this.incs, incs);
       });
+
+      this.$watch('room.messages', function (val, oldVal = []) {
+        const newMessages = slice(val, oldVal.length);
+        this.userMessages.push(
+          ...map(newMessages, m => Object.assign({ user: UserAccounts.findOne(m.sender) }, m)),
+        );
+      }, { immediate: true });
     },
 
     mounted() {
@@ -367,6 +367,7 @@
         }
         */
         this.elapsedTime = undefined;
+        this.hintsShown = 0;
       },
       async elapsedTime(val) { // TODO: 此处还要回收加分动效
         if (val >= 3) {
@@ -382,6 +383,19 @@
             });
           }
         }
+        forEach([1, 2, 3], (i) => {
+          if (val >= (5 * i + 3)) {
+            if (this.hintsShown < i) {
+              this.userMessages.push({
+                type: 4,
+                text: `第${this.room.currentRoundNumber()}题提示${i}：${this.room.currentQuestion().hints[i - 1]}`,
+              });
+              this.hintsShown += 1;
+            }
+          } else {
+            return false;
+          }
+        });
         if (val === 23) {
           await GameMethods.tellElapsedTime.callAsync({
             roomId: this.room._id,
@@ -440,6 +454,7 @@
         await GameMethods.startGame.callAsync({});
       },
       async submitAnswer(answer) {
+        this.hintsShown = 3;
         await GameMethods.submitAnswer.callAsync({
           roomId: this.room._id,
           session: this.room.session,

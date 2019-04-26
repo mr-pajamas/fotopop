@@ -102,6 +102,7 @@
         this.stopTimeout();
         this[tid] = Meteor.setTimeout(async () => {
           this[tid] = Meteor.setTimeout(
+            // TODO: 此处失败率很高，需要做错误处理否则用户界面将死
             async () => await createRoom.callAsync({ type: this.type, categoryId, categoryName }),
             5000,
           );
