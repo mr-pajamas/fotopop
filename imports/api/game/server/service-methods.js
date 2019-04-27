@@ -1,3 +1,4 @@
+import { Meteor } from 'meteor/meteor';
 import map from 'lodash/map';
 import reverse from 'lodash/reverse';
 import times from 'lodash/times';
@@ -32,6 +33,7 @@ const report = {
   ],
 };
 */
+/*
 export const createRoom = async function (userId, type, categoryId, pvt = false) {
   await agent.post('/ws/game/room/create', {
     uid: +userId,
@@ -40,9 +42,12 @@ export const createRoom = async function (userId, type, categoryId, pvt = false)
     type,
   });
 };
+*/
+
 
 export const report = async function (room) {
-  // TODO: uncomment this
+  if (Meteor.isDevelopment) return;
+
   const {
     _id: roomId,
     type,
@@ -61,23 +66,24 @@ export const report = async function (room) {
 };
 
 export const fetchQuestions = async function (type, categoryId) {
+  if (Meteor.isDevelopment) {
+    return times(10, i => ({
+      id: `${i}`,
+      type: i % 2,
+      audio: `/audio/${i + 1}.mp3`,
+      choices: ['你', '我', '中', '发', '白', '爱', '说',
+        '笑', '哭', '瓷', '奇', '花', '草', '树',
+        '叶', '青', '东', '南', '西', '北', '快'],
+      hints: times(3, j => `提示${j}`),
+      answerHash: '135a2dc49169a5513bf8f42658713dd6',
+      answerFormat: '...',
+    }));
+  }
+
   const { data: { data: { questions = [] } = {} } = {} } = await agent.get(
     '/ws/game/type/subjects',
     { params: { type, catId: +categoryId } },
   );
   if (!questions.length) throw new Error('获取题目失败');
   return questions;
-  /*
-  return times(10, i => ({
-    id: `${i}`,
-    type: i % 2,
-    audio: `/audio/${i + 1}.mp3`,
-    choices: ['你', '我', '中', '发', '白', '爱', '说',
-      '笑', '哭', '瓷', '奇', '花', '草', '树',
-      '叶', '青', '东', '南', '西', '北', '快'],
-    hints: times(3, j => `提示${j}`),
-    answerHash: '135a2dc49169a5513bf8f42658713dd6',
-    answerFormat: '...',
-  }));
-  */
 };

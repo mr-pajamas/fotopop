@@ -9,7 +9,7 @@
 
     <template v-if="ready">
 
-      <transition :name="$meteor.currentRoom ? 'slide-forward' : 'slide-backward'" @before-enter="blockInteractions" @before-leave="blockInteractions" @after-enter="restoreInteractions">
+      <transition appear :name="!appear && ($meteor.currentRoom ? 'slide-forward' : 'slide-backward')" @before-enter="blockInteractions" @before-leave="blockInteractions" @after-enter="restoreInteractions">
         <keep-alive include="lobby">
           <room v-if="$meteor.currentRoom" :room="$meteor.currentRoom" :own-account="$meteor.ownAccount" @session-over="resultQuery = $event" />
           <lobby v-else :own-account="$meteor.ownAccount" />
@@ -19,10 +19,10 @@
         <lobby v-if="!$meteor.currentRoom" :own-account="$meteor.ownAccount" />
       </transition>-->
       <transition name="slide-left">
-        <result v-if="resultQuery" :own-account="$meteor.ownAccount" v-bind="resultQuery" @close="resultQuery = null" />
+        <result v-if="!development && resultQuery" :own-account="$meteor.ownAccount" v-bind="resultQuery" @close="resultQuery = null" />
       </transition>
     </template>
-    <spinner-box v-else-if="!$meteor.disconnected" class="app-loader" />
+    <spinner-box v-else class="app-loader" />
 
     <!--<div class="filler" id="lottie"></div>-->
 
@@ -36,7 +36,7 @@
     <printer v-if="content" :content="content" @click.native="content = false" />
     -->
 
-    <div class="filler d-flex justify-content-center align-items-center dialog-filler" style="z-index: 9999" v-if="$meteor.disconnected">
+    <div class="filler d-flex justify-content-center align-items-center dialog-filler" style="z-index: 9999" v-if="ready && $meteor.disconnected">
       <div class="dialog disconnected-dialog d-flex flex-column align-items-center">
         <div class="wifi-icon d-flex justify-content-center align-items-start">
           <img alt="wifi" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEYAAAAyCAMAAADWQ11hAAAAgVBMVEUAAACqqrSsrLWqqrSqqrSqqrSurre6usaqqrS1tcO3t/+qqrSqqrSqqrSqqrSqqrWsrLWvr7eqqrSqqrSqqrSqqrSxsb2pqbOqqrSqqrSrq7SsrLWqqrSqqrWpqbSrq7SqqrWqqrWtrbWrq7etrbeqqrSqqrOqqrOpqbWrq7SpqbNZijbaAAAAKnRSTlMA/C7tyGobBvIKAvnklYJXUBHa0tWuFOvAuEole3ZennJjQzsy56eNoooY7ZNuAAACBUlEQVRIx6XV65prMBSA4ZUQ4kzRcWi11XPu/wL3nj41CQmC9+dov1qeFQOjkmsTPszMNzzP8DPzETbXBJaxoiBFTILSILK0G2eTTTDPGiX7UiA2AxUXG6YkhzvTcj8k45EnZdroUx1yicEWMYgLkjZli6Ut9DkBWyVwQIBTtlKKeYV4bIRvlvnrlZemz0Z4pHu2yoFQFkTYEcbGUZAh5WDu53quaJTNHhT2Tako5Q7AXt78HeENuUR28vnYQyn9LXZhkhtLv1zCoL2rQEM1/BbE4rD0aIMW+0gZh2KASJinHn66bskxfIdHUmEHemphsgj+a7pm6PYS1bvwBu8sMeWG3RwNfFzQZ6BW/Ez1oqpdyyNh6pZ+8hf4Ir/7ioVVI7uJNw3fBvy720Q4DbSw+J1cfDaFHv5mswpKQCDc6m3+mPqx6ou9XoiYhlMC4/jRmLXDIBGfmS5aje/mnenzLBjhUCYxsiIv0x8mQTWMiVD/AQSV093oNTT7Fw8AOh3vNPw5603lilrsfSOBavQk7P6XHQE0OhkGNavgldnOyQGJeLDPMO96ijddV3OTxIVtLJL7iDHk58SCtfADCdv2wLCG/USDtX3aK+bJmCRbPtmZKZxhqdpQHNMaFrsZUuUGsKHDK6tgo1fBAFs6vLKlwysbOt+35w+vrOzwyrYOr2zqmOZ85R+tU9md2HBZeQAAAABJRU5ErkJggg==">
@@ -89,9 +89,10 @@
     data() {
       return {
         // showResult: false,
-        content: false,
+        // content: false,
         // resultQuery: { roomId: 'shit', session: 1 },
         resultQuery: null,
+        appear: true,
       };
     },
 
@@ -152,6 +153,9 @@
       ready() {
         return this.$subReady.ownAccount && this.$subReady.currentRoom;
       },
+      development() {
+        return Meteor.isDevelopment;
+      },
     },
     watch: {
       ready(val) {
@@ -178,6 +182,7 @@
       },
       restoreInteractions(el) {
         el.style.pointerEvents = null;
+        this.appear = false;
       },
       exitGame() {
         bridge.gameExit();
