@@ -9,7 +9,7 @@
 
     <template v-if="ready">
 
-      <transition appear :name="!appear && ($meteor.currentRoom ? 'slide-forward' : 'slide-backward')" @before-enter="blockInteractions" @before-leave="blockInteractions" @after-enter="restoreInteractions">
+      <transition appear :name="!appear ? ($meteor.currentRoom ? 'slide-forward' : 'slide-backward') : ''" @before-enter="blockInteractions" @before-leave="blockInteractions" @after-enter="restoreInteractions">
         <keep-alive include="lobby">
           <room v-if="$meteor.currentRoom" :room="$meteor.currentRoom" :own-account="$meteor.ownAccount" @session-over="resultQuery = $event" />
           <lobby v-else :own-account="$meteor.ownAccount" />

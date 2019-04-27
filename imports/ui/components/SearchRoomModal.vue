@@ -2,7 +2,7 @@
   <div class="filler d-flex justify-content-center align-items-center dialog-filler" @click.self="$emit('close')">
     <div class="dialog search-room-dialog d-flex flex-column align-items-center">
       <form class="w-100" @submit.prevent="searchAndJoin">
-        <input type="text" class="d-block w-100" placeholder="请输入房间ID" autofocus v-model="searchId">
+        <input type="text" class="d-block w-100" placeholder="请输入房间ID" v-model="searchId">
         <p v-if="errMsg" class="w-100 text-center">{{ errMsg }}</p>
         <button class="btn d-block w-100" type="submit" :disabled="!searchIdValid || submitting">{{ submitting ? '查找中...' : '进入房间' }}</button>
       </form>
@@ -33,7 +33,7 @@
       },
     },
     mounted() {
-      this.$el.querySelector('input').focus();
+      this.autofocus();
     },
     methods: {
       async searchAndJoin() {
@@ -46,6 +46,9 @@
           this.submitting = false;
         }
       },
+      autofocus() {
+        this.$el.querySelector('input').focus();
+      },
     },
   };
 </script>
@@ -53,8 +56,8 @@
 <style lang="scss" scoped>
   .search-room-dialog {
     top: 20vh;
-    input {
-    }
+
+    animation: none;
 
     p {
       color: red;
