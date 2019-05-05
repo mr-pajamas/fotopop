@@ -8,7 +8,7 @@
     <!--<img src="/images/third.png" v-else-if="rank.place === 3" class="rank-number inflexible">-->
     <div v-else class="rank-number inflexible d-flex justify-content-center align-items-center"><span>{{ rank.place || '-' }}</span></div>
     <avatar :user="user" :show-vip="true" class="inflexible" />
-    <span class="user-name flexible">{{ user.name }}</span>
+    <span class="user-name flexible text-truncate">{{ user.name }}</span>
     <span class="score inflexible">{{ rank.score }}{{ unit || '' }}</span>
   </div>
 </template>

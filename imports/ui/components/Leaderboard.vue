@@ -67,9 +67,9 @@
       <div class="my-rank">
         <div class="my-rank-content d-flex align-items-center">
           <avatar :user="ownAccount" :show-vip="true" class="inflexible" />
-          <div class="name-and-rank flexible">
-            <p class="name">{{ ownAccount.name }}</p>
-            <p class="rank" v-if="myRank.place">第{{ myRank.place }}名</p>
+          <div class="name-and-rank flexible" style="overflow: hidden">
+            <p class="name text-truncate">{{ ownAccount.name }}</p>
+            <p class="rank" v-if="myRank.score && myRank.place">第{{ myRank.place }}名</p>
             <p class="rank" v-else>你未上榜</p>
           </div>
           <span class="score inflexible">{{ myRank.score }}</span>
