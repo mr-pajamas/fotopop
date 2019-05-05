@@ -142,6 +142,13 @@ Rooms.attachSchema(new SimpleSchema({
   'questions.$.choices.$': {
     type: String,
   },
+  'questions.$.wrongChoices': {
+    type: Array,
+  },
+  'questions.$.wrongChoices.$': {
+    type: SimpleSchema.Integer,
+    min: 0,
+  },
   'questions.$.hints': {
     type: Array,
     minCount: 3,
@@ -150,11 +157,9 @@ Rooms.attachSchema(new SimpleSchema({
   'questions.$.hints.$': {
     type: String,
   },
-  /*
   'questions.$.tip': {
     type: String,
   },
-  */
   'questions.$.answerHash': {
     type: String, // hashed
   },
@@ -167,6 +172,9 @@ Rooms.attachSchema(new SimpleSchema({
   },
   */
   'questions.$.answerFormat': {
+    type: String,
+  },
+  'questions.$.answer': {
     type: String,
   },
   messages: {
@@ -452,6 +460,10 @@ Rooms.helpers({
     const voters = this.bgVoters();
     const supporters = filter(voters, ({ bgElapsedTime }) => bgElapsedTime === -1);
     return supporters.length >= majorities[voters.length];
+  },
+
+  canStartGame() {
+    return !this.inGame() && this.sessionReady() && this.users.length > 1 && !find(this.users, user => !user.ready);
   },
 });
 

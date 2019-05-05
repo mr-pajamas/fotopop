@@ -1,6 +1,5 @@
 <template>
   <div class="portal filler d-flex flex-column justify-content-start">
-    <!-- TODO: Marquee -->
 
     <button class="btn rounded-circle exit-btn" @click="exitGame">
       <svg width="50" height="50" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><circle fill="#363666" opacity=".4" cx="25" cy="25" r="25"/><rect fill="#FFF" transform="rotate(90 25 14)" x="18" y="12" width="14" height="4" rx="2"/><path d="M14.73 14.068A14.958 14.958 0 0 0 10 25c0 8.284 6.716 15 15 15 8.284 0 15-6.716 15-15a14.96 14.96 0 0 0-4.842-11.037" stroke="#FFF" stroke-width="4" stroke-linecap="round"/></g></svg>
@@ -176,6 +175,8 @@
       </a>
     </div>
 
+    <broadcast />
+
     <search-room-modal v-if="showSearchRoom" @close="showSearchRoom = false" />
   </div>
 </template>
@@ -188,10 +189,11 @@
   import BigHead from './user/BigHead.vue';
   import DiamondInline from './user/DiamondInline.vue';
   import SearchRoomModal from './SearchRoomModal.vue';
+  import Broadcast from './Broadcast.vue';
 
   export default {
     name: 'portal',
-    components: { SearchRoomModal, DiamondInline, BigHead },
+    components: { Broadcast, SearchRoomModal, DiamondInline, BigHead },
     props: ['ownAccount'],
     data() {
       return {
@@ -250,6 +252,13 @@
 
     .bordered {
       border: .2rem rgb(51,51,51) solid;
+    }
+
+    .broadcast {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
     }
 
     .exit-btn {

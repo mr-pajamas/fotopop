@@ -74,9 +74,12 @@ export const fetchQuestions = async function (type, categoryId) {
       choices: ['你', '我', '中', '发', '白', '爱', '说',
         '笑', '哭', '瓷', '奇', '花', '草', '树',
         '叶', '青', '东', '南', '西', '北', '快'],
+      wrongChoices: [0, 2, 3, 5, 6, 7, 13],
       hints: times(3, j => `提示${j}`),
+      tip: '周杰伦的青花ci',
       answerHash: '135a2dc49169a5513bf8f42658713dd6',
       answerFormat: '...',
+      answer: '青花瓷',
     }));
   }
 

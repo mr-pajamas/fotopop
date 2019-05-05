@@ -45,10 +45,7 @@
       </div>
     </div>
     <div class="room-bottom d-flex flex-column">
-      <div class="broadcast-bar inflexible">
-        <div>欢迎来到足记游戏</div>
-      </div>
-      <div class="messages flexible" v-chat-scroll="{ always: false, smooth: true, scrollonremoved: true }">
+      <div class="messages" v-chat-scroll="{ always: false, smooth: true, scrollonremoved: true }" style="flex: 1 1 0">
         <template v-for="message in userMessages">
           <message v-if="message.type !== 1" :color="messageColor(message)">
             <template slot="icon">
@@ -63,6 +60,8 @@
 
         <div style="display: none" v-if="!inQuestion"></div>
       </div>
+
+      <broadcast />
 
       <transition name="slide-up">
         <answer-sheet v-if="inQuestion" class="inflexible" v-bind="room.currentQuestion()" @answer-correct="submitAnswer($event)" />
@@ -79,7 +78,13 @@
             <span>10</span>
           </span>
         </styled-pill-button>
-        <styled-pill-button v-if="room.host().id === ownAccount._id" bg-color="rgb(250,75,127)" color="#fff" :text-shadow="true" @click.native="startGame" :disabled="!room.sessionReady()">开始游戏</styled-pill-button>
+        <template v-if="room.host().id === ownAccount._id">
+          <styled-pill-button v-if="room.canStartGame()" bg-color="rgb(250,75,127)" color="#fff" :text-shadow="true" @click.native="startGame">开始游戏</styled-pill-button>
+          <styled-pill-button v-else bg-color="rgb(216,216,216)" color="rgb(175,175,175)" :text-shadow="true" disabled>开始游戏</styled-pill-button>
+        </template>
+        <!--
+        <styled-pill-button v-if="room.host().id === ownAccount._id" bg-color="rgb(250,75,127)" color="#fff" :text-shadow="true" @click.native="startGame" :disabled="!room.canStartGame()">开始游戏</styled-pill-button>
+        -->
       </div>
 
       <bottom-bar class="inflexible" @show-snippets="showSnippets = true" />
@@ -132,6 +137,7 @@
   import SoundIcon from './room/SoundIcon.vue';
   import AnswerSheet from './room/AnswerSheet';
   import Message from './room/Message.vue';
+  import Broadcast from './Broadcast.vue';
 
   const tid = Symbol('tid');
   // const atid = Symbol('atid');
@@ -152,7 +158,7 @@
 
   export default {
     name: 'room',
-    components: { Message, AnswerSheet, SoundIcon, BottomBar, StyledPillButton, EmptySlot, Avatar, DiamondInline, MessageBox },
+    components: { Broadcast, Message, AnswerSheet, SoundIcon, BottomBar, StyledPillButton, EmptySlot, Avatar, DiamondInline, MessageBox },
     props: ['ownAccount', 'room'],
     data() {
       return {
@@ -622,6 +628,7 @@
       }
     }
 
+    /*
     .broadcast-bar {
       height: 2rem;
 
@@ -632,6 +639,12 @@
         line-height: 1.37142857;
         background-color: rgb(54,54,102);
       }
+    }
+    */
+
+    .broadcast {
+      position: absolute;
+      width: 100%;
     }
 
     .messages {
@@ -693,6 +706,7 @@
     .room-bottom {
       background-color: #2d2c66;
       flex: 1 1 auto;
+      position: relative;
     }
 
     .countdown {
