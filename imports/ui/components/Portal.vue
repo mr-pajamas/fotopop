@@ -21,7 +21,7 @@
             <div class="progress" :style="{ width: '0' }"></div>
           </div>
         </div>
-        <diamond-inline :diamond="ownAccount.diamond" :bordered="true" />
+        <diamond-inline :diamond-amount="ownAccount.diamondAmount()" :bordered="true" />
       </div>
     </div>
 
@@ -122,7 +122,7 @@
     </div>
 
     <div class="actions-section inflexible d-flex">
-      <a href="#" @click.prevent="showSearchRoom = true">
+      <a href="#" @click.prevent="modal = 'search-room-modal'">
         <!--<img src="/images/search.svg" class="rounded-circle bordered d-block">-->
         <!--<img src="/images/search.png" class="rounded-circle bordered d-block">-->
         <img class="rounded-circle bordered d-block" style="background-color: rgb(255,94,114)" alt="search" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAG4AAABuCAMAAADxhdbJAAABAlBMVEX/XnL///8zMzM1NDT6XXBuP0X7+/s6NDSAgIDbVmaNRk/o6Oh7Qknl5eXzW27rWmvjWGmxTVpDQ0NANTZxcXFGRkZrPkRcOz82Njby8vLf39/ExMSvr6/3XG9tbW3uWmzoWWvIUmFXV1f39/f19fXX19eqqqpnZ2dfX19TU1OXSFE5OTlJNzn8/PzU1NTQ0NDMzMy8vLy3t7ednZ2JiYl7e3v8XXHvWm3QVGO3T1tYWFhMTEyEQ0s/Pz9VOj1SOTxOODvv7++/v7+Tk5OPj4+Dg4N2dnafSlR/Q0pnPUOjo6PkWGngV2jRVGRjY2PBUV+7T12pTFemS1aRRk94QUifSVS1HcZHAAADVklEQVRo3u2X13LiMBRArWswvfe+tFACCRBIgPSebJJN3f//lcVc2QndKyk7szM6T3o7vlWyIpFIJBKJRCKRrGC/8OAKFmzK95MrvsfPVJjSiruf/cr3kRvZ0fSJeh/KKd/CQTMCy3C4A+JltqYDkGVC0TktnsE6Wi9CbbdzFQs3YnNVdAtMpBdMkvmtHY9GCGl7drLRbTCxi0poIAEG+V6KfKV8cWNGeRoUY2sBpd4hi1RrQIk8isikEdthd05UJkimYcQnIJ9G3X6dz8oyhxAe9Cr6sZIHJL4vqied2qzNkwSd476PTLgS1J9F2gl7ZI4toGzv6R+SBWTEV7gzGhuZJwsmJT3AS9ouBzy6Jq2btqBLxcAkViWERPF8xLOVHdiT52SR9E3S9B1P4quUcOEEuYPrkqWksjUVkHGZkF3e8HIRnG6yEl8dkL6ZTkeBVTeCKR2yGo2OQDI9SS9m941VZ8c9SdZCJyI6OTqnpwRrLrEyPbIelKgeQjpo/sE44pim1Abd+bGxCNp4CrHp3q3k0pzwkhnoHZsuDjpbG3VpzOYkC12e4uEC2yEbwQsoM5kLHAW2tzJ2imez7toongZTAiy6AuZI26zrmVkPT08uFt0D6ITJZsqH+p7WOxj35hOLzgU6DWIBj3M8SOsHfLcUWXRBvFzI3zAGnSFH7dqWXXy1swHtTOtoKscWa9G5s44H545nq2SJdTKgc8Kmc9ObxTo471423TM+7MrWdTGeG8GPhb+wbKOvFdbH0T3o3FjW9VlLh4Rw8qoWbT782/vNqsvhM7NmUTfAr8OpY+9NyFiyVVX2vkQCGF6jYmWj1MHYYLzh5S3onMATHOJvwZSrjbafMCUSUHh4AbC0yi5UmPKq8OEG5HJ9bNR2p/BiByS6ul80JyAJG7fOfwpIaXfVBNSBco86LoIRoETTy3bJQAUTuwDf4ylQks5Oe24r93FzifT542ASdnZ9GlbMk7nGG0e0b98NM4RLtXFYha9442J8yCgC64i8Kja7SN/Bkbra5tV3ien7UEQQPHIsdale3MqfvqEihMJbYkF2cmveb6YvpIjiR+guYQTpOPGG8F0y53MpQgm4nopDF41q1vcxsTWVf8cw5FIkEolEIpFIJBLJf8wfxJBEtKfkjKYAAAAASUVORK5CYII=">
@@ -140,7 +140,7 @@
         -->
         <p>创建房间</p>
       </a>
-      <a href="#" @click.prevent="invite">
+      <a href="#" @click.prevent="invite" class="disabled">
         <!--<img src="/images/invite.svg" class="rounded-circle bordered d-block">-->
         <!--<img src="/images/invite.png" class="rounded-circle bordered d-block">-->
         <img class="rounded-circle bordered d-block" style="background-color: rgb(255,207,37)" alt="invite" src="data:image/png;base64,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">
@@ -149,7 +149,7 @@
         -->
         <p>邀请好友</p>
       </a>
-      <a href="#" class="disabled">
+      <a href="#" @click.prevent="modal = 'broadcast-modal'" class="disabled">
         <!--<img src="/images/broadcast.svg" class="rounded-circle bordered d-block">-->
         <!--<img src="/images/broadcast.png" class="rounded-circle bordered d-block">-->
         <img class="rounded-circle bordered d-block" style="background-color: rgb(64,197,255)" alt="broadcast" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAG4AAABuCAMAAADxhdbJAAAA8FBMVEVAxf8zMzP///83YHIzNjhqamo1TFc/wPg9q9szNTY7kbc+r+E9qNczOz8zODo6iaw3YnU5f504aoFAxP4/vPI+tus7mMA1SlQ0QUc0P0U9oc48ncg3Zns0REs/ue4+rN07jrM6jLA5eZY4dI84cYo4bYVfX182R087Ozs/wvz7+/v19fU/vfU+s+Y8lLs7lLs6g6Rubm42XG1mZmZkZGQ2VGJXV1c3Nzfv7+8+tenn5+fk5OQ9pdPQ0NChoaGampqVlZWBgYF4eHhycnJoaGg2WGhUVFRJSUk0PkM+sePT09PLy8uwsLA5d5KOjo5DQ0POpABjAAACV0lEQVRo3u3WZ2+jQBCA4RnHAfeCG+4lTtzLOXF6u1za9f//bw7DntcY30asyEYnzSvxDemh7MIARVEURVEURVEfU9pMLZqgqjlaJQugJj2MqzqgpAsN7TKgokoZnfZAQdkoquPye4ge7jqzzA7gHaqa6OViq/utBY+Nuzbz+4VxXLMKelsM0s4aObrcX3Ncw3iQr+y6VUviqrP7YWiTS4TRrpQDn/3UPJXMXq9Ufw3j356/hUIuzkC7ZAL8lsK36t+NQltchmsBcy+/zi1ri2tJabnqdCrg+qcPdzcW5OWgE0XNrwZVRAxbRyLCY0vu9Op8uJa8HOgSWyDGOB14bIEccWebYxHnamz8mzsJnJvUUZprFGfFuD9uDwXcsZBr2dvn0BeXlOYK7KSZH64k4h5FXBGdun64tojbF3EJxs3Bl2fKcPwT3csHtu8+Cblc28jUsnlQwfH+W+7LO3ATrV5XxYn/5v3nk4fb7yMVHC/6+GOkguOdfb7ayely3ALxTfDSw82TuIyDbCauSwDk44Vxo1lJGxo69W+Hbm6KVuWmLPfEuRhs9DXbY5PSjfcjJu91OdcBV7lZyVk098cbXA0dT/J5pjmX8QyjrVd04lyFjYdaToqr4roSeGoYWxy/PrnbK+C66AC8VeoujnsXEhgbJEQXnM9wjnvSe37JuSLsrJ1yc1B90g50Sc7gXBZ2F0G7AwigLLNE49yh/WojQXBFZonGK93yzCIEUSMseJgcjENALZAVnYCCEknkS0FBlTLTFKWnjVonDhRFURRFURRFURT1Mf0BPPUs4lrKCJYAAAAASUVORK5CYII=">
@@ -177,7 +177,7 @@
 
     <broadcast />
 
-    <search-room-modal v-if="showSearchRoom" @close="showSearchRoom = false" />
+    <component v-if="modal" :is="modal" @close="modal = ''" />
   </div>
 </template>
 
@@ -190,14 +190,15 @@
   import DiamondInline from './user/DiamondInline.vue';
   import SearchRoomModal from './SearchRoomModal.vue';
   import Broadcast from './Broadcast.vue';
+  import BroadcastModal from './BroadcastModal.vue';
 
   export default {
     name: 'portal',
-    components: { Broadcast, SearchRoomModal, DiamondInline, BigHead },
+    components: { BroadcastModal, Broadcast, SearchRoomModal, DiamondInline, BigHead },
     props: ['ownAccount'],
     data() {
       return {
-        showSearchRoom: false,
+        modal: '',
       };
     },
     mounted() {
@@ -217,7 +218,7 @@
       },
     },
     activated() {
-      this.showSearchRoom = false;
+      this.modal = '';
     },
   };
 </script>

@@ -104,6 +104,21 @@ UserAccounts.attachSchema(new SimpleSchema({
     defaultValue: 0,
   },
 
+  items: {
+    type: Array,
+    defaultValue: [],
+  },
+  'items.$': {
+    type: Object,
+  },
+  'items.$.id': {
+    type: String,
+  },
+  'items.$.amount': {
+    type: SimpleSchema.Integer,
+    defaultValue: 0,
+  },
+
   connection: {
     type: String,
     optional: true,

@@ -24,7 +24,7 @@
           </template>
         </message-box>
 
-        <diamond-inline :diamond="ownAccount.diamond" class="ml-auto" bg-color="#1f1e48" />
+        <diamond-inline :diamond-amount="ownAccount.diamondAmount()" class="ml-auto" bg-color="#1f1e48" />
       </div>
       <div class="room-users">
         <div v-for="(user, index) in $meteor.roomUsers" :key="user.id">

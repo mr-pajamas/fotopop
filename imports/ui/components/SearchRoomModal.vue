@@ -55,7 +55,7 @@
 
 <style lang="scss" scoped>
   .search-room-dialog {
-    top: 20vh;
+    top: 15vh;
 
     animation: none;
 

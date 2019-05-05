@@ -3,4 +3,5 @@ import '../custom-validation-error.js';
 // import './accounts-config.js';
 import './method-promisification.js';
 
+import '../../api/account/client/collection-helpers.js';
 import '../../api/account/client/methods.js';
