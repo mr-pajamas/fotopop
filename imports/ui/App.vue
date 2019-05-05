@@ -259,7 +259,9 @@
     text-decoration: none;
   }
 
-  button:focus {
+  button:focus,
+  input:focus,
+  textarea:focus {
     outline: 0 !important;
   }
 
@@ -632,11 +634,15 @@
     min-width: 75vw;
     padding: .875rem;
 
-    input {
+    input, .input {
+      display: block;
+      width: 100%;
+      background-clip: padding-box;
       border: 1px rgb(216,216,216) solid;
       background-color: rgb(245,245,245);
-      border-radius: 0;
-      box-shadow: none;
+      border-radius: .3rem;
+      font-weight: 400;
+      /*box-shadow: none;*/
     }
 
     input[type=text] {
