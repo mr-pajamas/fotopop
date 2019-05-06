@@ -1,9 +1,9 @@
 {
   "private": {
     "jwtSecret": "ODJnB/TpCPZWn6StKRMrx0PJRriIEoOimSm34eWttEBcVJBKHesNNO7epn8Ow2hYCA==",
-    "internalServiceEndpoint": "http://10.1.0.4:8080/app2"
+    "internalServiceEndpoint": "http://10.1.1.125:8080/app2"
   },
   "public": {
-    "serviceEndpoint": "http://10.1.0.4:8080/app2"
+    "serviceEndpoint": "http://10.1.1.125:8080/app2"
   }
 }

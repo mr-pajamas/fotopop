@@ -21,6 +21,16 @@
       <transition name="slide-left">
         <result v-if="!development && resultQuery" :own-account="$meteor.ownAccount" v-bind="resultQuery" @close="resultQuery = null" />
       </transition>
+
+      <div class="filler d-flex justify-content-center align-items-center dialog-filler" style="z-index: 9999" v-if="$meteor.disconnected">
+        <div class="dialog disconnected-dialog d-flex flex-column align-items-center">
+          <div class="wifi-icon d-flex justify-content-center align-items-start">
+            <img alt="wifi" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEYAAAAyCAMAAADWQ11hAAAAgVBMVEUAAACqqrSsrLWqqrSqqrSqqrSurre6usaqqrS1tcO3t/+qqrSqqrSqqrSqqrSqqrWsrLWvr7eqqrSqqrSqqrSqqrSxsb2pqbOqqrSqqrSrq7SsrLWqqrSqqrWpqbSrq7SqqrWqqrWtrbWrq7etrbeqqrSqqrOqqrOpqbWrq7SpqbNZijbaAAAAKnRSTlMA/C7tyGobBvIKAvnklYJXUBHa0tWuFOvAuEole3ZennJjQzsy56eNoooY7ZNuAAACBUlEQVRIx6XV65prMBSA4ZUQ4kzRcWi11XPu/wL3nj41CQmC9+dov1qeFQOjkmsTPszMNzzP8DPzETbXBJaxoiBFTILSILK0G2eTTTDPGiX7UiA2AxUXG6YkhzvTcj8k45EnZdroUx1yicEWMYgLkjZli6Ut9DkBWyVwQIBTtlKKeYV4bIRvlvnrlZemz0Z4pHu2yoFQFkTYEcbGUZAh5WDu53quaJTNHhT2Tako5Q7AXt78HeENuUR28vnYQyn9LXZhkhtLv1zCoL2rQEM1/BbE4rD0aIMW+0gZh2KASJinHn66bskxfIdHUmEHemphsgj+a7pm6PYS1bvwBu8sMeWG3RwNfFzQZ6BW/Ez1oqpdyyNh6pZ+8hf4Ir/7ioVVI7uJNw3fBvy720Q4DbSw+J1cfDaFHv5mswpKQCDc6m3+mPqx6ou9XoiYhlMC4/jRmLXDIBGfmS5aje/mnenzLBjhUCYxsiIv0x8mQTWMiVD/AQSV093oNTT7Fw8AOh3vNPw5603lilrsfSOBavQk7P6XHQE0OhkGNavgldnOyQGJeLDPMO96ijddV3OTxIVtLJL7iDHk58SCtfADCdv2wLCG/USDtX3aK+bJmCRbPtmZKZxhqdpQHNMaFrsZUuUGsKHDK6tgo1fBAFs6vLKlwysbOt+35w+vrOzwyrYOr2zqmOZ85R+tU9md2HBZeQAAAABJRU5ErkJggg==">
+          </div>
+          <p>网络不给力<br>正在为你重连到游戏</p>
+          <button class="btn d-block w-100" @click="exitGame">退出游戏</button>
+        </div>
+      </div>
     </template>
     <spinner-box v-else class="app-loader" />
 
@@ -35,16 +45,6 @@
     <!--
     <printer v-if="content" :content="content" @click.native="content = false" />
     -->
-
-    <div class="filler d-flex justify-content-center align-items-center dialog-filler" style="z-index: 9999" v-if="ready && $meteor.disconnected">
-      <div class="dialog disconnected-dialog d-flex flex-column align-items-center">
-        <div class="wifi-icon d-flex justify-content-center align-items-start">
-          <img alt="wifi" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEYAAAAyCAMAAADWQ11hAAAAgVBMVEUAAACqqrSsrLWqqrSqqrSqqrSurre6usaqqrS1tcO3t/+qqrSqqrSqqrSqqrSqqrWsrLWvr7eqqrSqqrSqqrSqqrSxsb2pqbOqqrSqqrSrq7SsrLWqqrSqqrWpqbSrq7SqqrWqqrWtrbWrq7etrbeqqrSqqrOqqrOpqbWrq7SpqbNZijbaAAAAKnRSTlMA/C7tyGobBvIKAvnklYJXUBHa0tWuFOvAuEole3ZennJjQzsy56eNoooY7ZNuAAACBUlEQVRIx6XV65prMBSA4ZUQ4kzRcWi11XPu/wL3nj41CQmC9+dov1qeFQOjkmsTPszMNzzP8DPzETbXBJaxoiBFTILSILK0G2eTTTDPGiX7UiA2AxUXG6YkhzvTcj8k45EnZdroUx1yicEWMYgLkjZli6Ut9DkBWyVwQIBTtlKKeYV4bIRvlvnrlZemz0Z4pHu2yoFQFkTYEcbGUZAh5WDu53quaJTNHhT2Tako5Q7AXt78HeENuUR28vnYQyn9LXZhkhtLv1zCoL2rQEM1/BbE4rD0aIMW+0gZh2KASJinHn66bskxfIdHUmEHemphsgj+a7pm6PYS1bvwBu8sMeWG3RwNfFzQZ6BW/Ez1oqpdyyNh6pZ+8hf4Ir/7ioVVI7uJNw3fBvy720Q4DbSw+J1cfDaFHv5mswpKQCDc6m3+mPqx6ou9XoiYhlMC4/jRmLXDIBGfmS5aje/mnenzLBjhUCYxsiIv0x8mQTWMiVD/AQSV093oNTT7Fw8AOh3vNPw5603lilrsfSOBavQk7P6XHQE0OhkGNavgldnOyQGJeLDPMO96ijddV3OTxIVtLJL7iDHk58SCtfADCdv2wLCG/USDtX3aK+bJmCRbPtmZKZxhqdpQHNMaFrsZUuUGsKHDK6tgo1fBAFs6vLKlwysbOt+35w+vrOzwyrYOr2zqmOZ85R+tU9md2HBZeQAAAABJRU5ErkJggg==">
-        </div>
-        <p>网络不给力<br>正在为你重连到游戏</p>
-        <button class="btn d-block w-100" @click="exitGame">退出游戏</button>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -71,6 +71,7 @@
   import SpinnerBox from './components/general/SpinnerBox.vue';
   import bridge from '../modules/client/js-bridge.js';
   import StyledRoundedCard from './components/general/StyledRoundedCard2.vue';
+  import items from '../domain/client/items.js';
 
   // import { getCategories } from '../api/game/client/service-methods.js';
 
@@ -151,7 +152,7 @@
     */
     computed: {
       ready() {
-        return this.$subReady.ownAccount && this.$subReady.currentRoom;
+        return this.$subReady.ownAccount && this.$subReady.currentRoom && !!items();
       },
       development() {
         return Meteor.isDevelopment;
@@ -259,7 +260,9 @@
     text-decoration: none;
   }
 
-  button:focus {
+  button:focus,
+  input:focus,
+  textarea:focus {
     outline: 0 !important;
   }
 
@@ -632,11 +635,15 @@
     min-width: 75vw;
     padding: .875rem;
 
-    input {
+    input, .input {
+      display: block;
+      width: 100%;
+      background-clip: padding-box;
       border: 1px rgb(216,216,216) solid;
       background-color: rgb(245,245,245);
-      border-radius: 0;
-      box-shadow: none;
+      border-radius: .3rem;
+      font-weight: 400;
+      /*box-shadow: none;*/
     }
 
     input[type=text] {

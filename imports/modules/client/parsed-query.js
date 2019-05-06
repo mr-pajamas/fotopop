@@ -5,6 +5,7 @@ const { jwt, ua, c } = queryString.parse(window.location.search);
 const osType = ua && ua.split('/')[3];
 
 export default {
+  osType: +osType,
   isAndroid: osType === '1',
   isIOS: osType === '2',
   ua,
