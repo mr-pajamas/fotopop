@@ -87,7 +87,7 @@
         -->
       </div>
 
-      <bottom-bar class="inflexible" @show-snippets="showSnippets = true" />
+      <bottom-bar class="inflexible" @show-snippets="modal = 'snippets-modal'" @show-broadcast="modal = 'broadcast-modal'" />
     </div>
 
     <transition name="countdown">
@@ -102,6 +102,7 @@
       <svg v-if="countdown === 1" class="countdown" width="130" height="130" viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M97.431 12.146l-26.37 108.698H44.075l14.138-58.277c2.04-8.415 3.069-13.473 3.08-15.173.012-1.7-.777-2.988-2.37-3.861-1.592-.874-5.505-1.309-11.74-1.309h-2.67l5.298-21.837c16.088 1.72 22.823.54 31.722-8.241H97.43z" fill="#5542ED"/><path d="M87.431 12.146l-26.37 108.698H34.075l14.138-58.277c2.04-8.415 3.069-13.473 3.08-15.173.012-1.7-.777-2.988-2.37-3.861-1.592-.874-5.505-1.309-11.74-1.309h-2.67l5.298-21.837c16.088 1.72 22.823.54 31.722-8.241H87.43z" fill="#FFF"/><path d="M87.431 12.146l-26.37 108.698H34.075l14.138-58.277c2.04-8.415 3.069-13.473 3.08-15.173.012-1.7-.777-2.988-2.37-3.861-1.592-.874-5.505-1.309-11.74-1.309h-2.67l5.298-21.837c16.088 1.72 22.823.54 31.722-8.241H87.43z" stroke="#333" stroke-width="6.9"/></g></svg>
     </transition>
 
+    <!--
     <div class="filler d-flex justify-content-center align-items-center dialog-filler" v-if="showSnippets" @click.self="showSnippets = false">
       <div class="dialog snippets-dialog">
         <div class="snippet-list d-flex flex-column align-items-stretch">
@@ -109,6 +110,9 @@
         </div>
       </div>
     </div>
+    -->
+
+    <component v-if="modal" :is="modal" @close="modal = ''" :own-account="ownAccount" :room="room" />
   </div>
 </template>
 
@@ -138,9 +142,12 @@
   import AnswerSheet from './room/AnswerSheet';
   import Message from './room/Message.vue';
   import Broadcast from './Broadcast.vue';
+  import BroadcastModal from './BroadcastModal.vue';
+  import SnippetsModal from './room/SnippetsModal.vue';
 
   const tid = Symbol('tid');
   // const atid = Symbol('atid');
+  /*
   const snippets = [
     '稍等下，马上开',
     '快点答题啊，是不是在挂机啊！',
@@ -155,19 +162,21 @@
     '6666666',
     '我要举报，这里有人开挂！',
   ];
+  */
 
   export default {
     name: 'room',
-    components: { Broadcast, Message, AnswerSheet, SoundIcon, BottomBar, StyledPillButton, EmptySlot, Avatar, DiamondInline, MessageBox },
+    components: { SnippetsModal, BroadcastModal, Broadcast, Message, AnswerSheet, SoundIcon, BottomBar, StyledPillButton, EmptySlot, Avatar, DiamondInline, MessageBox },
     props: ['ownAccount', 'room'],
     data() {
       return {
         elapsedTime: undefined,
         bots: {},
         incs: {}, // { uid2: { c: 1, value: 5, ttl: 2 } }
-        showSnippets: false,
+        // showSnippets: false,
         userMessages: [],
         hintsShown: 0,
+        modal: '',
       };
     },
     computed: {
@@ -189,9 +198,11 @@
       mayLeaveRoom() {
         return !this.room.inGame();
       },
+      /*
       snippets() {
         return snippets;
       },
+      */
     },
     meteor: {
       roomUsers() {
@@ -474,10 +485,12 @@
       messageColor({ type }) {
         return [undefined, 'rgb(48,255,234)', undefined, 'rgb(255,57,98)', 'rgb(255,232,42)'][type];
       },
+      /*
       async sendMessage(text) {
         await GameMethods.sendMessage.callAsync({ roomId: this.room._id, messageText: text });
         this.showSnippets = false;
       },
+      */
     },
   };
 </script>
@@ -716,7 +729,7 @@
       margin-top: auto;
       margin-bottom: auto;
     }
-
+    /*
     .snippets-dialog {
       width: 100%;
       bottom: 0;
@@ -743,5 +756,6 @@
         }
       }
     }
+    */
   }
 </style>

@@ -15,7 +15,7 @@
 </template>
 
 <script>
-  import query from '../../../modules/client/parsed-query.js';
+  // import query from '../../../modules/client/parsed-query.js';
   import bridge from '../../../modules/client/js-bridge.js';
 
   export default {

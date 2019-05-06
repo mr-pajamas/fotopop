@@ -2,6 +2,7 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
+import find from 'lodash/find';
 
 const UserAccounts = new Mongo.Collection('accounts');
 
@@ -124,6 +125,13 @@ UserAccounts.attachSchema(new SimpleSchema({
     optional: true,
   },
 }));
+
+UserAccounts.helpers({
+  itemAmount(id) {
+    const item = find(this.items || [], i => i.id === id);
+    return item ? item.amount : 0;
+  },
+});
 
 /*
 const sample = {

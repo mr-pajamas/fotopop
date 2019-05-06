@@ -71,7 +71,7 @@
   import SpinnerBox from './components/general/SpinnerBox.vue';
   import bridge from '../modules/client/js-bridge.js';
   import StyledRoundedCard from './components/general/StyledRoundedCard2.vue';
-  import items from '../domain/items.js';
+  import items from '../domain/client/items.js';
 
   // import { getCategories } from '../api/game/client/service-methods.js';
 

@@ -2,7 +2,7 @@ import Vue from 'vue';
 import find from 'lodash/find';
 import filter from 'lodash/filter';
 
-import { getItems } from '../api/item/client/service-methods.js';
+import { getItems } from '../../api/item/client/service-methods.js';
 
 const data = Vue.observable({ items: undefined });
 
@@ -11,13 +11,13 @@ getItems().then((items) => {
 });
 
 
-const isListable = item => !['HALL', 'QUICK_SEARCH', 'WRONG_CLEAN', 'TIPS', 'FALL_CLEAN'].includes(item.id);
+const isListable = item => !['40', '60', '50', '30', '20'].includes(item.id);
 
-const isBroadcast = item => item.id === 'HALL';
-const isFastMatch = item => item.id === 'QUICK_SEARCH';
-const isExclude = item => item.id === 'WRONG_CLEAN';
-const isTip = item => item.id === 'TIPS';
-const isCancelDefeat = item => item.id === 'FALL_CLEAN';
+const isBroadcast = item => item.id === '40';
+const isFastMatch = item => item.id === '60';
+const isExclude = item => item.id === '50';
+const isTip = item => item.id === '30';
+const isCancelDefeat = item => item.id === '20';
 
 
 export default () => data.items;

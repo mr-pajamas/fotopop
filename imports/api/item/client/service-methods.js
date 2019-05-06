@@ -7,7 +7,7 @@ import client from '../../../modules/client/service-client.js';
 export const getItems = async function () {
   if (Meteor.isDevelopment) {
     await sleep(2000);
-    return [{ id: 'HALL', name: '喇叭', price: 10 }];
+    return [{ id: '40', name: '喇叭', price: 10 }];
   }
 
   const { data: { data: { list = [] } = {} } = {} } = await client.get('/api/product/tools');
@@ -15,12 +15,12 @@ export const getItems = async function () {
   return map(
     list,
     ({
-      eventEnum: id,
+      event,
       name,
       price,
       coverUrl: icon,
     }) => ({
-      id,
+      id: `${event}`,
       name,
       price,
       icon,

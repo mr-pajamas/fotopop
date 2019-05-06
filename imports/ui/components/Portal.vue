@@ -177,7 +177,7 @@
 
     <broadcast />
 
-    <component v-if="modal" :is="modal" @close="modal = ''" />
+    <component v-if="modal" :is="modal" @close="modal = ''" :own-account="ownAccount" />
   </div>
 </template>
 
