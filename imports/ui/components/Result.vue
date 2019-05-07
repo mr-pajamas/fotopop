@@ -98,7 +98,7 @@
               <p class="lead"><span>+{{ ownRank.expGain }}</span></p>
             </div>
             <hr>
-            <div class="streak" v-if="ownRank.place === 1">
+            <div class="streak" v-if="ownAccount.streaks">
               <p>恭喜你当前连胜次数为：{{ ownRank.wins }}次</p>
               <template v-if="ownRank.remainingWins">
                 <p class="lead">再胜<span class="red">{{ ownRank.remainingWins }}场</span>可获得</p>

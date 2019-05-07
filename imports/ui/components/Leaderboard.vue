@@ -34,8 +34,8 @@
       </div>
 
       <div class="ranking-lists flexible d-flex flex-column">
-        <div class="tabs d-flex align-items-end inflexible">
-          <a href="#" class="tab" @click.prevent="type = 0" :class="{ selected: type === 0 }">土豪榜</a>
+        <div class="tabs d-flex align-items-end justify-content-center inflexible">
+          <!--<a href="#" class="tab" @click.prevent="type = 0" :class="{ selected: type === 0 }">土豪榜</a>-->
           <!--<a href="#" class="tab" @click.prevent="type = 1" :class="{ selected: type === 1 }">魅力榜</a>-->
           <a href="#" class="tab" @click.prevent="type = 2" :class="{ selected: type === 2 }">等级榜</a>
         </div>
@@ -103,7 +103,7 @@
     data() {
       return {
         loading: true,
-        type: 0,
+        type: 2,
         scope: 0,
         myRank: {},
         rankList: [],
