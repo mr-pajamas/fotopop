@@ -13,16 +13,17 @@
   export default {
     components: { AspectRatioBox },
     name: "aspect-ratio-img-box",
-    props: ['ratio', 'src'],
+    props: ['ratio', 'src', 'randomBgColor'],
     computed: {
       imgStyle() {
         const style = {
-          backgroundColor: this.randomColor(),
+          // backgroundColor: this.randomColor(),
           backgroundRepeat: 'no-repeat',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         };
         if (this.src) style.backgroundImage = `url("${this.src}")`;
+        if (this.randomBgColor) style.backgroundColor = this.randomColor();
         return style;
       },
     },

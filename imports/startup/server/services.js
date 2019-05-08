@@ -6,3 +6,5 @@ import '../../api/game/server/publications.js';
 
 import '../../api/broadcast/methods.js';
 import '../../api/broadcast/server/publications.js';
+
+import '../../api/item/methods.js';

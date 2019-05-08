@@ -24,7 +24,7 @@
       -->
       <span class="small d-block text-center">发送喇叭</span>
     </button>
-    <button class="btn inflexible icon-btn disabled">
+    <button class="btn inflexible icon-btn" @click="$emit('show-items')">
       <!--<img src="/images/snippets.svg" class="d-block mx-auto">-->
       <!-- 道具 -->
       <img class="mx-auto d-block" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACoAAAAuCAMAAABpjHt/AAAA/FBMVEUAAAADAwMDAwMDAwP/zyUkpeVaWM7////luiEEBAYPDAQEBAMfHkX5yiRWVMWykBpmUxBMPg0pIQg8OoeWehdNS7AyMXEJCREHBwxOTLIKCAP19fVFQ5wwL20RESaTdxfp6enAwMBRT7pCQZcrKWAYGDUPDh7Enx0jHxQMDAxYVsrJyclUUsClpaVHRaJAPpI4N4B4eHg0M3YpKFwoJ1olJFJLSkobGjkjIh8GERcVFRXr6+v58+LQ0NDn27y7u7vj1rZKSKebm5sZcJuHh4eAgIBwcHCekG2Th2dXV1dbV08cGz1IRDxBPTMtLS0TEyjGoB0sJhmLcRYVEw91TfkuAAAAA3RSTlMA6VOHqIw1AAAByElEQVQ4y7XV53LaQBSGYcOXHGklIaGCVSjGgAm4dzu9957c/71EqwPj8eSoeDJ5f0oPy2p2V9pot1Bbq72hY1lnC4pGrem9mu5Ceb5MkfdAQnyXbXMKpuWTWNH7/0TNyA8yK/Ajs4x2Ogy7NlbZXcb5nduU8ywoJzzDTi90FCyPr0p0y4aTkhsDA6LUgb1VRj1gk4iGAHYobxO2J1PT0lIP+hEYsLVMkXbhUDHoo/4lD0sOuhI1bRUez5yRwhtjD5h/Pj89mirbFOgvcPmghnEJTiESqI8Y+HbyantsGEZ/7+Dtl1zO4As0wGCO5bax7tlPJNMeAoFacCcjLJ+v5IsFkgG5sGRK+9+R8LiPF4gPqYQG6BHtJzgo6BiYEpE8AR+hHgVPeQK/cZTTUHysSK/AIVT/yYfrd2PjK4bFGkTyEqR0jOv3CwDLk0/6lykvgbiwZ8hLLubIG/HClm2XK0CdT2j3NAbUrrxddJ6NRF1MSOcOY8xgexVb+yqlVS9H661dcWB6rlt9YKRjyFUdbks63P/97ZJlPwSYZQItexP+RTt5guTrt2hNN7Q+ps0+Rg8L2m41kK8LqtP/UN0NbdQdP54NP8l/AG6hNXLQ4ZKoAAAAAElFTkSuQmCC">
