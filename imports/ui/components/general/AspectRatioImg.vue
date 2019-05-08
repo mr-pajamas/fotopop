@@ -10,7 +10,7 @@
   export default {
     name: "aspect-ratio-img",
     components: { AspectRatioBox },
-    props: ['ratio', 'heightBased', 'src', 'randomBgColor'],
+    props: ['ratio', 'heightBased', 'src', 'randomBgColor', 'size'],
     computed: {
       imgStyle() {
         const style = {
@@ -18,6 +18,7 @@
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         };
+        if (this.size) style.backgroundSize = this.size;
         if (this.src) style.backgroundImage = `url("${this.src}")`;
         if (this.randomBgColor) style.backgroundColor = randomColor();
         return style;

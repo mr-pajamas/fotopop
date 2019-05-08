@@ -1,6 +1,7 @@
 <template>
   <div class="aspect-ratio-box">
-    <svg xmlns="http://www.w3.org/2000/svg" :viewBox="shimSvgViewBox" :class="{ 'height-based': !!heightBased }"></svg>
+    <img :src="imgSrc" :class="{ 'height-based': !!heightBased }">
+    <!--<svg xmlns="http://www.w3.org/2000/svg" :viewBox="shimSvgViewBox" :class="{ 'height-based': !!heightBased }"></svg>-->
     <div class="aspect-ratio-box-inside">
       <slot></slot>
     </div>
@@ -12,9 +13,8 @@
     name: "aspect-ratio-box",
     props: ['ratio', 'heightBased'],
     computed: {
-      shimSvgViewBox() {
-        if (!this.ratio) return '0 0 100 100';
-        return `0 0 ${this.ratio * 100} 100`;
+      imgSrc() {
+        return `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='${[0, 0, (this.ratio ? this.ratio * 100 : 100), 100].join(' ')}'%3E%3C/svg%3E`;
       },
     },
   };
@@ -25,7 +25,8 @@
   .aspect-ratio-box {
     position: relative;
 
-    svg {
+    > img {
+      display: block;
       width: 100% !important;
       height: auto !important;
 
@@ -35,7 +36,7 @@
       }
     }
 
-    .aspect-ratio-box-inside {
+    > .aspect-ratio-box-inside {
       position: absolute;
       top: 0;
       left: 0;
