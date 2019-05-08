@@ -47,7 +47,7 @@
     <div class="choice-area d-flex">
       <div class="grid inflexible" v-for="(choice, index) in choices">
         <button class="btn w-100 choice" :class="{ pressed: isPressed(index), excluded: isExcluded(index) }" @click="!isExcluded(index) && onChoiceClick(index)" :disabled="isExcluded(index) || answerCorrect">
-          <aspect-ratio-box :ratio="7/6">
+          <aspect-ratio-box :ratio="7 / 6">
             <div class="w-100 h-100 d-flex align-items-center justify-content-center">
               <span>{{ choice }}</span>
             </div>
@@ -70,7 +70,7 @@
 
   import { getWrongChoices, getTip } from '../../../api/game/methods.js';
 
-  import AspectRatioBox from '../general/AspectRatioBox.vue';
+  import AspectRatioBox from '../general/AspectRatioBox2.vue';
   import StyledRoundedButton from '../general/StyledRoundedButton2.vue';
 
   const tid = Symbol('tid');

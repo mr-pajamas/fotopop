@@ -42,7 +42,7 @@
 
   import CategoriesHeader from './CategoriesHeader.vue';
   import HeaderBar from './lobby/HeaderBar.vue';
-  import AspectRatioBox from './general/AspectRatioBox.vue';
+  import AspectRatioBox from './general/AspectRatioBox2.vue';
   import AchievementGroup from './lobby/AchievementGroup.vue';
   import SpinnerBox from './general/SpinnerBox.vue';
 

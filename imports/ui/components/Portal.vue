@@ -108,7 +108,8 @@
       </div>
       <div class="star-player flexible">
         <div class="filler d-flex flex-column align-items-center">
-          <img v-if="$meteor.starPlayer" :src="($meteor.starPlayer.avatar && $meteor.starPlayer.avatar.full) || '/images/default-avatar.png'" class="star-avatar">
+          <aspect-ratio-img :src="($meteor.starPlayer.avatar && $meteor.starPlayer.avatar.full) || '/images/default-avatar.png'" :ratio="1" :height-based="true" class="star-avatar" v-if="$meteor.starPlayer" />
+          <!--<img v-if="$meteor.starPlayer" :src="($meteor.starPlayer.avatar && $meteor.starPlayer.avatar.full) || '/images/default-avatar.png'" class="star-avatar">-->
           <!--
           <svg class="star-player-badge" width="162" height="59" viewBox="0 0 162 59" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><rect stroke="#333" stroke-width="4" fill="#FFF" x="24" y="15" width="126" height="36" rx="5"/><rect fill="#FF5E72" x="28" y="19" width="118" height="28" rx="3"/><path d="M54.01 27.972a30.593 30.593 0 0 1-2.046 4.444l-1.298-.814v9.504h-2.002v-1.32h-2.618v1.848H44V24.672h6.666v5.72A28.892 28.892 0 0 0 53.24 23l2.09.44a41.717 41.717 0 0 1-.66 2.508h8.8v2.024h-6.6v3.366h5.808v1.98H56.87v3.278h6.292v1.958H56.87v4.862h-2.09V27.972h-.77zm-7.964 9.878h2.618v-4.752h-2.618v4.752zm0-6.71h2.618v-4.554h-2.618v4.554zm36.63-7.238V43.35h-2.09v-1.54h-9.922v1.562h-2.09v-19.47h14.102zM70.664 39.764h9.922v-6.116h-9.922v6.116zm0-8.162h9.922v-5.676h-9.922v5.676zm26.158-8.536a33.37 33.37 0 0 1 1.848 3.762h6.82v1.584c-2.508 4.752-6.138 8.426-10.912 10.978.924.88 2.046 1.364 3.366 1.474 1.034.044 2.508.066 4.422.066 1.166 0 2.772-.044 4.84-.132l-.506 2.068h-4.004c-1.958 0-3.366-.022-4.202-.044-2.398-.044-4.202-.748-5.434-2.156-.462-.484-.836-.726-1.144-.726-.484 0-1.32 1.144-2.508 3.454l-1.672-1.166c1.496-2.992 2.904-4.466 4.224-4.466.286 0 .55.066.792.198a.442.442 0 0 1 .176.088c4.334-2.288 7.656-5.346 9.988-9.174H89.122v-2.046h7.26a21.14 21.14 0 0 0-1.98-3.366l2.42-.396zm16.698 12.738c-.682 1.408-1.43 2.64-2.266 3.652l-1.364-1.628c1.188-1.364 2.2-3.234 3.036-5.632l1.892.418-.484 1.342h4.884V32.46h2.112v1.496h7.084v1.848h-7.084v1.76h6.27v1.76h-6.27v1.76h8.074v1.892h-18.722v-1.892h8.536v-1.76H113.3v-1.76h5.918v-1.76h-5.698zm-.946-12.034h14.542v8.096h-14.542V23.77zm12.474 6.336v-1.452h-10.406v1.452h10.406zm-10.406-3.124h10.406v-1.43h-10.406v1.43z" fill="#333"/><path d="M14.005 15.214c-.536.872-1.075 1.556-1.624 2.053-.534.484-1.238.937-2.116 1.366.91.552 1.613 1.053 2.116 1.508.52.472 1.057 1.104 1.614 1.897.475-.76.99-1.392 1.546-1.897.537-.486 1.265-.989 2.188-1.516-.932-.43-1.66-.88-2.188-1.358-.545-.494-1.055-1.178-1.536-2.053z" stroke="#333" stroke-width="2" fill="#43D2F6"/><path d="M7.93 46.269c-.789 1.359-1.575 2.397-2.371 3.118-.784.71-1.866 1.375-3.25 2.003 1.433.84 2.513 1.588 3.25 2.255.752.682 1.536 1.63 2.357 2.85.681-1.166 1.424-2.117 2.234-2.85.791-.717 1.916-1.47 3.38-2.265-1.482-.632-2.607-1.292-3.38-1.993-.79-.715-1.525-1.753-2.22-3.118z" stroke="#333" stroke-width="2" fill="#FFCB2B"/><path d="M152.427 2.297c-.985 1.748-1.964 3.067-2.952 3.962-.977.884-2.356 1.712-4.144 2.494 1.849 1.066 3.227 2.008 4.144 2.84.932.844 1.908 2.043 2.938 3.6.84-1.489 1.76-2.69 2.766-3.6.988-.896 2.427-1.843 4.322-2.851-1.921-.789-3.36-1.611-4.322-2.483-.978-.886-1.89-2.206-2.752-3.962z" stroke="#333" stroke-width="2" fill="#F25A5A"/></g></svg>
           -->
@@ -193,10 +194,11 @@
   import Broadcast from './Broadcast.vue';
   import BroadcastModal from './BroadcastModal.vue';
   import { UserAccounts } from '../../api/account/collections.js';
+  import AspectRatioImg from './general/AspectRatioImg.vue';
 
   export default {
     name: 'portal',
-    components: { BroadcastModal, Broadcast, SearchRoomModal, DiamondInline, BigHead },
+    components: { AspectRatioImg, BroadcastModal, Broadcast, SearchRoomModal, DiamondInline, BigHead },
     props: ['ownAccount'],
     data() {
       return {

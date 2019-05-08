@@ -10,7 +10,7 @@
           <div class="cell" v-for="(item, index) in items" :key="item.id">
             <a href="javascript:void(0)" class="item-box" :class="{ selected: index === selectedIndex }">
               <div class="item-icon">
-                <aspect-ratio-img-box :ratio="1" :src="item.icon" class="w-100" />
+                <aspect-ratio-img :ratio="1" :src="item.icon" class="w-100" />
                 <div class="amount-label" v-if="ownAccount.itemAmount(item.id)">{{ ownAccount.itemAmount(item.id) }}</div>
               </div>
               <p class="item-price d-flex align-items-center justify-content-center"><img src="/images/diamond.png" class="d-block"><span>{{ item.price }}</span></p>
@@ -90,7 +90,7 @@
   import query from '../../../modules/client/parsed-query.js';
   import { listableItems } from '../../../domain/client/items.js';
   import bridge from '../../../modules/client/js-bridge.js';
-  import AspectRatioImgBox from '../general/AspectRatioImgBox.vue';
+  import AspectRatioImg from '../general/AspectRatioImg.vue';
   import { useItem } from '../../../api/item/methods.js';
 
   const tid = Symbol('tid');
@@ -98,7 +98,7 @@
   export default {
     name: "items-modal",
     components: {
-      AspectRatioImgBox,
+      AspectRatioImg,
       // 'tiny-slider': VueTinySlider,
       Flickity,
     },
