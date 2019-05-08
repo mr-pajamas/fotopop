@@ -14,7 +14,7 @@
     <transition name="collapse" @before-enter="beforeEnter" @enter="enter" @before-leave="beforeLeave" @leave="leave">
       <div class="group-body" v-show="true">
         <div class="group-body-content">
-          <a href="#" class="achievement d-block" v-for="achievement in group.achievements" :key="achievement.name" :class="{ acquired: acquired(achievement) }">
+          <a href="#" class="achievement d-block" v-for="achievement in group.achievements" :key="achievement.name" :class="{ acquired: acquired(achievement) }" @click.prevent="acquired(achievement) && !decorated(achievement) && decorate(achievement)">
             <div class="medal-bar d-flex align-items-center">
               <img v-if="acquired(achievement)" :src="achievement.medal" class="medal">
               <div v-else class="medal d-flex align-items-center"><span>{{ achievement.name }}</span></div>
@@ -22,7 +22,12 @@
               <span v-if="!acquired(achievement)" class="status">未获得</span>
               <img v-else-if="newlyAcquired(achievement)" class="status" style="color: rgb(250,75,127)" src="/images/new.png">
               <!-- decorated -->
-
+              <transition name="draw" :duration="{ enter: 800 }">
+                <svg v-if="decorated(achievement)" class="status" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 440">
+                  <circle cx="220" cy="220" r="180" fill="none" stroke="rgb(253,72,126)" stroke-width="40" />
+                  <path fill="none" stroke="rgb(253,72,126)" stroke-width="40" class="check" d="M114 210l80 78 176-183"/>
+                </svg>
+              </transition>
             </div>
             <p>{{ achievement.description }}</p>
           </a>
@@ -38,6 +43,8 @@
   import find from 'lodash/find';
 
   import { AchievementStatus } from '../../../domain/enums.js';
+
+  import { decorate } from '../../../api/account/client/service-methods.js';
 
   export default {
     name: "achievement-group",
@@ -65,6 +72,9 @@
       newlyAcquired({ status }) {
         return status === AchievementStatus.NEWLY_ACQUIRED;
       },
+      decorated({ status }) {
+        return status === AchievementStatus.DECORATED;
+      },
       beforeEnter(el) {
         // el.style.height = '0';
         // TweenMax.set(el, { height: 0 });
@@ -85,6 +95,10 @@
       leave(el, done) {
         // el.style.height = '0';
         TweenMax.to(el, .2, { height: 0, repeat: 0, ease: Sine.ease, onComplete: done });
+      },
+      async decorate({ id }) {
+        await decorate(id);
+        this.$emit('update');
       },
     },
   };
@@ -152,6 +166,21 @@
           img.status {
             height: 1.2rem;
           }
+
+          svg.status {
+            height: 1.8rem;
+            width: auto;
+
+            circle {
+              stroke-dasharray: 1131;
+              stroke-dashoffset: 0;
+            }
+
+            path {
+              stroke-dasharray: 366;
+              stroke-dashoffset: 0;
+            }
+          }
         }
 
         p {
@@ -160,6 +189,33 @@
           margin: 0;
         }
       }
+    }
+  }
+
+  .draw-enter-active {
+    circle {
+      animation: stroke-circle .5s ease-in-out forwards;
+    }
+    path {
+      animation: stroke-check .8s ease-in-out forwards;
+    }
+  }
+
+  @keyframes stroke-circle {
+    from {
+      stroke-dashoffset: 1131;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes stroke-check {
+    0%, 30% {
+      stroke-dashoffset: 366;
+    }
+    100% {
+      stroke-dashoffset: 0;
     }
   }
 </style>

@@ -609,7 +609,7 @@
     pointer-events: none;
   }
 
-  @keyframes dialogFadeIn {
+  @keyframes dialog-fade-in {
     0% {
       opacity: 0;
       transform: translateY(80%);
@@ -620,13 +620,19 @@
     }
   }
 
+  @keyframes stroke {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
   .dialog-filler {
     background-color: rgba(0,0,0,.5);
     z-index: 1000;
   }
 
   .dialog {
-    animation: dialogFadeIn .5s both .1s;
+    animation: dialog-fade-in .5s both .1s;
     background-color: #fff;
     position: absolute;
     border-radius: .8rem;
