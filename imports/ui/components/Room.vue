@@ -87,7 +87,7 @@
         -->
       </div>
 
-      <bottom-bar class="inflexible" @show-snippets="modal = 'snippets-modal'" @show-broadcast="modal = 'broadcast-modal'" />
+      <bottom-bar class="inflexible" @show-snippets="modal = 'snippets-modal'" @show-broadcast="modal = 'broadcast-modal'" @show-items="modal = 'items-modal'" />
     </div>
 
     <transition name="countdown">
@@ -144,6 +144,7 @@
   import Broadcast from './Broadcast.vue';
   import BroadcastModal from './BroadcastModal.vue';
   import SnippetsModal from './room/SnippetsModal.vue';
+  import ItemsModal from './room/ItemsModal.vue';
 
   const tid = Symbol('tid');
   // const atid = Symbol('atid');
@@ -166,7 +167,7 @@
 
   export default {
     name: 'room',
-    components: { SnippetsModal, BroadcastModal, Broadcast, Message, AnswerSheet, SoundIcon, BottomBar, StyledPillButton, EmptySlot, Avatar, DiamondInline, MessageBox },
+    components: { ItemsModal, SnippetsModal, BroadcastModal, Broadcast, Message, AnswerSheet, SoundIcon, BottomBar, StyledPillButton, EmptySlot, Avatar, DiamondInline, MessageBox },
     props: ['ownAccount', 'room'],
     data() {
       return {
