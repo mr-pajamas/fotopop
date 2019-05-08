@@ -34,8 +34,12 @@ export const broadcast = new ValidatedMethod({
 
     // 检查库存
     if (!this.isSimulation) {
-      const { useItem } = await import('../item/server/service-methods.js');
+      const [{ textCheck }, { useItem }] = await Promise.all([
+        import('../general/server/service-methods.js'),
+        import('../item/server/service-methods.js'),
+      ]);
       try {
+        await textCheck(message);
         await useItem(userId, osType, '40', !user.itemAmount('40'));
       } catch (e) {
         throw new Meteor.Error(500, e.message);
