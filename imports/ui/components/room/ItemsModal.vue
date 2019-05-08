@@ -10,7 +10,7 @@
           <div class="cell" v-for="(item, index) in items" :key="item.id">
             <a href="javascript:void(0)" class="item-box" :class="{ selected: index === selectedIndex }">
               <div class="item-icon">
-                <aspect-ratio-img :ratio="1" :src="item.icon" class="w-100" />
+                <aspect-ratio-img :ratio="1" :src="item.icon" size="contain" class="w-100" />
                 <div class="amount-label" v-if="ownAccount.itemAmount(item.id)">{{ ownAccount.itemAmount(item.id) }}</div>
               </div>
               <p class="item-price d-flex align-items-center justify-content-center"><img src="/images/diamond.png" class="d-block"><span>{{ item.price }}</span></p>
