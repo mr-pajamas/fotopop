@@ -12,7 +12,7 @@
 </template>
 
 <script>
-  import AspectRatioBox from '../general/AspectRatioBox.vue';
+  import AspectRatioBox from '../general/AspectRatioBox2.vue';
   export default {
     name: 'avatar',
     components: { AspectRatioBox },
