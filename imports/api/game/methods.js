@@ -1162,3 +1162,145 @@ export const sendMessage = new ValidatedMethod({
     });
   },
 });
+
+export const getWrongChoices = new ValidatedMethod({
+  name: 'game.getWrongChoices',
+  validate: new SimpleSchema({
+    roomId: {
+      type: String,
+    },
+    session: {
+      type: SimpleSchema.Integer,
+      min: 1,
+    },
+    roundNumber: {
+      type: SimpleSchema.Integer,
+      min: 1,
+      max: 10,
+    },
+    osType: {
+      type: SimpleSchema.Integer,
+      allowedValues: [1, 2],
+    },
+  }).validator({ clean: true }),
+  mixins: [LoggedInMixin],
+  checkLoggedInError: {
+    error: '403',
+    reason: 'You need to be logged in to call this method',
+  },
+  applyOptions: {
+    wait: true,
+    noRetry: true,
+    throwStubExceptions: true,
+  },
+  async run({
+    roomId,
+    session,
+    roundNumber,
+    osType,
+  }) {
+    const { userId } = this;
+
+    const user = UserAccounts.findOne(userId);
+
+    const currentRoom = Rooms.findOne({
+      _id: roomId,
+      searchId: { $exists: true, $ne: null },
+      'users.id': userId,
+    });
+
+    if (!currentRoom) throw new Meteor.Error(400, '用户不在指定房间中');
+
+    if (!currentRoom.inGame()) throw new Meteor.Error(409, '当前房间未进行游戏');
+
+    if (currentRoom.session !== session
+      || currentRoom.currentRoundNumber() !== roundNumber) {
+      throw new Meteor.Error(400, '指定的回合非当前正在进行的回合');
+    }
+
+    // 终局检查
+    if (currentRoom.currentRoundOver()) throw new Meteor.Error(409, '当前回合已经结束');
+
+    if (!this.isSimulation) {
+      const { useItem } = await import('../item/server/service-methods.js');
+      try {
+        await useItem(userId, osType, '50', !user.itemAmount('50'));
+      } catch (e) {
+        throw new Meteor.Error(500, e.message);
+      }
+    }
+
+    return currentRoom.currentQuestion().wrongChoices;
+  },
+});
+
+export const getTip = new ValidatedMethod({
+  name: 'game.getTip',
+  validate: new SimpleSchema({
+    roomId: {
+      type: String,
+    },
+    session: {
+      type: SimpleSchema.Integer,
+      min: 1,
+    },
+    roundNumber: {
+      type: SimpleSchema.Integer,
+      min: 1,
+      max: 10,
+    },
+    osType: {
+      type: SimpleSchema.Integer,
+      allowedValues: [1, 2],
+    },
+  }).validator({ clean: true }),
+  mixins: [LoggedInMixin],
+  checkLoggedInError: {
+    error: '403',
+    reason: 'You need to be logged in to call this method',
+  },
+  applyOptions: {
+    wait: true,
+    noRetry: true,
+    throwStubExceptions: true,
+  },
+  async run({
+    roomId,
+    session,
+    roundNumber,
+    osType,
+  }) {
+    const { userId } = this;
+
+    const user = UserAccounts.findOne(userId);
+
+    const currentRoom = Rooms.findOne({
+      _id: roomId,
+      searchId: { $exists: true, $ne: null },
+      'users.id': userId,
+    });
+
+    if (!currentRoom) throw new Meteor.Error(400, '用户不在指定房间中');
+
+    if (!currentRoom.inGame()) throw new Meteor.Error(409, '当前房间未进行游戏');
+
+    if (currentRoom.session !== session
+      || currentRoom.currentRoundNumber() !== roundNumber) {
+      throw new Meteor.Error(400, '指定的回合非当前正在进行的回合');
+    }
+
+    // 终局检查
+    if (currentRoom.currentRoundOver()) throw new Meteor.Error(409, '当前回合已经结束');
+
+    if (!this.isSimulation) {
+      const { useItem } = await import('../item/server/service-methods.js');
+      try {
+        await useItem(userId, osType, '30', !user.itemAmount('30'));
+      } catch (e) {
+        throw new Meteor.Error(500, e.message);
+      }
+    }
+
+    return currentRoom.currentQuestion().tip;
+  },
+});

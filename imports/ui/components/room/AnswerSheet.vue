@@ -1,15 +1,17 @@
 <template>
   <div class="answer-sheet">
-    <div class="button-bar d-flex" style="display: none !important;">
-      <button class="btn btn-rounded">
+    <div class="button-bar d-flex">
+      <button class="btn btn-rounded" @click="excludeWrongChoices" :disabled="!!wrongChoices.length || fetchingWrongChoices || answerCorrect" v-if="excludeItem">
         <div>除&nbsp;&nbsp;&nbsp;错</div>
-        <div class="small">200钻石</div>
+        <div class="small" v-if="excludeItemAmount">拥有{{ excludeItemAmount }}个</div>
+        <div class="small" v-else>{{ excludeItem.price }}钻石</div>
         <!--<img src="/images/exclude.svg" class="btn-append-icon">-->
         <svg class="btn-append-icon" width="40" height="58" viewBox="0 0 40 58" xmlns="http://www.w3.org/2000/svg"><g transform="translate(4 2)" stroke="#030303" stroke-width="4" fill="none" fill-rule="evenodd"><path d="M13 33.757v16.422a3.667 3.667 0 0 0 3.667 3.667h1.416a3.667 3.667 0 0 0 3.667-3.667V33.757c-1.684.964-3.12 1.455-4.375 1.455s-2.69-.491-4.375-1.455z" fill="#FFF"/><ellipse fill="#EB5A6B" cx="17" cy="17.231" rx="17" ry="17.231"/><path d="M9 22.848L26 12" stroke-linecap="round"/></g></svg>
       </button>
-      <button class="btn btn-rounded">
+      <button class="btn btn-rounded" @click="showTip" :disabled="!!tip || fetchingTip || answerCorrect" style="padding-right: 1.5rem" v-if="tipItem">
         <div>提&nbsp;&nbsp;示</div>
-        <div class="small">50钻石</div>
+        <div class="small" v-if="tipItemAmount">拥有{{ tipItemAmount }}个</div>
+        <div class="small" v-else>{{ tipItem.price }}钻石</div>
         <img src="/images/tip.png" class="btn-append-icon">
         <!--
         <svg class="btn-append-icon" width="40" height="58" viewBox="0 0 40 58" xmlns="http://www.w3.org/2000/svg"><g transform="translate(2 2)" stroke-width="4" fill="none" fill-rule="evenodd"><path d="M7.667 33.059v17.274A3.667 3.667 0 0 0 11.333 54h12.75a3.667 3.667 0 0 0 3.667-3.667V33.06c-4.234 1.533-7.56 2.307-10.042 2.307-2.48 0-5.807-.774-10.041-2.307z" stroke="#030303" fill="#FFF"/><path d="M8 41h17M8 47h17" stroke="#030303" stroke-linecap="square"/><ellipse stroke="#030303" fill="#FFCF25" cx="17" cy="17.231" rx="17" ry="17.231"/><path d="M18.271 5.53c5.803 1.408 8.704 4.391 8.704 8.949" stroke="#FFF" stroke-linecap="round"/></g></svg>
@@ -59,9 +61,14 @@
 <script>
   import { Meteor } from 'meteor/meteor';
   import indexOf from 'lodash/indexOf';
+  // import map from 'lodash/map';
+  // import forEach from 'lodash/forEach';
   import MD5 from 'crypto-js/md5';
+  import query from '../../../modules/client/parsed-query.js';
+  import bridge from '../../../modules/client/js-bridge.js';
+  import { excludeItem, tipItem } from '../../../domain/client/items.js';
 
-  import { submitAnswer } from '../../../api/game/methods.js';
+  import { getWrongChoices, getTip } from '../../../api/game/methods.js';
 
   import AspectRatioBox from '../general/AspectRatioBox.vue';
   import StyledRoundedButton from '../general/StyledRoundedButton2.vue';
@@ -71,11 +78,14 @@
   export default {
     name: "answer-sheet",
     components: { StyledRoundedButton, AspectRatioBox },
-    props: ['type', 'choices', 'answerFormat', 'answerHash'],
+    props: ['ownAccount', 'room', 'type', 'choices', 'answerFormat', 'answerHash'],
     data() {
       return {
-        excluded: [],
+        wrongChoices: [],
+        tip: '',
         model: [], // -1 表示空格，undefined表示空位，数字表示序号
+        fetchingWrongChoices: false,
+        fetchingTip: false,
       };
     },
     computed: {
@@ -114,6 +124,18 @@
         if (this.answerIncorrect) return '#ff0000';
         return '#333333';
       },
+      excludeItem() {
+        return excludeItem();
+      },
+      excludeItemAmount() {
+        return this.ownAccount.itemAmount(this.excludeItem.id);
+      },
+      tipItem() {
+        return tipItem();
+      },
+      tipItemAmount() {
+        return this.ownAccount.itemAmount(this.tipItem.id);
+      },
     },
 
     watch: {
@@ -128,6 +150,22 @@
       answerIncorrect(val) {
         if (val) {
           this[tid] = Meteor.setTimeout(() => this.reset(), 1000);
+        }
+      },
+      wrongChoices(val) {
+        const { hit, newModel } = this.model.reduce((acc, cur) => {
+          if (indexOf(val, cur) !== -1) {
+            acc.hit = true;
+            acc.newModel.push(undefined);
+          } else {
+            acc.newModel.push(cur);
+          }
+          return acc;
+        }, { hit: false, newModel: [] });
+
+        if (hit) {
+          this.model = newModel;
+          if (this.type === 1) this.compactModel();
         }
       },
     },
@@ -161,7 +199,7 @@
         return this.model.includes(i);
       },
       isExcluded(i) {
-        return this.excluded.includes(i);
+        return this.wrongChoices.includes(i);
       },
       compactModel() { // 仅当英语模式需要用到
         const newModel = [...this.answerFormat].map(c => c === ' ' ? -1 : undefined);
@@ -178,6 +216,45 @@
           from: 0,
           newModel,
         }));
+      },
+      async excludeWrongChoices() {
+        if (this.excludeItemAmount || this.ownAccount.diamondAmount() >= this.excludeItem.price) {
+          this.fetchingWrongChoices = true;
+          try {
+            this.wrongChoices = await getWrongChoices.callAsync({
+              roomId: this.room._id,
+              session: this.room.session,
+              roundNumber: this.room.currentRoundNumber(),
+              osType: query.osType,
+            });
+          } catch (e) {
+            // TODO: 显示异常信息
+          } finally {
+            this.fetchingWrongChoices = false;
+          }
+        } else {
+          bridge.gameFastRecharge({ showMessage: true });
+        }
+      },
+      async showTip() {
+        if (this.tipItemAmount || this.ownAccount.diamondAmount() >= this.tipItem.price) {
+          this.fetchingTip = true;
+          try {
+            this.tip = await getTip.callAsync({
+              roomId: this.room._id,
+              session: this.room.session,
+              roundNumber: this.room.currentRoundNumber(),
+              osType: query.osType,
+            });
+            this.$emit('got-tip', this.tip);
+          } catch (e) {
+            // TODO: 显示异常信息
+          } finally {
+            this.fetchingTip = false;
+          }
+        } else {
+          bridge.gameFastRecharge({ showMessage: true });
+        }
       },
     },
   };
@@ -205,7 +282,6 @@
 
         & + .btn-rounded {
           margin-left: 1.5rem;
-          padding-right: 1.5rem;
         }
 
         .small {
@@ -218,6 +294,10 @@
           width: auto;
           top: -5%;
           right: -13%;
+        }
+
+        &[disabled] {
+          opacity: .4;
         }
       }
     }

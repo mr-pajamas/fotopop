@@ -64,7 +64,7 @@
       <broadcast />
 
       <transition name="slide-up">
-        <answer-sheet v-if="inQuestion" class="inflexible" v-bind="room.currentQuestion()" @answer-correct="submitAnswer($event)" />
+        <answer-sheet v-if="inQuestion" class="inflexible" v-bind="room.currentQuestion()" :own-account="ownAccount" :room="room" @answer-correct="submitAnswer($event)" @got-tip="tip = $event" />
       </transition>
 
       <div v-if="!room.inGame()" class="button-group inflexible d-flex">
@@ -113,6 +113,12 @@
     -->
 
     <component v-if="modal" :is="modal" @close="modal = ''" :own-account="ownAccount" :room="room" />
+
+    <div class="tip-modal" v-if="tip">
+      <h5 class="text-center">终极提示</h5>
+      <p class="text-center">{{ tip }}</p>
+      <button class="btn close-btn rounded-circle" @click="tip = ''"><img class="d-block w-100" alt="close" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAMAAAC7IEhfAAAAVFBMVEUAAABwdJNxdZNwdJNwdJN8hJtwdJNwdZJwdJNydpNydJRzdpJ1dZl0gJdxdZJwdJL////IydVydpPP0Nq/wc6srsCford3e5e5u8m2uMewssOmqbszQBPYAAAAD3RSTlMA1qh/8wv+6L+CclIjFvKQZ/NzAAABEElEQVQ4y53V27KDIAwF0HBRkWJDbe31///z9OFEwE3L2P3mzBqZSBKpTPDaKWuV0z7Qx0yj4ixqnKqsM5Y3saZDdxi4kuGwdabnanpTHqv5Y3R+fOFAJmf4a8xaR/8d9v8VdQM3MnTFwfNy5SLX5y0/fJLvvMR4yt0lxod8+ekNx/UFUaS4uMjD+Ibpfk8ixZ3n9d6JAjPK5CSBPKNEx540o0THmhyjRMeOFKMsnFRjGSU6tnTcwktMtaccSaGrSUUO3fmE0pFGNzNKTb7iGKWnUHMoA5FCh1IVbSYuyVdqs6xxn+KSvKfGzUbh9ljK+3jd0yjsGK4d49peADtXSntJ/bD22ou0vZp/Xvbt38cf11pJqJcx9xEAAAAASUVORK5CYII="></button>
+    </div>
   </div>
 </template>
 
@@ -178,6 +184,7 @@
         userMessages: [],
         hintsShown: 0,
         modal: '',
+        tip: '',
       };
     },
     computed: {
@@ -386,6 +393,7 @@
         */
         this.elapsedTime = undefined;
         this.hintsShown = 0;
+        this.tip = '';
       },
       async elapsedTime(val) { // TODO: 此处还要回收加分动效
         if (val >= 3) {
@@ -473,6 +481,7 @@
       },
       async submitAnswer(answer) {
         this.hintsShown = 3;
+        this.tip = '';
         await GameMethods.submitAnswer.callAsync({
           roomId: this.room._id,
           session: this.room.session,
@@ -758,5 +767,36 @@
       }
     }
     */
+    .tip-modal {
+      animation: dialog-fade-in .5s both .1s;
+      background-color: rgba(0,0,0,.5);
+      position: absolute;
+      border-radius: .75rem;
+      overflow: visible;
+      /*box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);*/
+      width: 40vw;
+      padding: .875rem;
+      align-self: center;
+      color: #fff;
+
+      h5 {
+        font-size: 1rem;
+        margin: 0 0 .75rem;
+      }
+
+      p {
+        line-height: 1.4;
+        font-size: .875rem;
+        margin: 0;
+      }
+
+      .close-btn {
+        height: 1.6rem;
+        width: 1.6rem;
+        position: absolute;
+        top: -.5rem;
+        right: -.5rem;
+      }
+    }
   }
 </style>

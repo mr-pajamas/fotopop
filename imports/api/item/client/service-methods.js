@@ -8,6 +8,14 @@ export const getItems = async function () {
   if (Meteor.isDevelopment) {
     await sleep(2000);
     return [{
+      id: '30',
+      name: '提示',
+      price: 50,
+    }, {
+      id: '50',
+      name: '除错',
+      price: 20,
+    }, {
       id: '40',
       name: '喇叭',
       price: 10,
