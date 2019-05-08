@@ -95,7 +95,7 @@
             <rank :user="ownAccount" :rank="ownRank" unit="分" />
             <div class="exp-gain">
               <p>经验值</p>
-              <p class="lead"><span>+{{ ownRank.expGain }}</span></p>
+              <p class="lead d-flex justify-content-start align-items-center"><span>+{{ ownRank.expGain }}</span><span class="double-exp-badge" v-if="ownRank.doubleExp">双倍</span></p>
             </div>
             <hr>
             <div class="streak" v-if="ownAccount.streaks">
@@ -123,15 +123,18 @@
             </div>
             <div class="streak" v-else-if="ownRank.wins">
               <p>很遗憾，你的{{ ownRank.wins }}场连胜被终结！</p>
-              <p class="lead">是否使用<span class="red">败绩抹除卡</span></p>
-              <div class="d-flex align-items-center cancel-defeat">
-                <img src="/images/cancel-defeat.png" class="inflexible">
-                <div class="flexible">
-                  <p>败绩抹除卡</p>
-                  <p class="small">99钻/次</p>
+              <template v-if="cancelDefeatItem">
+                <p class="lead">是否使用<span class="red">败绩抹除卡</span></p>
+                <div class="d-flex align-items-center cancel-defeat">
+                  <img :src="cancelDefeatItem.icon" class="inflexible">
+                  <div class="flexible">
+                    <p>败绩抹除卡</p>
+                    <p class="small" v-if="cancelDefeatItemAmount">拥有{{ cancelDefeatItemAmount }}个</p>
+                    <p class="small" v-else>{{ cancelDefeatItem.price }}钻/次</p>
+                  </div>
+                  <styled-pill-button :bg-color="cancelingDefeat ? '#a0a0a0' : 'rgb(64,197,255)'" class="inflexible" :disabled="cancelingDefeat" @click.native="cancelDefeat">立即使用</styled-pill-button>
                 </div>
-                <styled-pill-button bg-color="rgb(64,197,255)" class="inflexible disabled">立即使用</styled-pill-button>
-              </div>
+              </template>
             </div>
             <div class="streak" v-else>
               <p>你暂未获得连胜</p>
@@ -175,8 +178,12 @@
   import { Results } from '../../api/game/collections.js';
 
   import { leaveRoom, ready } from '../../api/game/methods.js';
+  import { useItem } from '../../api/item/methods.js';
 
+  import query from '../../modules/client/parsed-query.js';
   import bridge from '../../modules/client/js-bridge.js';
+
+  import { cancelDefeatItem } from '../../domain/client/items.js';
 
   import StyledRoundedCard from './general/StyledRoundedCard2.vue';
   import Avatar from './user/Avatar.vue';
@@ -227,6 +234,11 @@
     name: "result",
     components: { SpinnerBox, Rank, StyledPillButton, Avatar, StyledRoundedCard },
     props: ['ownAccount', 'roomId', 'session'],
+    data() {
+      return {
+        cancelingDefeat: false,
+      };
+    },
     created() {
       // console.log(this.roomId, this.session);
       this.$subscribe('result', { name: 'game.result', args: [{ roomId: this.roomId, session: this.session }] });
@@ -251,6 +263,10 @@
         return undefined;
       }
       */
+      cancelDefeatItem,
+      cancelDefeatItemAmount() {
+        return this.ownAccount.itemAmount(this.cancelDefeatItem.id);
+      },
     },
 
     mounted() {
@@ -330,6 +346,20 @@
       },
       share() {
         bridge.gameShare({ roomId: this.roomId, session: this.session });
+      },
+      async cancelDefeat() {
+        if (this.cancelDefeatItemAmount || this.ownAccount.diamondAmount() >= this.cancelDefeatItem.price) {
+          this.cancelingDefeat = true;
+          try {
+            await useItem.callAsync({ id: this.cancelDefeatItem.id, osType: query.osType });
+          } catch (e) {
+            // TODO: 显示异常信息
+          } finally {
+            this.cancelingDefeat = false;
+          }
+        } else {
+          bridge.gameFastRecharge({ showMessage: true });
+        }
       },
     },
   };
@@ -489,6 +519,22 @@
               font-size: 1.125rem;
               /*font-weight: bold;*/
               margin: 0;
+            }
+          }
+        }
+
+        .exp-gain {
+          p.lead {
+            margin-top: .5rem;
+            .double-exp-badge {
+              margin-left: .4rem;
+              background-color: rgb(255,207,37);
+              font-size: .75rem;
+              color: rgb(11,11,11);
+              height: 1.125rem;
+              line-height: 1.125rem;
+              padding: 0 .4rem;
+              border-radius: .3rem;
             }
           }
         }

@@ -124,15 +124,11 @@
         if (this.answerIncorrect) return '#ff0000';
         return '#333333';
       },
-      excludeItem() {
-        return excludeItem();
-      },
+      excludeItem,
       excludeItemAmount() {
         return this.ownAccount.itemAmount(this.excludeItem.id);
       },
-      tipItem() {
-        return tipItem();
-      },
+      tipItem,
       tipItemAmount() {
         return this.ownAccount.itemAmount(this.tipItem.id);
       },
