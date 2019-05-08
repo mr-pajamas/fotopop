@@ -52,7 +52,7 @@
         <div class="winner flexible">
           <div class="filler d-flex flex-column justify-content-center align-items-center">
             <img :src="$meteor.winner.dressedMedal" class="title" :style="{ opacity: $meteor.winner.dressedMedal ? '1' :  '0' }">
-            <img :src="($meteor.winner.avatar && $meteor.winner.avatar.full) || '/images/avatar-full.png'" class="winner-avatar">
+            <img :src="($meteor.winner.avatar && $meteor.winner.avatar.full) || '/images/default-avatar.png'" class="winner-avatar">
             <div class="winner-name-bar w-100 d-flex justify-content-center">
               <div class="winner-name d-flex align-items-center">
                 <!--<img src="/images/crown.svg" class="rotated-crown">-->

@@ -15,7 +15,7 @@
 
             <img :src="winner && winner.user.dressedMedal" class="title" :style="{ opacity: (winner && winner.user.dressedMedal) ? '1' :  '0' }">
 
-            <img :src="(winner && winner.user.avatar && winner.user.avatar.full) || '/images/avatar-full.png'" class="winner-avatar" :style="{ opacity: (winner && winner.user.avatar && winner.user.avatar.full) ? '1' : '0' }">
+            <img :src="(winner && winner.user.avatar && winner.user.avatar.full) || '/images/default-avatar.png'" class="winner-avatar" :style="{ opacity: (winner && winner.user.avatar && winner.user.avatar.full) ? '1' : '0' }">
           </div>
         </div>
         <styled-rounded-card class="w-100 inflexible winner-card" bottom-color="rgba(82,40,167,.4)" :bg="false">
