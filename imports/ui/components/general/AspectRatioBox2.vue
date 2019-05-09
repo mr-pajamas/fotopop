@@ -15,7 +15,7 @@
     computed: {
       imgSrc() {
         const canvas = document.createElement('canvas');
-        canvas.width = Math.round(this.ratio * 100);
+        canvas.width = Math.round((this.ratio || 1) * 100);
         canvas.height = 100;
         return canvas.toDataURL('image/png');
         // return `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='${[0, 0, (this.ratio ? this.ratio * 100 : 100), 100].join(' ')}'%3E%3C/svg%3E`;
