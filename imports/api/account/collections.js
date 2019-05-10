@@ -79,12 +79,10 @@ UserAccounts.attachSchema(new SimpleSchema({
     defaultValue: 0,
   },
   */
-  /*
   bot: {
     type: Boolean,
     defaultValue: false,
   },
-  */
   streaks: {
     type: SimpleSchema.Integer,
     defaultValue: 0,

@@ -361,7 +361,7 @@
         this.userMessages.push(
           ...map(newMessages, m => Object.assign({ user: UserAccounts.findOne(m.sender) }, m)),
         );
-      }, { immediate: true });
+      });
     },
 
     mounted() {

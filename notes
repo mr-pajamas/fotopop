@@ -113,3 +113,21 @@ http://localhost:3000/?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJ1c2Vy
 2、房间/队列不能有重复的人 （代码保证）
 3、房间最多6人 （代码保证）
 4、
+
+
+机器人
+
+服务器checkin
+1、checkin
+2、判定死亡节点/判定新节点
+3、机器人重新分配（pickup 和 abandon）
+a、机器人状态以及状态历时【】
+b、机器人的状态是恢复出来的，根据数据情况
+c、还有些变量，在机器人线程里
+
+服务器配置为botServer，全局配置
+
+
+教引擎怎么识别事件（静态），引擎来识别，然后发给定向BOTS
+bot全局init教引擎识别事件
+bot局部init恢复状态
