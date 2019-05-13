@@ -11,7 +11,6 @@ import map from 'lodash/map';
 import reduce from 'lodash/reduce';
 import find from 'lodash/find';
 import forEach from 'lodash/forEach';
-import last from 'lodash/last';
 
 const Rooms = new Mongo.Collection('rooms');
 
@@ -463,7 +462,10 @@ Rooms.helpers({
   },
 
   canStartGame() {
-    return !this.inGame() && this.sessionReady() && this.users.length > 1 && !find(this.users, user => !user.ready);
+    return !this.inGame()
+      && this.sessionReady()
+      && this.users.length > 1
+      && !find(this.users, user => !user.ready);
   },
 });
 

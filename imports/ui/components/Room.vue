@@ -10,13 +10,13 @@
           <button class="btn rounded-circle inflexible leave-btn" @click="leaveRoom">
             <svg width="50" height="50" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><circle fill="#1F1E48" cx="25" cy="25" r="25"/><path d="M15.257 17.933l-4.632 5.137a1 1 0 0 0 .024 1.365l4.632 4.788A1 1 0 0 0 17 28.528v-9.926a1 1 0 0 0-1.743-.67z" fill="#FFF"/><path d="M14 22h12a2 2 0 1 1 0 4H14v-4z" fill="#FFF"/><path d="M19 12h13a4 4 0 0 1 4 4v16a4 4 0 0 1-4 4H19" stroke="#FFF" stroke-width="4" stroke-linecap="round"/></g></svg>
           </button>
-          <div class="room-title flexible">
+          <div class="room-title flexible" @click="showBots = !showBots">
             <p class="room-name">{{ room.typeName() }} - {{ room.categoryName }}</p>
             <p class="small">房间ID：{{ room.searchId }}</p>
           </div>
         </template>
 
-        <message-box v-else class="question-counter">
+        <message-box v-else class="question-counter" @click.native="showBots = !showBots">
           <span v-if="countdown">即将播放第{{ room.currentRoundNumber() }}题</span>
           <template v-else>
             <span>{{ room.currentRoundNumber() }}/10题<span v-if="elapsedTime !== undefined" style="margin-left: .5rem">{{ 23 - elapsedTime }}s</span></span>
@@ -29,7 +29,7 @@
       <div class="room-users">
         <div v-for="(user, index) in $meteor.roomUsers" :key="user.id">
           <div class="avatar-box">
-            <avatar :user="user" :show-vip="true" :offline="user.offline" />
+            <avatar :user="user" :show-vip="true" :offline="user.offline" :show-bot="showBots" />
             <div v-if="index === 0" class="host-label">房主</div>
             <div v-if="!room.inGame() && user.ready" class="avatar-label ready-label"><span>准备</span></div>
             <transition name="inc">
@@ -185,6 +185,7 @@
         hintsShown: 0,
         modal: '',
         tip: '',
+        showBots: false,
       };
     },
     computed: {

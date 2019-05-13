@@ -17,7 +17,7 @@ const Bot = function (id, level, roomId) {
   this.roomId = roomId;
 };
 
-Bot.levelMap = [undefined, 24, 15, 7];
+Bot.levelMap = [undefined, 20, 15, 7];
 /*
 Bot.expectedDecisionTime = 3;
 Bot.STAY = Symbol('stay');

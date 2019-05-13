@@ -51,14 +51,14 @@ Meteor.onLogin(({ user: { _id: userId }, connection: { onClose } }) => {
   }
 
   onClose(() => {
-    const { value: affected } = UserAccounts.rawFindOneAndUpdate({
+    const { value } = UserAccounts.rawFindOneAndUpdate({
       _id: userId,
       connection: cid,
     }, {
       $unset: { connection: '' },
     });
 
-    if (!affected) return;
+    if (!value) return;
 
     const current = Rooms.findOne({ 'users.id': userId });
 
@@ -83,7 +83,6 @@ Meteor.onLogin(({ user: { _id: userId }, connection: { onClose } }) => {
         $pull: { users: { id: userId } },
       });
     } else if (currentRoom) {
-
       const user = UserAccounts.findOne(userId);
       if (!currentRoom.inGame()) {
         // TODO: 发送请求（只是通知？还是后端来？）
@@ -223,14 +222,14 @@ Meteor.onLogin(({ user: { _id: userId }, connection: { onClose } }) => {
 
       // TODO: 发送请求通知
       // TODO: 如果期间有断线用户回来，直接假定该轮结束
-      const affected = Rooms.remove({
+      const removed = Rooms.remove({
         _id: currentRoom._id,
         // 没有一个活人
         users: { $not: { $elemMatch: { botLevel: null, offline: false } } },
       });
 
 
-      if (!affected) {
+      if (!removed) {
         fillRoom(currentRoom._id);
         decideBigGiftEnd(currentRoom._id);
 

@@ -12,6 +12,7 @@ Meteor.startup(() => {
         _id: `10001${i}`,
         name: `机器人${i}`,
         diamond: { level: 8, amount: { common: 250, ios: 150, android: 80 } },
+        bot: true,
       });
     });
 
@@ -76,6 +77,7 @@ Meteor.startup(() => {
     });
   }
 
+  /*
   const botIds = times(3, i => `10001${i}`);
 
   if (UserAccounts.find({ _id: { $in: botIds } }).fetch().length === 0) {
@@ -87,6 +89,7 @@ Meteor.startup(() => {
       });
     });
   }
+  */
   /*
   if (!UserAccounts.findOne('uuid2')) {
     UserAccounts.insert({ _id: 'uuid2', name: '渣渣辉' });

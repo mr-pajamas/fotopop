@@ -11,7 +11,7 @@ import { Rooms } from '../collections.js';
 import { report, fetchQuestions } from './service-methods.js';
 import { UserAccounts } from '../../account/collections.js';
 
-function findAndJoin(userId, type, categoryId, prepend = false) {
+function findAndJoin(userId, botLevel, type, categoryId, prepend = false) {
   const user = UserAccounts.findOne(userId);
   const { value: affected } = Rooms.rawFindOneAndUpdate({
     type,
@@ -24,11 +24,14 @@ function findAndJoin(userId, type, categoryId, prepend = false) {
   }, {
     $inc: { userCount: 1 },
     $push: {
+      users: Object.assign({ id: userId, ready: true, offline: false }, botLevel && { botLevel }),
+      /*
       users: {
         id: userId,
         ready: true,
         offline: false,
       },
+      */
       messages: {
         type: 1,
         text: `${user.name || '足记用户'}进入了房间`,
@@ -48,8 +51,8 @@ function findAndJoin(userId, type, categoryId, prepend = false) {
     }, {
       $push: {
         users: prepend
-          ? { $each: [{ id: userId }], $position: 0 }
-          : { id: userId },
+          ? { $each: [Object.assign({ id: userId }, botLevel && { botLevel })], $position: 0 }
+          : Object.assign({ id: userId }, botLevel && { botLevel }),
       },
     }, {
       bypassCollection2: true,
@@ -81,7 +84,7 @@ function fillRoom(roomId) {
 
     if (!queue) break;
 
-    const { id: userId } = queue.users[0];
+    const { id: userId, botLevel } = queue.users[0];
 
     const user = UserAccounts.findOne(userId);
     try {
@@ -92,7 +95,10 @@ function fillRoom(roomId) {
         rounds: null,
       }, {
         $push: {
-          users: { id: userId, ready: true, offline: false },
+          users: Object.assign(
+            { id: userId, ready: true, offline: false },
+            botLevel && { botLevel },
+          ),
           messages: {
             type: 1,
             text: `${user.name || '足记用户'}进入了房间`,
@@ -108,7 +114,7 @@ function fillRoom(roomId) {
 
       if (!affected) {
         // 重新等待加入房间
-        findAndJoin(userId, type, categoryId, true);
+        findAndJoin(userId, botLevel, type, categoryId, true);
       }
     } catch (e) {
       // 失败原因可能是这个人在此期间加到其他地方去了
@@ -217,7 +223,6 @@ function decideRoundEnd(roomId) {
       // 发送报告
       // 返回题目
       if (affected) { // TODO: 应该可以重复请求，就不需要affected了
-
         report(room);
         // TODO: 拉题目
         fetchQuestions(room.type, room.categoryId).then((questions) => {

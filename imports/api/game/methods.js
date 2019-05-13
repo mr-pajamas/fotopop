@@ -354,7 +354,7 @@ export const findAndJoinRoom = new ValidatedMethod({
 
     if (!this.isSimulation) {
       const { findAndJoin } = await import('./server/game-operation.js');
-      findAndJoin(userId, type, categoryId);
+      findAndJoin(userId, undefined, type, categoryId);
 
       /*
       const user = UserAccounts.findOne(userId);
@@ -567,7 +567,7 @@ export const ready = new ValidatedMethod({
 // TODO: 这里需要房间ID和session
 export const startGame = new ValidatedMethod({
   name: 'game.startGame',
-  validate: new SimpleSchema({}).validator({ clean: true }),
+  validate: null,
   mixins: [LoggedInMixin],
   checkLoggedInError: {
     error: '403',
@@ -604,9 +604,11 @@ export const startGame = new ValidatedMethod({
     if (currentRoom.host().id !== userId) throw new Meteor.Error(403, '用户不是房主，无权开始游戏');
 
     // TODO: 可能需要删除
-    if (currentRoom.fastMatching) throw new Meteor.Error(409, '当前房间正在进行快速匹配');
+    // if (currentRoom.fastMatching) throw new Meteor.Error(409, '当前房间正在进行快速匹配');
 
     if (!currentRoom.questions || currentRoom.questions.length === 0) throw new Meteor.Error(409, '当前房间题目尚未准备好');
+
+    if (currentRoom.users.length <= 1) throw new Meteor.Error(409, '当前房间人数不够，无法开始游戏');
 
     if (find(currentRoom.users, user => !user.ready)) throw new Meteor.Error(409, '当前房间有人未准备好，无法开始游戏');
 
