@@ -129,7 +129,7 @@ Meteor.onLogin(({ user: { _id: userId }, connection: { onClose } }) => {
               },
             },
           },
-          currentRoom.lastWinner === userId && { $unset: { lastWinner: '' } },
+          (currentRoom.lastWinner === userId) && { $unset: { lastWinner: '' } },
         ));
 
         // 为了以防万一游戏在期间开始
@@ -214,7 +214,7 @@ Meteor.onLogin(({ user: { _id: userId }, connection: { onClose } }) => {
               },
             },
           },
-          currentRoom.lastWinner === userId && { $unset: { lastWinner: '' } },
+          (currentRoom.lastWinner === userId) && { $unset: { lastWinner: '' } },
         ));
       }
 

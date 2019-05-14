@@ -492,7 +492,7 @@ export const leaveRoom = new ValidatedMethod({
           },
         },
       },
-      currentRoom.lastWinner === userId && { $unset: { lastWinner: '' } },
+      (currentRoom.lastWinner === userId) && { $unset: { lastWinner: '' } },
     ));
 
     if (!this.isSimulation) {
