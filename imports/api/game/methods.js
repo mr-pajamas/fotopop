@@ -136,7 +136,8 @@ export const createRoom = new ValidatedMethod({
           // 先拉人，再加房间，如果加房间失败，退回去
 
           const { fillRoom } = await import('./server/game-operation.js');
-          fillRoom(roomId);
+          Meteor.setTimeout(fillRoom.bind(null, roomId), 2000);
+          // fillRoom(roomId);
         });
       }
 
