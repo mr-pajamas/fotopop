@@ -514,6 +514,86 @@ export const leaveRoom = new ValidatedMethod({
   },
 });
 
+export const fastMatch = new ValidatedMethod({
+  name: 'game.fastMatch',
+  validate: new SimpleSchema({
+    roomId: {
+      type: String,
+    },
+    session: {
+      type: SimpleSchema.Integer,
+      min: 1,
+    },
+    osType: {
+      type: SimpleSchema.Integer,
+      allowedValues: [1, 2],
+    },
+  }).validator({ clean: true }),
+  mixins: [LoggedInMixin],
+  checkLoggedInError: {
+    error: '403',
+    reason: 'You need to be logged in to call this method',
+  },
+  applyOptions: {
+    wait: true,
+    noRetry: true,
+    throwStubExceptions: true,
+  },
+  async run({ roomId, session, osType }) {
+    const { userId } = this;
+
+    const user = UserAccounts.findOne(userId);
+
+    const currentRoom = Rooms.findOne({
+      _id: roomId,
+      searchId: { $exists: true, $ne: null },
+      'users.id': userId,
+    });
+
+    if (!currentRoom) throw new Meteor.Error(400, '用户不在指定房间中');
+
+    if (currentRoom.inGame()) throw new Meteor.Error(409, '当前房间正在游戏中');
+
+    if (currentRoom.session !== session) {
+      throw new Meteor.Error(400, '指定的场次非当前场次');
+    }
+
+    if (currentRoom.fastMatching) throw new Meteor.Error(409, '当前房间已经在快速匹配中');
+
+    if (!this.isSimulation) {
+      const { useItem } = await import('../item/server/service-methods.js');
+      try {
+        await useItem(userId, osType, '60', !user.itemAmount('60'));
+      } catch (e) {
+        throw new Meteor.Error(500, e.message);
+      }
+
+      Rooms.update({
+        _id: roomId,
+        'users.id': userId,
+        session,
+        rounds: null,
+        /*
+        $or: [
+          { fastMatching: null },
+          { fastMatching: false },
+        ],
+        */
+      }, {
+        $set: { fastMatching: true, pvt: false },
+        $push: {
+          messages: {
+            type: 1,
+            text: `${user.name || '足记用户'}使用了快速匹配`,
+          },
+        },
+      });
+
+      // TODO: 使用失败退item
+    }
+  },
+});
+
 export const ready = new ValidatedMethod({
   name: 'game.ready',
   validate: new SimpleSchema({
@@ -628,6 +708,7 @@ export const startGame = new ValidatedMethod({
           // 'users.$[].score': 0,
           // roundCount: 1,
           'users.$[u].ready': false, // TODO: 临时方案
+          fastMatching: false,
         },
         $unset: { 'users.$[].supporters': '' },
       }, {

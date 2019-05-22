@@ -67,22 +67,27 @@
         <answer-sheet v-if="inQuestion" class="inflexible" v-bind="room.currentQuestion()" :own-account="ownAccount" :room="room" @answer-correct="submitAnswer($event)" @got-tip="tip = $event" />
       </transition>
 
-      <div v-if="!room.inGame()" class="button-group inflexible d-flex">
-        <styled-pill-button class="fast-match-btn" bg-color="rgb(64,197,255)" color="#fff" :text-shadow="true" v-if="!room.fastMatching">
-          <span>快速匹配</span>
-          <span class="fast-match-price">
+      <div v-if="!room.inGame() && (fastMatchItem || (room.host().id === ownAccount._id))" class="button-group inflexible d-flex">
+        <div v-if="fastMatchItem">
+          <styled-pill-button class="fast-match-btn" :bg-color="usingFastMatch ? '#a0a0a0' : 'rgb(64,197,255)'" color="#fff" :text-shadow="true" v-if="!room.fastMatching" :disabled="usingFastMatch" @click.native="fastMatch">
+            <span>快速匹配</span>
+
+            <span class="fast-match-amount" v-if="fastMatchItemAmount">{{ fastMatchItemAmount }}个</span>
+            <span class="fast-match-price" v-else>
             <img src="/images/diamond.png" class="d-block">
-            <!--
-            <svg width="28" height="23" viewBox="0 0 28 23" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M14.098 21.224L26.194 8.277a.415.415 0 0 0 .001-.557l-5.927-6.406a.358.358 0 0 0-.262-.117H7.594c-.099 0-.194.043-.263.12L1.474 7.72a.415.415 0 0 0 .003.555l12.1 12.949a.352.352 0 0 0 .52 0" fill="#00AEEF"/><path d="M14.098 21.224L26.194 8.277a.415.415 0 0 0 .001-.557l-5.927-6.406a.358.358 0 0 0-.262-.117H7.594c-.099 0-.194.043-.263.12L1.474 7.72a.415.415 0 0 0 .003.555l12.1 12.949a.352.352 0 0 0 .52 0z" stroke="#00AEEF" stroke-width="1.844"/><path d="M26.67 13.838h-.032" fill="#FFF200"/><path fill="#0194FF" d="M13.837 21.42l-6.293-6.735-.032-.032L1.22 7.917l6.325-6.77.11.12 1.481 6.616.011.034 1.263 3.635.017.048z"/><path fill="#FFF200" d="M11.145 5.004l-2.01 2.88-1.48-6.616"/><path fill="#07DBFC" d="M13.837 1.147l-2.692 3.857-2.01 2.88L7.47 1.267l-.026-.12zM13.837 1.147h6.294l.03-.031.029.031-1.844 6.736"/><path fill="#0194FF" d="M26.454 7.917l-6.294 6.736-6.323 6.768 3.323-9.979 1.175-3.525z"/><path fill="#32F4FE" d="M26.485 7.883l-.031.034h-8.12l.012-.034 1.814-6.767.03.031h.001zM1.115 7.883l.031.034h8.119l-.011-.034-1.815-6.767-.03.031z"/><path d="M9.146 7.917H1.234" fill="#FFF200"/><path fill="#00CCFE" d="M13.837 1.147l-2.692 3.857-2.01 2.88.011.033 1.263 3.636.017.047 3.411 9.82 3.323-9.978 1.175-3.525z"/><path fill="#32F4FE" d="M15.404 7.917h2.93l-4.497-6.77-2.692 3.857-2.01 2.88.01.033z"/><path fill="#0194FF" d="M13.837 21.42l-6.293-6.735-.032-.032L1.22 7.917l6.325-6.77.11.12 1.481 6.616.011.034 1.263 3.635.017.048z"/><path fill="#FFF200" d="M11.145 5.004l-2.01 2.88-1.48-6.616"/><path fill="#07DBFC" d="M13.837 1.147l-2.692 3.857-2.01 2.88L7.47 1.267l-.026-.12zM13.837 1.147h6.294l.03-.031.029.031-1.844 6.736"/><path fill="#0194FF" d="M26.454 7.917l-6.294 6.736-6.323 6.768 3.323-9.979 1.175-3.525z"/><path fill="#32F4FE" d="M26.485 7.883l-.031.034h-8.12l.012-.034 1.814-6.767.03.031h.001zM1.115 7.883l.031.034h8.119l-.011-.034-1.815-6.767-.03.031z"/><path d="M9.146 7.917H1.234" fill="#FFF200"/><path fill="#00CCFE" d="M13.837 1.147l-2.692 3.857-2.01 2.88.011.033 1.263 3.636.017.047 3.411 9.82 3.323-9.978 1.175-3.525z"/><path fill="#32F4FE" d="M15.404 7.917h2.93l-4.497-6.77-2.692 3.857-2.01 2.88.01.033z"/></g></svg>
-            -->
-            <span>10</span>
+              <!--
+              <svg width="28" height="23" viewBox="0 0 28 23" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M14.098 21.224L26.194 8.277a.415.415 0 0 0 .001-.557l-5.927-6.406a.358.358 0 0 0-.262-.117H7.594c-.099 0-.194.043-.263.12L1.474 7.72a.415.415 0 0 0 .003.555l12.1 12.949a.352.352 0 0 0 .52 0" fill="#00AEEF"/><path d="M14.098 21.224L26.194 8.277a.415.415 0 0 0 .001-.557l-5.927-6.406a.358.358 0 0 0-.262-.117H7.594c-.099 0-.194.043-.263.12L1.474 7.72a.415.415 0 0 0 .003.555l12.1 12.949a.352.352 0 0 0 .52 0z" stroke="#00AEEF" stroke-width="1.844"/><path d="M26.67 13.838h-.032" fill="#FFF200"/><path fill="#0194FF" d="M13.837 21.42l-6.293-6.735-.032-.032L1.22 7.917l6.325-6.77.11.12 1.481 6.616.011.034 1.263 3.635.017.048z"/><path fill="#FFF200" d="M11.145 5.004l-2.01 2.88-1.48-6.616"/><path fill="#07DBFC" d="M13.837 1.147l-2.692 3.857-2.01 2.88L7.47 1.267l-.026-.12zM13.837 1.147h6.294l.03-.031.029.031-1.844 6.736"/><path fill="#0194FF" d="M26.454 7.917l-6.294 6.736-6.323 6.768 3.323-9.979 1.175-3.525z"/><path fill="#32F4FE" d="M26.485 7.883l-.031.034h-8.12l.012-.034 1.814-6.767.03.031h.001zM1.115 7.883l.031.034h8.119l-.011-.034-1.815-6.767-.03.031z"/><path d="M9.146 7.917H1.234" fill="#FFF200"/><path fill="#00CCFE" d="M13.837 1.147l-2.692 3.857-2.01 2.88.011.033 1.263 3.636.017.047 3.411 9.82 3.323-9.978 1.175-3.525z"/><path fill="#32F4FE" d="M15.404 7.917h2.93l-4.497-6.77-2.692 3.857-2.01 2.88.01.033z"/><path fill="#0194FF" d="M13.837 21.42l-6.293-6.735-.032-.032L1.22 7.917l6.325-6.77.11.12 1.481 6.616.011.034 1.263 3.635.017.048z"/><path fill="#FFF200" d="M11.145 5.004l-2.01 2.88-1.48-6.616"/><path fill="#07DBFC" d="M13.837 1.147l-2.692 3.857-2.01 2.88L7.47 1.267l-.026-.12zM13.837 1.147h6.294l.03-.031.029.031-1.844 6.736"/><path fill="#0194FF" d="M26.454 7.917l-6.294 6.736-6.323 6.768 3.323-9.979 1.175-3.525z"/><path fill="#32F4FE" d="M26.485 7.883l-.031.034h-8.12l.012-.034 1.814-6.767.03.031h.001zM1.115 7.883l.031.034h8.119l-.011-.034-1.815-6.767-.03.031z"/><path d="M9.146 7.917H1.234" fill="#FFF200"/><path fill="#00CCFE" d="M13.837 1.147l-2.692 3.857-2.01 2.88.011.033 1.263 3.636.017.047 3.411 9.82 3.323-9.978 1.175-3.525z"/><path fill="#32F4FE" d="M15.404 7.917h2.93l-4.497-6.77-2.692 3.857-2.01 2.88.01.033z"/></g></svg>
+              -->
+            <span>{{ fastMatchItem.price }}</span>
           </span>
-        </styled-pill-button>
-        <busy-pill-button bg-color="rgb(64,197,255)" color="#fff" :text-shadow="true" disabled v-else>匹配中&hellip;</busy-pill-button>
-        <template v-if="room.host().id === ownAccount._id">
+          </styled-pill-button>
+          <busy-pill-button bg-color="rgb(64,197,255)" color="#fff" :text-shadow="true" disabled v-else>匹配中&hellip;</busy-pill-button>
+        </div>
+
+        <div v-if="room.host().id === ownAccount._id">
           <styled-pill-button v-if="room.canStartGame()" bg-color="rgb(250,75,127)" color="#fff" :text-shadow="true" @click.native="startGame">开始游戏</styled-pill-button>
           <styled-pill-button v-else bg-color="rgb(216,216,216)" color="rgb(175,175,175)" :text-shadow="true" disabled>开始游戏</styled-pill-button>
-        </template>
+        </div>
         <!--
         <styled-pill-button v-if="room.host().id === ownAccount._id" bg-color="rgb(250,75,127)" color="#fff" :text-shadow="true" @click.native="startGame" :disabled="!room.canStartGame()">开始游戏</styled-pill-button>
         -->
@@ -134,6 +139,11 @@
   import slice from 'lodash/slice';
   import { Meteor } from 'meteor/meteor';
 
+  import query from '../../modules/client/parsed-query.js';
+  import bridge from '../../modules/client/js-bridge.js';
+
+  import { fastMatchItem } from '../../domain/client/items.js';
+
   import { UserAccounts } from '../../api/account/collections.js';
   import * as GameMethods from '../../api/game/methods.js';
 
@@ -146,7 +156,7 @@
   import StyledPillButton from './general/StyledPillButton2.vue';
   import BottomBar from './room/BottomBar.vue';
   import SoundIcon from './room/SoundIcon.vue';
-  import AnswerSheet from './room/AnswerSheet';
+  import AnswerSheet from './room/AnswerSheet.vue';
   import Message from './room/Message.vue';
   import Broadcast from './Broadcast.vue';
   import BroadcastModal from './BroadcastModal.vue';
@@ -188,6 +198,7 @@
         modal: '',
         tip: '',
         showBots: false,
+        usingFastMatch: false,
       };
     },
     computed: {
@@ -214,6 +225,10 @@
         return snippets;
       },
       */
+      fastMatchItem,
+      fastMatchItemAmount() {
+        return this.ownAccount.itemAmount(this.fastMatchItem.id);
+      },
     },
     meteor: {
       roomUsers() {
@@ -461,6 +476,24 @@
           }
         }, 1000);
       },
+      async fastMatch() {
+        if (this.fastMatchItemAmount || this.ownAccount.diamondAmount() >= this.fastMatchItem.price) {
+          this.usingFastMatch = true;
+          try {
+            await GameMethods.fastMatch.callAsync({
+              roomId: this.room._id,
+              session: this.room.session,
+              osType: query.osType,
+            });
+          } catch (e) {
+            // TODO: 显示异常信息
+          } finally {
+            this.usingFastMatch = false;
+          }
+        } else {
+          bridge.gameFastRecharge({ showMessage: true });
+        }
+      },
       /*
       stopTicker() {
         if (this[atid]) {
@@ -705,20 +738,27 @@
         }
       }
 
-      > button {
+      button {
+        display: block;
+        width: 100%;
         height: 3.4rem;
         font-size: 1.2rem;
         line-height: 1.4;
       }
 
       .fast-match-btn {
+
+        .fast-match-amount,
         .fast-match-price {
           margin-left: .8rem;
           font-size: .8rem;
           line-height: 1;
+          text-shadow: none;
+        }
+
+        .fast-match-price {
           display: flex;
           align-items: center;
-          text-shadow: none;
 
           img, svg {
             margin-right: .2rem;
