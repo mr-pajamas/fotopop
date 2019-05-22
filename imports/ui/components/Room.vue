@@ -68,7 +68,7 @@
       </transition>
 
       <div v-if="!room.inGame()" class="button-group inflexible d-flex">
-        <styled-pill-button class="fast-match-btn disabled" bg-color="rgb(64,197,255)" color="#fff" :text-shadow="true">
+        <styled-pill-button class="fast-match-btn" bg-color="rgb(64,197,255)" color="#fff" :text-shadow="true" v-if="!room.fastMatching">
           <span>快速匹配</span>
           <span class="fast-match-price">
             <img src="/images/diamond.png" class="d-block">
@@ -78,6 +78,7 @@
             <span>10</span>
           </span>
         </styled-pill-button>
+        <busy-pill-button bg-color="rgb(64,197,255)" color="#fff" :text-shadow="true" disabled v-else>匹配中&hellip;</busy-pill-button>
         <template v-if="room.host().id === ownAccount._id">
           <styled-pill-button v-if="room.canStartGame()" bg-color="rgb(250,75,127)" color="#fff" :text-shadow="true" @click.native="startGame">开始游戏</styled-pill-button>
           <styled-pill-button v-else bg-color="rgb(216,216,216)" color="rgb(175,175,175)" :text-shadow="true" disabled>开始游戏</styled-pill-button>
@@ -151,6 +152,7 @@
   import BroadcastModal from './BroadcastModal.vue';
   import SnippetsModal from './room/SnippetsModal.vue';
   import ItemsModal from './room/ItemsModal.vue';
+  import BusyPillButton from './general/BusyPillButton.vue';
 
   const tid = Symbol('tid');
   // const atid = Symbol('atid');
@@ -173,7 +175,7 @@
 
   export default {
     name: 'room',
-    components: { ItemsModal, SnippetsModal, BroadcastModal, Broadcast, Message, AnswerSheet, SoundIcon, BottomBar, StyledPillButton, EmptySlot, Avatar, DiamondInline, MessageBox },
+    components: { BusyPillButton, ItemsModal, SnippetsModal, BroadcastModal, Broadcast, Message, AnswerSheet, SoundIcon, BottomBar, StyledPillButton, EmptySlot, Avatar, DiamondInline, MessageBox },
     props: ['ownAccount', 'room'],
     data() {
       return {
@@ -704,7 +706,7 @@
       }
 
       > button {
-        height: 3rem;
+        height: 3.4rem;
         font-size: 1.2rem;
         line-height: 1.4;
       }

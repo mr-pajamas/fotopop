@@ -76,6 +76,8 @@
   .progress-pie {
     position: relative;
     overflow: hidden;
+    backface-visibility: hidden;
+    transform: translate3d(0, 0, 0);
 
     .pie {
       position: absolute;

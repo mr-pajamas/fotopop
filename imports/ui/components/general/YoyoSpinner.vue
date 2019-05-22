@@ -1,5 +1,5 @@
 <template>
-  <progress-pie :color="color" :bg-color="bgColor" :progress="progress" />
+  <progress-pie class="yoyo-spinner" :color="color" :bg-color="bgColor" :progress="progress" />
 </template>
 
 <script>
