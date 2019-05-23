@@ -337,6 +337,7 @@
       },
       async leaveAndClose() {
         // if (this.room) {
+        this.$emit('leave');
         try {
           await leaveRoom.callAsync({ roomId: this.roomId });
         } finally {

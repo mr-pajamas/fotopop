@@ -531,6 +531,7 @@
         });
       },
       async leaveRoom() {
+        this.$emit('leave');
         await GameMethods.leaveRoom.callAsync({ roomId: this.room._id });
       },
       async kick(kickee) {

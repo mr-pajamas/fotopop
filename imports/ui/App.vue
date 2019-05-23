@@ -11,7 +11,7 @@
 
       <transition appear :name="!appear ? ($meteor.currentRoom ? 'slide-forward' : 'slide-backward') : ''" @before-enter="blockInteractions" @before-leave="blockInteractions" @after-enter="restoreInteractions">
         <keep-alive include="lobby">
-          <room v-if="$meteor.currentRoom" :room="$meteor.currentRoom" :own-account="$meteor.ownAccount" @session-over="resultQuery = $event" />
+          <room v-if="$meteor.currentRoom" :room="$meteor.currentRoom" :own-account="$meteor.ownAccount" @leave="initiative = true" @session-over="resultQuery = $event" />
           <lobby v-else :own-account="$meteor.ownAccount" />
         </keep-alive>
       </transition>
@@ -19,7 +19,7 @@
         <lobby v-if="!$meteor.currentRoom" :own-account="$meteor.ownAccount" />
       </transition>-->
       <transition name="slide-left">
-        <result v-if="!development && resultQuery" :own-account="$meteor.ownAccount" v-bind="resultQuery" @close="resultQuery = null" />
+        <result v-if="!development && resultQuery" :own-account="$meteor.ownAccount" v-bind="resultQuery" @leave="initiative = true" @close="resultQuery = null" />
       </transition>
 
       <!-- toast -->
@@ -76,6 +76,7 @@
   import StyledRoundedCard from './components/general/StyledRoundedCard2.vue';
   import items from '../domain/client/items.js';
   import Toast from './components/general/Toast.vue';
+  import { toast } from '../modules/client/toast.js';
 
   // import { getCategories } from '../api/game/client/service-methods.js';
 
@@ -98,6 +99,7 @@
         // resultQuery: { roomId: 'shit', session: 1 },
         resultQuery: null,
         appear: true,
+        initiative: false,
       };
     },
 
@@ -161,11 +163,23 @@
       development() {
         return Meteor.isDevelopment;
       },
+      lobbyShown() {
+        return !this.$meteor.currentRoom && (this.development || !this.resultQuery);
+      },
     },
     watch: {
       ready(val) {
         if (val) {
           bridge.removeGamePlaceHolder();
+        }
+      },
+      lobbyShown(val) {
+        if (val) {
+          if (!this.initiative) {
+            toast('你已经被请出了房间');
+          } else {
+            this.initiative = false;
+          }
         }
       },
     },
