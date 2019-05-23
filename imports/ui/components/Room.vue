@@ -31,6 +31,9 @@
           <div class="avatar-box">
             <avatar :user="user" :show-vip="true" :offline="user.offline" :show-bot="showBots" />
             <div v-if="index === 0" class="host-label">房主</div>
+            <button class="btn rounded-circle kick-btn" v-else-if="!room.inGame() && (room.host().id === ownAccount._id)" @click="kick(user.id)">
+              <svg viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><circle fill="#FFF" cx="15" cy="15" r="15"/><rect fill="#272651" x="6" y="13" width="18" height="4" rx="2"/></g></svg>
+            </button>
             <div v-if="!room.inGame() && user.ready" class="avatar-label ready-label"><span>准备</span></div>
             <transition name="inc">
               <div v-if="room.inGame() && incs[user.id]" :key="incs[user.id].c" class="avatar-label inc-label"><span>+{{ incs[user.id].d }}</span></div>
@@ -141,6 +144,8 @@
 
   import query from '../../modules/client/parsed-query.js';
   import bridge from '../../modules/client/js-bridge.js';
+
+  import { toast } from '../../modules/client/toast.js';
 
   import { fastMatchItem } from '../../domain/client/items.js';
 
@@ -528,6 +533,15 @@
       async leaveRoom() {
         await GameMethods.leaveRoom.callAsync({ roomId: this.room._id });
       },
+      async kick(kickee) {
+        const { diamond: { level: kickeeDiamondLevel = 0 } = {} } = UserAccounts.findOne(kickee);
+        const { diamond: { level: userDiamondLevel = 0 } = {} } = this.ownAccount;
+        if (kickeeDiamondLevel > userDiamondLevel) {
+          toast('对方VIP等级高于你，请离失败');
+        } else {
+          await GameMethods.kick.callAsync({ roomId: this.room._id, kickee });
+        }
+      },
       messageColor({ type }) {
         return [undefined, 'rgb(48,255,234)', undefined, 'rgb(255,57,98)', 'rgb(255,232,42)'][type];
       },
@@ -678,6 +692,14 @@
             background-color: #5542ed;
             color: #fff;
             display: inline-block;
+          }
+
+          .kick-btn {
+            height: 1.2rem;
+            width: 1.2rem;
+            position: absolute;
+            top: 2%;
+            right: 0;
           }
         }
 

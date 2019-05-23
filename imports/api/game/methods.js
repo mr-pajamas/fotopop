@@ -443,6 +443,83 @@ export const findAndJoinRoom = new ValidatedMethod({
   },
 });
 
+export const kick = new ValidatedMethod({
+  name: 'game.kick',
+  validate: new SimpleSchema({
+    roomId: {
+      type: String,
+    },
+    kickee: {
+      type: String,
+    },
+  }).validator({ clean: true }),
+  mixins: [LoggedInMixin],
+  checkLoggedInError: {
+    error: '403',
+    reason: 'You need to be logged in to call this method',
+  },
+  applyOptions: {
+    wait: true,
+    noRetry: true,
+    throwStubExceptions: true,
+  },
+  run({ roomId, kickee }) {
+    const { userId } = this;
+
+    const currentRoom = Rooms.findOne({
+      _id: roomId,
+      searchId: { $exists: true, $ne: null },
+      'users.id': userId,
+    });
+
+    if (!currentRoom) throw new Meteor.Error(400, '用户不在指定房间中');
+
+    if (currentRoom.host().id !== userId) throw new Meteor.Error(403, '用户不是房主，无权踢人');
+
+    if (!currentRoom.user(kickee)) throw new Meteor.Error(400, '指定用户不在房间中');
+
+    if (currentRoom.inGame()) throw new Meteor.Error(409, '当前房间正在游戏中，无法踢人');
+
+    const users = UserAccounts.find({ _id: { $in: [userId, kickee] } }).fetch();
+
+    const user = find(users, u => u._id === userId);
+    const kickeeUser = find(users, u => u._id === kickee);
+
+    const [
+      { diamond: { level: userDiamondLevel = 0 } = {} },
+      { diamond: { level: kickeeDiamondLevel = 0 } = {} },
+    ] = [user, kickeeUser];
+
+    if (kickeeDiamondLevel > userDiamondLevel) throw new Meteor.Error(403, '对方VIP等级高于用户，无法踢人');
+
+    Rooms.update({
+      _id: roomId,
+      $and: [
+        { 'users.id': userId },
+        { 'users.id': kickee },
+      ],
+      rounds: null,
+    }, {
+      $pull: { users: { id: kickee } },
+      $inc: { userCount: -1 },
+      $push: {
+        messages: {
+          type: 1,
+          text: `${kickeeUser.name || '足记用户'}被请离了房间`,
+        },
+      },
+    });
+
+    if (!this.isSimulation) {
+      Meteor.defer(async () => {
+        const { fillRoom, decideBigGiftEnd } = await import('./server/game-operation.js');
+        fillRoom(roomId);
+        decideBigGiftEnd(roomId);
+      });
+    }
+  },
+});
+
 export const leaveRoom = new ValidatedMethod({
   name: 'game.leaveRoom',
   validate: new SimpleSchema({
