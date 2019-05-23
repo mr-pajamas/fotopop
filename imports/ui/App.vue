@@ -22,6 +22,9 @@
         <result v-if="!development && resultQuery" :own-account="$meteor.ownAccount" v-bind="resultQuery" @close="resultQuery = null" />
       </transition>
 
+      <!-- toast -->
+      <toast />
+
       <div class="filler d-flex justify-content-center align-items-center dialog-filler" style="z-index: 9999" v-if="$meteor.disconnected">
         <div class="dialog disconnected-dialog d-flex flex-column align-items-center">
           <div class="wifi-icon d-flex justify-content-center align-items-start">
@@ -72,6 +75,7 @@
   import bridge from '../modules/client/js-bridge.js';
   import StyledRoundedCard from './components/general/StyledRoundedCard2.vue';
   import items from '../domain/client/items.js';
+  import Toast from './components/general/Toast.vue';
 
   // import { getCategories } from '../api/game/client/service-methods.js';
 
@@ -86,7 +90,7 @@
 
   export default {
     name: "app",
-    components: { StyledRoundedCard, SpinnerBox, Printer, Result, Room, Lobby },
+    components: { Toast, StyledRoundedCard, SpinnerBox, Printer, Result, Room, Lobby },
     data() {
       return {
         // showResult: false,
@@ -602,6 +606,10 @@
     position: absolute;
     z-index: 2000;
     align-self: center;
+  }
+
+  .toast {
+    z-index: 3000;
   }
 
   .disabled {

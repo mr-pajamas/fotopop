@@ -69,7 +69,7 @@
 
       <div v-if="!room.inGame() && (fastMatchItem || (room.host().id === ownAccount._id))" class="button-group inflexible d-flex">
         <div v-if="fastMatchItem">
-          <styled-pill-button class="fast-match-btn" :bg-color="usingFastMatch ? '#a0a0a0' : 'rgb(64,197,255)'" color="#fff" :text-shadow="true" v-if="!room.fastMatching" :disabled="usingFastMatch" @click.native="fastMatch">
+          <styled-pill-button class="fast-match-btn" :bg-color="(usingFastMatch || room.users.length === 6) ? 'rgb(216,216,216)' : 'rgb(64,197,255)'" :color="(usingFastMatch || room.users.length === 6) ? 'rgb(175,175,175)' : '#fff'" :text-shadow="true" v-if="!room.fastMatching" :disabled="usingFastMatch || room.users.length === 6" @click.native="fastMatch">
             <span>快速匹配</span>
 
             <span class="fast-match-amount" v-if="fastMatchItemAmount">{{ fastMatchItemAmount }}个</span>
