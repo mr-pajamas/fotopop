@@ -325,6 +325,10 @@ Rooms.attachSchema(new SimpleSchema({
       */
     }),
   },
+  botLeavingCount: {
+    type: SimpleSchema.Integer,
+    defaultValue: 0,
+  },
 }));
 
 if (Meteor.isServer) {

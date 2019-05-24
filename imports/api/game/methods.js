@@ -8,11 +8,6 @@ import { LoggedInMixin } from 'meteor/tunifight:loggedin-mixin';
 import times from 'lodash/times';
 import random from 'lodash/random';
 import find from 'lodash/find';
-import map from 'lodash/map';
-import take from 'lodash/take';
-import reduce from 'lodash/reduce';
-import reject from 'lodash/reject';
-import attempt from 'lodash/attempt';
 
 import MD5 from 'crypto-js/md5';
 
@@ -555,6 +550,43 @@ export const leaveRoom = new ValidatedMethod({
 
     const user = UserAccounts.findOne(userId);
     // 如果退出的是lastWinner那么要清空
+
+    const affected = Rooms.update({
+      _id: roomId,
+      'users.id': userId,
+      rounds: null,
+      $nor: [{ lastWinner: userId }, { lastWinner: null, 'users.0.id': userId }],
+    }, {
+      $pull: { users: { id: userId } },
+      $inc: { userCount: -1 },
+      $push: {
+        messages: {
+          type: 1,
+          text: `${user.name || '足记用户'}离开了房间`,
+        },
+      },
+    });
+
+    if (!affected) {
+      Rooms.update({
+        _id: roomId,
+        'users.id': userId,
+        rounds: null,
+        $or: [{ lastWinner: userId }, { lastWinner: null, 'users.0.id': userId }],
+      }, {
+        $pull: { users: { id: userId } },
+        $inc: { userCount: -1 },
+        $set: { botLeavingCount: 0 },
+        $push: {
+          messages: {
+            type: 1,
+            text: `${user.name || '足记用户'}离开了房间`,
+          },
+        },
+        $unset: { lastWinner: '' },
+      });
+    }
+    /*
     Rooms.update({
       _id: roomId,
       'users.id': userId,
@@ -572,16 +604,17 @@ export const leaveRoom = new ValidatedMethod({
       },
       (currentRoom.lastWinner === userId) && { $unset: { lastWinner: '' } },
     ));
+    */
 
     if (!this.isSimulation) {
       Meteor.defer(async () => {
-        const affected = Rooms.remove({
+        const removed = Rooms.remove({
           _id: roomId,
           // 没有一个活人
           users: { $not: { $elemMatch: { botLevel: null, offline: false } } },
         });
 
-        if (!affected) {
+        if (!removed) {
           const { fillRoom, decideBigGiftEnd } = await import('./server/game-operation.js');
           fillRoom(roomId);
           decideBigGiftEnd(roomId);
@@ -786,6 +819,7 @@ export const startGame = new ValidatedMethod({
           // roundCount: 1,
           'users.$[u].ready': false, // TODO: 临时方案
           fastMatching: false,
+          botLeavingCount: 0,
         },
         $unset: { 'users.$[].supporters': '' },
       }, {
