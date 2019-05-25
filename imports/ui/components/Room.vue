@@ -163,7 +163,7 @@
   import SoundIcon from './room/SoundIcon.vue';
   import AnswerSheet from './room/AnswerSheet.vue';
   import Message from './room/Message.vue';
-  import Broadcast from './Broadcast.vue';
+  import Broadcast from './Broadcast2.vue';
   import BroadcastModal from './BroadcastModal.vue';
   import SnippetsModal from './room/SnippetsModal.vue';
   import ItemsModal from './room/ItemsModal.vue';

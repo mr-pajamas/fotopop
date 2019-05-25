@@ -10,3 +10,7 @@ Meteor.publish('broadcast.broadcasts', function () {
     sort: { createdAt: 1 },
   });
 });
+
+Meteor.publish('broadcast.latestBroadcast', function () {
+  return Broadcasts.find({}, { sort: { createdAt: -1 }, limit: 1 });
+});
