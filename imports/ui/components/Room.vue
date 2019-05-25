@@ -10,13 +10,13 @@
           <button class="btn rounded-circle inflexible leave-btn" @click="leaveRoom">
             <svg width="50" height="50" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><circle fill="#1F1E48" cx="25" cy="25" r="25"/><path d="M15.257 17.933l-4.632 5.137a1 1 0 0 0 .024 1.365l4.632 4.788A1 1 0 0 0 17 28.528v-9.926a1 1 0 0 0-1.743-.67z" fill="#FFF"/><path d="M14 22h12a2 2 0 1 1 0 4H14v-4z" fill="#FFF"/><path d="M19 12h13a4 4 0 0 1 4 4v16a4 4 0 0 1-4 4H19" stroke="#FFF" stroke-width="4" stroke-linecap="round"/></g></svg>
           </button>
-          <div class="room-title flexible" @click="showBots = !showBots">
+          <div class="room-title flexible" v-hammer:tripletap="toggleShowBots">
             <p class="room-name">{{ room.typeName() }} - {{ room.categoryName }}</p>
             <p class="small">房间ID：{{ room.searchId }}</p>
           </div>
         </template>
 
-        <message-box v-else class="question-counter" @click.native="showBots = !showBots">
+        <message-box v-else class="question-counter" v-hammer:tripletap="toggleShowBots">
           <span v-if="countdown">即将播放第{{ room.currentRoundNumber() }}题</span>
           <template v-else>
             <span>{{ room.currentRoundNumber() }}/10题<span v-if="elapsedTime !== undefined" style="margin-left: .5rem">{{ 23 - elapsedTime }}s</span></span>
@@ -31,6 +31,9 @@
           <div class="avatar-box">
             <avatar :user="user" :show-vip="true" :offline="user.offline" :show-bot="showBots" />
             <div v-if="index === 0" class="host-label">房主</div>
+            <button class="btn rounded-circle kick-btn" v-else-if="!room.inGame() && hostRoom" @click="kick(user.id)">
+              <svg viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><circle fill="#FFF" cx="15" cy="15" r="15"/><rect fill="#272651" x="6" y="13" width="18" height="4" rx="2"/></g></svg>
+            </button>
             <div v-if="!room.inGame() && user.ready" class="avatar-label ready-label"><span>准备</span></div>
             <transition name="inc">
               <div v-if="room.inGame() && incs[user.id]" :key="incs[user.id].c" class="avatar-label inc-label"><span>+{{ incs[user.id].d }}</span></div>
@@ -67,21 +70,27 @@
         <answer-sheet v-if="inQuestion" class="inflexible" v-bind="room.currentQuestion()" :own-account="ownAccount" :room="room" @answer-correct="submitAnswer($event)" @got-tip="tip = $event" />
       </transition>
 
-      <div v-if="!room.inGame()" class="button-group inflexible d-flex">
-        <styled-pill-button class="fast-match-btn disabled" bg-color="rgb(64,197,255)" color="#fff" :text-shadow="true">
-          <span>快速匹配</span>
-          <span class="fast-match-price">
+      <div v-if="!room.inGame() && (fastMatchItem || hostRoom)" class="button-group inflexible d-flex">
+        <div v-if="fastMatchItem">
+          <styled-pill-button class="fast-match-btn" :bg-color="(usingFastMatch || room.users.length === 6) ? 'rgb(216,216,216)' : 'rgb(64,197,255)'" :color="(usingFastMatch || room.users.length === 6) ? 'rgb(175,175,175)' : '#fff'" :text-shadow="true" v-if="!room.fastMatching" :disabled="usingFastMatch || room.users.length === 6" @click.native="fastMatch">
+            <span>快速匹配</span>
+
+            <span class="fast-match-amount" v-if="fastMatchItemAmount">{{ fastMatchItemAmount }}个</span>
+            <span class="fast-match-price" v-else>
             <img src="/images/diamond.png" class="d-block">
-            <!--
-            <svg width="28" height="23" viewBox="0 0 28 23" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M14.098 21.224L26.194 8.277a.415.415 0 0 0 .001-.557l-5.927-6.406a.358.358 0 0 0-.262-.117H7.594c-.099 0-.194.043-.263.12L1.474 7.72a.415.415 0 0 0 .003.555l12.1 12.949a.352.352 0 0 0 .52 0" fill="#00AEEF"/><path d="M14.098 21.224L26.194 8.277a.415.415 0 0 0 .001-.557l-5.927-6.406a.358.358 0 0 0-.262-.117H7.594c-.099 0-.194.043-.263.12L1.474 7.72a.415.415 0 0 0 .003.555l12.1 12.949a.352.352 0 0 0 .52 0z" stroke="#00AEEF" stroke-width="1.844"/><path d="M26.67 13.838h-.032" fill="#FFF200"/><path fill="#0194FF" d="M13.837 21.42l-6.293-6.735-.032-.032L1.22 7.917l6.325-6.77.11.12 1.481 6.616.011.034 1.263 3.635.017.048z"/><path fill="#FFF200" d="M11.145 5.004l-2.01 2.88-1.48-6.616"/><path fill="#07DBFC" d="M13.837 1.147l-2.692 3.857-2.01 2.88L7.47 1.267l-.026-.12zM13.837 1.147h6.294l.03-.031.029.031-1.844 6.736"/><path fill="#0194FF" d="M26.454 7.917l-6.294 6.736-6.323 6.768 3.323-9.979 1.175-3.525z"/><path fill="#32F4FE" d="M26.485 7.883l-.031.034h-8.12l.012-.034 1.814-6.767.03.031h.001zM1.115 7.883l.031.034h8.119l-.011-.034-1.815-6.767-.03.031z"/><path d="M9.146 7.917H1.234" fill="#FFF200"/><path fill="#00CCFE" d="M13.837 1.147l-2.692 3.857-2.01 2.88.011.033 1.263 3.636.017.047 3.411 9.82 3.323-9.978 1.175-3.525z"/><path fill="#32F4FE" d="M15.404 7.917h2.93l-4.497-6.77-2.692 3.857-2.01 2.88.01.033z"/><path fill="#0194FF" d="M13.837 21.42l-6.293-6.735-.032-.032L1.22 7.917l6.325-6.77.11.12 1.481 6.616.011.034 1.263 3.635.017.048z"/><path fill="#FFF200" d="M11.145 5.004l-2.01 2.88-1.48-6.616"/><path fill="#07DBFC" d="M13.837 1.147l-2.692 3.857-2.01 2.88L7.47 1.267l-.026-.12zM13.837 1.147h6.294l.03-.031.029.031-1.844 6.736"/><path fill="#0194FF" d="M26.454 7.917l-6.294 6.736-6.323 6.768 3.323-9.979 1.175-3.525z"/><path fill="#32F4FE" d="M26.485 7.883l-.031.034h-8.12l.012-.034 1.814-6.767.03.031h.001zM1.115 7.883l.031.034h8.119l-.011-.034-1.815-6.767-.03.031z"/><path d="M9.146 7.917H1.234" fill="#FFF200"/><path fill="#00CCFE" d="M13.837 1.147l-2.692 3.857-2.01 2.88.011.033 1.263 3.636.017.047 3.411 9.82 3.323-9.978 1.175-3.525z"/><path fill="#32F4FE" d="M15.404 7.917h2.93l-4.497-6.77-2.692 3.857-2.01 2.88.01.033z"/></g></svg>
-            -->
-            <span>10</span>
+              <!--
+              <svg width="28" height="23" viewBox="0 0 28 23" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M14.098 21.224L26.194 8.277a.415.415 0 0 0 .001-.557l-5.927-6.406a.358.358 0 0 0-.262-.117H7.594c-.099 0-.194.043-.263.12L1.474 7.72a.415.415 0 0 0 .003.555l12.1 12.949a.352.352 0 0 0 .52 0" fill="#00AEEF"/><path d="M14.098 21.224L26.194 8.277a.415.415 0 0 0 .001-.557l-5.927-6.406a.358.358 0 0 0-.262-.117H7.594c-.099 0-.194.043-.263.12L1.474 7.72a.415.415 0 0 0 .003.555l12.1 12.949a.352.352 0 0 0 .52 0z" stroke="#00AEEF" stroke-width="1.844"/><path d="M26.67 13.838h-.032" fill="#FFF200"/><path fill="#0194FF" d="M13.837 21.42l-6.293-6.735-.032-.032L1.22 7.917l6.325-6.77.11.12 1.481 6.616.011.034 1.263 3.635.017.048z"/><path fill="#FFF200" d="M11.145 5.004l-2.01 2.88-1.48-6.616"/><path fill="#07DBFC" d="M13.837 1.147l-2.692 3.857-2.01 2.88L7.47 1.267l-.026-.12zM13.837 1.147h6.294l.03-.031.029.031-1.844 6.736"/><path fill="#0194FF" d="M26.454 7.917l-6.294 6.736-6.323 6.768 3.323-9.979 1.175-3.525z"/><path fill="#32F4FE" d="M26.485 7.883l-.031.034h-8.12l.012-.034 1.814-6.767.03.031h.001zM1.115 7.883l.031.034h8.119l-.011-.034-1.815-6.767-.03.031z"/><path d="M9.146 7.917H1.234" fill="#FFF200"/><path fill="#00CCFE" d="M13.837 1.147l-2.692 3.857-2.01 2.88.011.033 1.263 3.636.017.047 3.411 9.82 3.323-9.978 1.175-3.525z"/><path fill="#32F4FE" d="M15.404 7.917h2.93l-4.497-6.77-2.692 3.857-2.01 2.88.01.033z"/><path fill="#0194FF" d="M13.837 21.42l-6.293-6.735-.032-.032L1.22 7.917l6.325-6.77.11.12 1.481 6.616.011.034 1.263 3.635.017.048z"/><path fill="#FFF200" d="M11.145 5.004l-2.01 2.88-1.48-6.616"/><path fill="#07DBFC" d="M13.837 1.147l-2.692 3.857-2.01 2.88L7.47 1.267l-.026-.12zM13.837 1.147h6.294l.03-.031.029.031-1.844 6.736"/><path fill="#0194FF" d="M26.454 7.917l-6.294 6.736-6.323 6.768 3.323-9.979 1.175-3.525z"/><path fill="#32F4FE" d="M26.485 7.883l-.031.034h-8.12l.012-.034 1.814-6.767.03.031h.001zM1.115 7.883l.031.034h8.119l-.011-.034-1.815-6.767-.03.031z"/><path d="M9.146 7.917H1.234" fill="#FFF200"/><path fill="#00CCFE" d="M13.837 1.147l-2.692 3.857-2.01 2.88.011.033 1.263 3.636.017.047 3.411 9.82 3.323-9.978 1.175-3.525z"/><path fill="#32F4FE" d="M15.404 7.917h2.93l-4.497-6.77-2.692 3.857-2.01 2.88.01.033z"/></g></svg>
+              -->
+            <span>{{ fastMatchItem.price }}</span>
           </span>
-        </styled-pill-button>
-        <template v-if="room.host().id === ownAccount._id">
+          </styled-pill-button>
+          <busy-pill-button bg-color="rgb(64,197,255)" color="#fff" :text-shadow="true" disabled v-else>匹配中&hellip;</busy-pill-button>
+        </div>
+
+        <div v-if="hostRoom">
           <styled-pill-button v-if="room.canStartGame()" bg-color="rgb(250,75,127)" color="#fff" :text-shadow="true" @click.native="startGame">开始游戏</styled-pill-button>
           <styled-pill-button v-else bg-color="rgb(216,216,216)" color="rgb(175,175,175)" :text-shadow="true" disabled>开始游戏</styled-pill-button>
-        </template>
+        </div>
         <!--
         <styled-pill-button v-if="room.host().id === ownAccount._id" bg-color="rgb(250,75,127)" color="#fff" :text-shadow="true" @click.native="startGame" :disabled="!room.canStartGame()">开始游戏</styled-pill-button>
         -->
@@ -133,6 +142,13 @@
   import slice from 'lodash/slice';
   import { Meteor } from 'meteor/meteor';
 
+  import query from '../../modules/client/parsed-query.js';
+  import bridge from '../../modules/client/js-bridge.js';
+
+  import { toast } from '../../modules/client/toast.js';
+
+  import { fastMatchItem } from '../../domain/client/items.js';
+
   import { UserAccounts } from '../../api/account/collections.js';
   import * as GameMethods from '../../api/game/methods.js';
 
@@ -145,12 +161,13 @@
   import StyledPillButton from './general/StyledPillButton2.vue';
   import BottomBar from './room/BottomBar.vue';
   import SoundIcon from './room/SoundIcon.vue';
-  import AnswerSheet from './room/AnswerSheet';
+  import AnswerSheet from './room/AnswerSheet.vue';
   import Message from './room/Message.vue';
-  import Broadcast from './Broadcast.vue';
+  import Broadcast from './Broadcast2.vue';
   import BroadcastModal from './BroadcastModal.vue';
   import SnippetsModal from './room/SnippetsModal.vue';
   import ItemsModal from './room/ItemsModal.vue';
+  import BusyPillButton from './general/BusyPillButton.vue';
 
   const tid = Symbol('tid');
   // const atid = Symbol('atid');
@@ -173,7 +190,7 @@
 
   export default {
     name: 'room',
-    components: { ItemsModal, SnippetsModal, BroadcastModal, Broadcast, Message, AnswerSheet, SoundIcon, BottomBar, StyledPillButton, EmptySlot, Avatar, DiamondInline, MessageBox },
+    components: { BusyPillButton, ItemsModal, SnippetsModal, BroadcastModal, Broadcast, Message, AnswerSheet, SoundIcon, BottomBar, StyledPillButton, EmptySlot, Avatar, DiamondInline, MessageBox },
     props: ['ownAccount', 'room'],
     data() {
       return {
@@ -186,6 +203,7 @@
         modal: '',
         tip: '',
         showBots: false,
+        usingFastMatch: false,
       };
     },
     computed: {
@@ -197,6 +215,9 @@
         return this.room.host().id === this.ownAccount._id;
       },
       */
+      hostRoom() {
+        return this.room.host().id === this.ownAccount._id;
+      },
       countdown() {
         const cd = 3 - this.elapsedTime;
         return cd > 0 ? cd : 0;
@@ -212,6 +233,10 @@
         return snippets;
       },
       */
+      fastMatchItem,
+      fastMatchItemAmount() {
+        return this.ownAccount.itemAmount(this.fastMatchItem.id);
+      },
     },
     meteor: {
       roomUsers() {
@@ -363,6 +388,10 @@
           ...map(newMessages, m => Object.assign({ user: UserAccounts.findOne(m.sender) }, m)),
         );
       });
+
+      this.$watch('hostRoom', function (val) {
+        this.$emit('host', val);
+      }, { immediate: true });
     },
 
     mounted() {
@@ -459,6 +488,24 @@
           }
         }, 1000);
       },
+      async fastMatch() {
+        if (this.fastMatchItemAmount || this.ownAccount.diamondAmount() >= this.fastMatchItem.price) {
+          this.usingFastMatch = true;
+          try {
+            await GameMethods.fastMatch.callAsync({
+              roomId: this.room._id,
+              session: this.room.session,
+              osType: query.osType,
+            });
+          } catch (e) {
+            // TODO: 显示异常信息
+          } finally {
+            this.usingFastMatch = false;
+          }
+        } else {
+          bridge.gameFastRecharge({ showMessage: true });
+        }
+      },
       /*
       stopTicker() {
         if (this[atid]) {
@@ -491,7 +538,17 @@
         });
       },
       async leaveRoom() {
+        this.$emit('leave');
         await GameMethods.leaveRoom.callAsync({ roomId: this.room._id });
+      },
+      async kick(kickee) {
+        const { diamond: { level: kickeeDiamondLevel = 0 } = {} } = UserAccounts.findOne(kickee);
+        const { diamond: { level: userDiamondLevel = 0 } = {} } = this.ownAccount;
+        if (kickeeDiamondLevel > userDiamondLevel) {
+          toast('对方VIP等级高于你，请离失败');
+        } else {
+          await GameMethods.kick.callAsync({ roomId: this.room._id, kickee });
+        }
       },
       messageColor({ type }) {
         return [undefined, 'rgb(48,255,234)', undefined, 'rgb(255,57,98)', 'rgb(255,232,42)'][type];
@@ -502,6 +559,9 @@
         this.showSnippets = false;
       },
       */
+      toggleShowBots() {
+        this.showBots = !this.showBots;
+      },
     },
   };
 </script>
@@ -644,6 +704,14 @@
             color: #fff;
             display: inline-block;
           }
+
+          .kick-btn {
+            height: 1.2rem;
+            width: 1.2rem;
+            position: absolute;
+            top: 2%;
+            right: 0;
+          }
         }
 
         > p {
@@ -703,20 +771,27 @@
         }
       }
 
-      > button {
-        height: 3rem;
+      button {
+        display: block;
+        width: 100%;
+        height: 3.4rem;
         font-size: 1.2rem;
         line-height: 1.4;
       }
 
       .fast-match-btn {
+
+        .fast-match-amount,
         .fast-match-price {
           margin-left: .8rem;
           font-size: .8rem;
           line-height: 1;
+          text-shadow: none;
+        }
+
+        .fast-match-price {
           display: flex;
           align-items: center;
-          text-shadow: none;
 
           img, svg {
             margin-right: .2rem;

@@ -20,6 +20,10 @@ export const getItems = async function () {
       name: '喇叭',
       price: 10,
     }, {
+      id: '60',
+      name: '快速匹配',
+      price: 20,
+    }, {
       id: '11',
       name: '双倍经验卡1局',
       price: 100,

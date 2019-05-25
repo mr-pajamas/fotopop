@@ -9,5 +9,6 @@ Meteor.publish('account.ownAccount', function () {
 });
 
 Meteor.publish('account.accounts', function (userIds = []) {
-  return UserAccounts.find({ _id: { $in: userIds } });
+  const normalizedUserIds = Array.from(new Set(userIds)).sort();
+  return UserAccounts.find({ _id: { $in: normalizedUserIds } });
 });

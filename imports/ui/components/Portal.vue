@@ -191,7 +191,7 @@
   import BigHead from './user/BigHead.vue';
   import DiamondInline from './user/DiamondInline.vue';
   import SearchRoomModal from './SearchRoomModal.vue';
-  import Broadcast from './Broadcast.vue';
+  import Broadcast from './Broadcast2.vue';
   import BroadcastModal from './BroadcastModal.vue';
   import { UserAccounts } from '../../api/account/collections.js';
   import AspectRatioImg from './general/AspectRatioImg.vue';

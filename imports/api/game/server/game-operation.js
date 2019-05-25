@@ -67,6 +67,7 @@ function fillRoom(roomId) {
       _id: roomId,
       rounds: null,
       users: { $not: { $size: 6 } },
+      pvt: false,
     });
     if (!room) break;
 
@@ -159,6 +160,8 @@ function decideRoundEnd(roomId) {
         return result;
       }, { score: -1 });
 
+      lastWinner = lastWinner || room.lastWinner;
+
       if (lastWinner) {
         lastWinner = !room.user(lastWinner).offline && lastWinner;
       }
@@ -193,7 +196,7 @@ function decideRoundEnd(roomId) {
           rounds: { $size: 10 },
         }, {
           $inc: { session: 1 },
-          $unset: { questions: '', rounds: '' },
+          $unset: { questions: '', rounds: '', lastWinner: '' },
           $set: { fastMatching: false },
           $pull: { users: { offline: true } },
         }));

@@ -10,7 +10,7 @@
 </template>
 
 <script>
-  import AspectRatioBox from './AspectRatioBox';
+  import AspectRatioBox from './AspectRatioBox2.vue';
   export default {
     name: "spinner-box",
     components: { AspectRatioBox },

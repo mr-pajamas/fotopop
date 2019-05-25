@@ -114,6 +114,43 @@ Meteor.onLogin(({ user: { _id: userId }, connection: { onClose } }) => {
         }
         */
 
+        let updated = Rooms.update({
+          _id: currentRoom._id,
+          'users.id': userId,
+          rounds: null,
+          $nor: [{ lastWinner: userId }, { lastWinner: null, 'users.0.id': userId }],
+        }, {
+          $pull: { users: { id: userId } },
+          $inc: { userCount: -1 },
+          $push: {
+            messages: {
+              type: 1,
+              text: `${user.name || '足记用户'}离开了房间`,
+            },
+          },
+        });
+
+        if (!updated) {
+          updated = Rooms.update({
+            _id: currentRoom._id,
+            'users.id': userId,
+            rounds: null,
+            $or: [{ lastWinner: userId }, { lastWinner: null, 'users.0.id': userId }],
+          }, {
+            $pull: { users: { id: userId } },
+            $inc: { userCount: -1 },
+            $set: { botLeavingCount: 0 },
+            $push: {
+              messages: {
+                type: 1,
+                text: `${user.name || '足记用户'}离开了房间`,
+              },
+            },
+            $unset: { lastWinner: '' },
+          });
+        }
+
+        /*
         Rooms.update({
           _id: currentRoom._id,
           'users.id': userId,
@@ -129,26 +166,29 @@ Meteor.onLogin(({ user: { _id: userId }, connection: { onClose } }) => {
               },
             },
           },
-          currentRoom.lastWinner === userId && { $unset: { lastWinner: '' } },
+          (currentRoom.lastWinner === userId) && { $unset: { lastWinner: '' } },
         ));
+        */
 
         // 为了以防万一游戏在期间开始
-        Rooms.rawUpdateOne({
-          _id: currentRoom._id,
-          'users.id': userId,
-          rounds: { $exists: true, $ne: null },
-        }, {
-          $set: { 'users.$[u].offline': true },
-          $unset: {
-            'users.$[u].elapsedTime': '',
-            'users.$[u].bgElapsedTime': '',
-          },
-          $inc: { userCount: -1 },
-        }, {
-          arrayFilters: [{
-            'u.id': userId,
-          }],
-        });
+        if (!updated) {
+          Rooms.rawUpdateOne({
+            _id: currentRoom._id,
+            'users.id': userId,
+            rounds: { $exists: true, $ne: null },
+          }, {
+            $set: { 'users.$[u].offline': true },
+            $unset: {
+              'users.$[u].elapsedTime': '',
+              'users.$[u].bgElapsedTime': '',
+            },
+            $inc: { userCount: -1 },
+          }, {
+            arrayFilters: [{
+              'u.id': userId,
+            }],
+          });
+        }
 
         /*
         Rooms.remove({
@@ -181,7 +221,7 @@ Meteor.onLogin(({ user: { _id: userId }, connection: { onClose } }) => {
 
         // 这里要重新计算终局检查，以及机器人答题情况
 
-        Rooms.rawUpdateOne({
+        let { matchedCount: updated } = Rooms.rawUpdateOne({
           _id: currentRoom._id,
           'users.id': userId,
           rounds: { $exists: true, $ne: null },
@@ -199,6 +239,44 @@ Meteor.onLogin(({ user: { _id: userId }, connection: { onClose } }) => {
         });
 
         // 为了以防万一游戏在期间结束
+        if (!updated) {
+          updated = Rooms.update({
+            _id: currentRoom._id,
+            'users.id': userId,
+            rounds: null,
+            $nor: [{ lastWinner: userId }, { lastWinner: null, 'users.0.id': userId }],
+          }, {
+            $pull: { users: { id: userId } },
+            $inc: { userCount: -1 },
+            $push: {
+              messages: {
+                type: 1,
+                text: `${user.name || '足记用户'}离开了房间`,
+              },
+            },
+          });
+        }
+
+        if (!updated) {
+          Rooms.update({
+            _id: currentRoom._id,
+            'users.id': userId,
+            rounds: null,
+            $or: [{ lastWinner: userId }, { lastWinner: null, 'users.0.id': userId }],
+          }, {
+            $pull: { users: { id: userId } },
+            $inc: { userCount: -1 },
+            $set: { botLeavingCount: 0 },
+            $push: {
+              messages: {
+                type: 1,
+                text: `${user.name || '足记用户'}离开了房间`,
+              },
+            },
+            $unset: { lastWinner: '' },
+          });
+        }
+        /*
         Rooms.update({
           _id: currentRoom._id,
           'users.id': userId,
@@ -214,8 +292,9 @@ Meteor.onLogin(({ user: { _id: userId }, connection: { onClose } }) => {
               },
             },
           },
-          currentRoom.lastWinner === userId && { $unset: { lastWinner: '' } },
+          (currentRoom.lastWinner === userId) && { $unset: { lastWinner: '' } },
         ));
+        */
       }
 
       // fillRoom(currentRoom._id);

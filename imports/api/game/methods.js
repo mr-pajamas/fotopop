@@ -8,11 +8,6 @@ import { LoggedInMixin } from 'meteor/tunifight:loggedin-mixin';
 import times from 'lodash/times';
 import random from 'lodash/random';
 import find from 'lodash/find';
-import map from 'lodash/map';
-import take from 'lodash/take';
-import reduce from 'lodash/reduce';
-import reject from 'lodash/reject';
-import attempt from 'lodash/attempt';
 
 import MD5 from 'crypto-js/md5';
 
@@ -136,7 +131,8 @@ export const createRoom = new ValidatedMethod({
           // 先拉人，再加房间，如果加房间失败，退回去
 
           const { fillRoom } = await import('./server/game-operation.js');
-          fillRoom(roomId);
+          Meteor.setTimeout(fillRoom.bind(null, roomId), 2000);
+          // fillRoom(roomId);
         });
       }
 
@@ -442,6 +438,83 @@ export const findAndJoinRoom = new ValidatedMethod({
   },
 });
 
+export const kick = new ValidatedMethod({
+  name: 'game.kick',
+  validate: new SimpleSchema({
+    roomId: {
+      type: String,
+    },
+    kickee: {
+      type: String,
+    },
+  }).validator({ clean: true }),
+  mixins: [LoggedInMixin],
+  checkLoggedInError: {
+    error: '403',
+    reason: 'You need to be logged in to call this method',
+  },
+  applyOptions: {
+    wait: true,
+    noRetry: true,
+    throwStubExceptions: true,
+  },
+  run({ roomId, kickee }) {
+    const { userId } = this;
+
+    const currentRoom = Rooms.findOne({
+      _id: roomId,
+      searchId: { $exists: true, $ne: null },
+      'users.id': userId,
+    });
+
+    if (!currentRoom) throw new Meteor.Error(400, '用户不在指定房间中');
+
+    if (currentRoom.host().id !== userId) throw new Meteor.Error(403, '用户不是房主，无权踢人');
+
+    if (!currentRoom.user(kickee)) throw new Meteor.Error(400, '指定用户不在房间中');
+
+    if (currentRoom.inGame()) throw new Meteor.Error(409, '当前房间正在游戏中，无法踢人');
+
+    const users = UserAccounts.find({ _id: { $in: [userId, kickee] } }).fetch();
+
+    const user = find(users, u => u._id === userId);
+    const kickeeUser = find(users, u => u._id === kickee);
+
+    const [
+      { diamond: { level: userDiamondLevel = 0 } = {} },
+      { diamond: { level: kickeeDiamondLevel = 0 } = {} },
+    ] = [user, kickeeUser];
+
+    if (kickeeDiamondLevel > userDiamondLevel) throw new Meteor.Error(403, '对方VIP等级高于用户，无法踢人');
+
+    Rooms.update({
+      _id: roomId,
+      $and: [
+        { 'users.id': userId },
+        { 'users.id': kickee },
+      ],
+      rounds: null,
+    }, {
+      $pull: { users: { id: kickee } },
+      $inc: { userCount: -1 },
+      $push: {
+        messages: {
+          type: 1,
+          text: `${kickeeUser.name || '足记用户'}被请离了房间`,
+        },
+      },
+    });
+
+    if (!this.isSimulation) {
+      Meteor.defer(async () => {
+        const { fillRoom, decideBigGiftEnd } = await import('./server/game-operation.js');
+        fillRoom(roomId);
+        decideBigGiftEnd(roomId);
+      });
+    }
+  },
+});
+
 export const leaveRoom = new ValidatedMethod({
   name: 'game.leaveRoom',
   validate: new SimpleSchema({
@@ -477,6 +550,43 @@ export const leaveRoom = new ValidatedMethod({
 
     const user = UserAccounts.findOne(userId);
     // 如果退出的是lastWinner那么要清空
+
+    const affected = Rooms.update({
+      _id: roomId,
+      'users.id': userId,
+      rounds: null,
+      $nor: [{ lastWinner: userId }, { lastWinner: null, 'users.0.id': userId }],
+    }, {
+      $pull: { users: { id: userId } },
+      $inc: { userCount: -1 },
+      $push: {
+        messages: {
+          type: 1,
+          text: `${user.name || '足记用户'}离开了房间`,
+        },
+      },
+    });
+
+    if (!affected) {
+      Rooms.update({
+        _id: roomId,
+        'users.id': userId,
+        rounds: null,
+        $or: [{ lastWinner: userId }, { lastWinner: null, 'users.0.id': userId }],
+      }, {
+        $pull: { users: { id: userId } },
+        $inc: { userCount: -1 },
+        $set: { botLeavingCount: 0 },
+        $push: {
+          messages: {
+            type: 1,
+            text: `${user.name || '足记用户'}离开了房间`,
+          },
+        },
+        $unset: { lastWinner: '' },
+      });
+    }
+    /*
     Rooms.update({
       _id: roomId,
       'users.id': userId,
@@ -492,23 +602,104 @@ export const leaveRoom = new ValidatedMethod({
           },
         },
       },
-      currentRoom.lastWinner === userId && { $unset: { lastWinner: '' } },
+      (currentRoom.lastWinner === userId) && { $unset: { lastWinner: '' } },
     ));
+    */
 
     if (!this.isSimulation) {
       Meteor.defer(async () => {
-        const affected = Rooms.remove({
+        const removed = Rooms.remove({
           _id: roomId,
           // 没有一个活人
           users: { $not: { $elemMatch: { botLevel: null, offline: false } } },
         });
 
-        if (!affected) {
+        if (!removed) {
           const { fillRoom, decideBigGiftEnd } = await import('./server/game-operation.js');
           fillRoom(roomId);
           decideBigGiftEnd(roomId);
         }
       });
+    }
+  },
+});
+
+export const fastMatch = new ValidatedMethod({
+  name: 'game.fastMatch',
+  validate: new SimpleSchema({
+    roomId: {
+      type: String,
+    },
+    session: {
+      type: SimpleSchema.Integer,
+      min: 1,
+    },
+    osType: {
+      type: SimpleSchema.Integer,
+      allowedValues: [1, 2],
+    },
+  }).validator({ clean: true }),
+  mixins: [LoggedInMixin],
+  checkLoggedInError: {
+    error: '403',
+    reason: 'You need to be logged in to call this method',
+  },
+  applyOptions: {
+    wait: true,
+    noRetry: true,
+    throwStubExceptions: true,
+  },
+  async run({ roomId, session, osType }) {
+    const { userId } = this;
+
+    const user = UserAccounts.findOne(userId);
+
+    const currentRoom = Rooms.findOne({
+      _id: roomId,
+      searchId: { $exists: true, $ne: null },
+      'users.id': userId,
+    });
+
+    if (!currentRoom) throw new Meteor.Error(400, '用户不在指定房间中');
+
+    if (currentRoom.inGame()) throw new Meteor.Error(409, '当前房间正在游戏中');
+
+    if (currentRoom.session !== session) {
+      throw new Meteor.Error(400, '指定的场次非当前场次');
+    }
+
+    if (currentRoom.fastMatching) throw new Meteor.Error(409, '当前房间已经在快速匹配中');
+
+    if (!this.isSimulation) {
+      const { useItem } = await import('../item/server/service-methods.js');
+      try {
+        await useItem(userId, osType, '60', !user.itemAmount('60'));
+      } catch (e) {
+        throw new Meteor.Error(500, e.message);
+      }
+
+      Rooms.update({
+        _id: roomId,
+        'users.id': userId,
+        session,
+        rounds: null,
+        /*
+        $or: [
+          { fastMatching: null },
+          { fastMatching: false },
+        ],
+        */
+      }, {
+        $set: { fastMatching: true, pvt: false },
+        $push: {
+          messages: {
+            type: 1,
+            text: `${user.name || '足记用户'}使用了快速匹配`,
+          },
+        },
+      });
+
+      // TODO: 使用失败退item
     }
   },
 });
@@ -627,6 +818,8 @@ export const startGame = new ValidatedMethod({
           // 'users.$[].score': 0,
           // roundCount: 1,
           'users.$[u].ready': false, // TODO: 临时方案
+          fastMatching: false,
+          botLeavingCount: 0,
         },
         $unset: { 'users.$[].supporters': '' },
       }, {

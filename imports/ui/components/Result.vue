@@ -337,6 +337,7 @@
       },
       async leaveAndClose() {
         // if (this.room) {
+        this.$emit('leave');
         try {
           await leaveRoom.callAsync({ roomId: this.roomId });
         } finally {
@@ -472,7 +473,7 @@
     .own-result {
       padding: 0 .8rem;
       position: relative;
-      z-index: 1;
+      /*z-index: 1;*/
 
       .result-card .result-card-body {
         color: #0b0b0b;
