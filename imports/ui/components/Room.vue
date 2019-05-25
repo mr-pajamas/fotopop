@@ -10,13 +10,13 @@
           <button class="btn rounded-circle inflexible leave-btn" @click="leaveRoom">
             <svg width="50" height="50" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><circle fill="#1F1E48" cx="25" cy="25" r="25"/><path d="M15.257 17.933l-4.632 5.137a1 1 0 0 0 .024 1.365l4.632 4.788A1 1 0 0 0 17 28.528v-9.926a1 1 0 0 0-1.743-.67z" fill="#FFF"/><path d="M14 22h12a2 2 0 1 1 0 4H14v-4z" fill="#FFF"/><path d="M19 12h13a4 4 0 0 1 4 4v16a4 4 0 0 1-4 4H19" stroke="#FFF" stroke-width="4" stroke-linecap="round"/></g></svg>
           </button>
-          <div class="room-title flexible" @click="showBots = !showBots">
+          <div class="room-title flexible" v-hammer:tripletap="toggleShowBots">
             <p class="room-name">{{ room.typeName() }} - {{ room.categoryName }}</p>
             <p class="small">房间ID：{{ room.searchId }}</p>
           </div>
         </template>
 
-        <message-box v-else class="question-counter" @click.native="showBots = !showBots">
+        <message-box v-else class="question-counter" v-hammer:tripletap="toggleShowBots">
           <span v-if="countdown">即将播放第{{ room.currentRoundNumber() }}题</span>
           <template v-else>
             <span>{{ room.currentRoundNumber() }}/10题<span v-if="elapsedTime !== undefined" style="margin-left: .5rem">{{ 23 - elapsedTime }}s</span></span>
@@ -31,7 +31,7 @@
           <div class="avatar-box">
             <avatar :user="user" :show-vip="true" :offline="user.offline" :show-bot="showBots" />
             <div v-if="index === 0" class="host-label">房主</div>
-            <button class="btn rounded-circle kick-btn" v-else-if="!room.inGame() && (room.host().id === ownAccount._id)" @click="kick(user.id)">
+            <button class="btn rounded-circle kick-btn" v-else-if="!room.inGame() && hostRoom" @click="kick(user.id)">
               <svg viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><circle fill="#FFF" cx="15" cy="15" r="15"/><rect fill="#272651" x="6" y="13" width="18" height="4" rx="2"/></g></svg>
             </button>
             <div v-if="!room.inGame() && user.ready" class="avatar-label ready-label"><span>准备</span></div>
@@ -70,7 +70,7 @@
         <answer-sheet v-if="inQuestion" class="inflexible" v-bind="room.currentQuestion()" :own-account="ownAccount" :room="room" @answer-correct="submitAnswer($event)" @got-tip="tip = $event" />
       </transition>
 
-      <div v-if="!room.inGame() && (fastMatchItem || (room.host().id === ownAccount._id))" class="button-group inflexible d-flex">
+      <div v-if="!room.inGame() && (fastMatchItem || hostRoom)" class="button-group inflexible d-flex">
         <div v-if="fastMatchItem">
           <styled-pill-button class="fast-match-btn" :bg-color="(usingFastMatch || room.users.length === 6) ? 'rgb(216,216,216)' : 'rgb(64,197,255)'" :color="(usingFastMatch || room.users.length === 6) ? 'rgb(175,175,175)' : '#fff'" :text-shadow="true" v-if="!room.fastMatching" :disabled="usingFastMatch || room.users.length === 6" @click.native="fastMatch">
             <span>快速匹配</span>
@@ -87,7 +87,7 @@
           <busy-pill-button bg-color="rgb(64,197,255)" color="#fff" :text-shadow="true" disabled v-else>匹配中&hellip;</busy-pill-button>
         </div>
 
-        <div v-if="room.host().id === ownAccount._id">
+        <div v-if="hostRoom">
           <styled-pill-button v-if="room.canStartGame()" bg-color="rgb(250,75,127)" color="#fff" :text-shadow="true" @click.native="startGame">开始游戏</styled-pill-button>
           <styled-pill-button v-else bg-color="rgb(216,216,216)" color="rgb(175,175,175)" :text-shadow="true" disabled>开始游戏</styled-pill-button>
         </div>
@@ -215,6 +215,9 @@
         return this.room.host().id === this.ownAccount._id;
       },
       */
+      hostRoom() {
+        return this.room.host().id === this.ownAccount._id;
+      },
       countdown() {
         const cd = 3 - this.elapsedTime;
         return cd > 0 ? cd : 0;
@@ -385,6 +388,10 @@
           ...map(newMessages, m => Object.assign({ user: UserAccounts.findOne(m.sender) }, m)),
         );
       });
+
+      this.$watch('hostRoom', function (val) {
+        this.$emit('host', val);
+      }, { immediate: true });
     },
 
     mounted() {
@@ -552,6 +559,9 @@
         this.showSnippets = false;
       },
       */
+      toggleShowBots() {
+        this.showBots = !this.showBots;
+      },
     },
   };
 </script>

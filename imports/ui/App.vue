@@ -11,7 +11,7 @@
 
       <transition appear :name="!appear ? ($meteor.currentRoom ? 'slide-forward' : 'slide-backward') : ''" @before-enter="blockInteractions" @before-leave="blockInteractions" @after-enter="restoreInteractions">
         <keep-alive include="lobby">
-          <room v-if="$meteor.currentRoom" :room="$meteor.currentRoom" :own-account="$meteor.ownAccount" @leave="initiative = true" @session-over="resultQuery = $event" />
+          <room v-if="$meteor.currentRoom" :room="$meteor.currentRoom" :own-account="$meteor.ownAccount" @leave="initiative = true" @session-over="resultQuery = $event" @host="host = $event" />
           <lobby v-else :own-account="$meteor.ownAccount" />
         </keep-alive>
       </transition>
@@ -100,6 +100,7 @@
         resultQuery: null,
         appear: true,
         initiative: false,
+        host: false,
       };
     },
 
@@ -176,10 +177,14 @@
       lobbyShown(val) {
         if (val) {
           if (!this.initiative) {
-            toast('你已经被请出了房间');
-          } else {
-            this.initiative = false;
+            if (!this.host) {
+              toast('你已经被请出了房间');
+            } else {
+              toast('由于长时间未开始游戏，你被请出了房间');
+            }
           }
+          this.initiative = false;
+          this.host = false;
         }
       },
     },
