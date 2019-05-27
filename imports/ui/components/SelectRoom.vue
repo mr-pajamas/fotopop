@@ -172,7 +172,8 @@
 
     .category-list {
       padding: .8rem;
-      overflow: auto;
+      overflow: scroll;
+      -webkit-overflow-scrolling: touch;
 
       > a {
         & + a {

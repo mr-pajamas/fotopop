@@ -51,12 +51,14 @@
       <div class="messages" v-chat-scroll="{ always: false, smooth: true, scrollonremoved: true }" style="flex: 1 1 0">
         <template v-for="message in userMessages">
           <message v-if="message.type !== 1" :color="messageColor(message)">
-            <template slot="icon">
+            <template #icon>
               <avatar class="w-100" v-if="message.type === 2" :user="message.user" :show-vip="false" />
               <img class="w-100" src="/images/m4.png" v-else-if="message.type === 4">
               <img class="w-100" src="/images/m3.png" v-else>
             </template>
-            <template slot="default">{{ message.text }}</template>
+            <template #default>
+              <span class="message-content">{{ message.text }}</span>
+            </template>
           </message>
           <p v-else class="message-line">{{ message.text }}</p>
         </template>
@@ -96,7 +98,7 @@
         -->
       </div>
 
-      <bottom-bar class="inflexible" @show-snippets="modal = 'snippets-modal'" @show-broadcast="modal = 'broadcast-modal'" @show-items="modal = 'items-modal'" />
+      <bottom-bar class="inflexible" @show-snippets="modal = 'snippets-modal'" @show-broadcast="modal = 'broadcast-modal'" @show-items="modal = 'items-modal'" @show-message="modal = 'message-modal'" />
     </div>
 
     <transition name="countdown">
@@ -168,6 +170,7 @@
   import SnippetsModal from './room/SnippetsModal.vue';
   import ItemsModal from './room/ItemsModal.vue';
   import BusyPillButton from './general/BusyPillButton.vue';
+  import MessageModal from './room/MessageModal.vue';
 
   const tid = Symbol('tid');
   // const atid = Symbol('atid');
@@ -190,7 +193,7 @@
 
   export default {
     name: 'room',
-    components: { BusyPillButton, ItemsModal, SnippetsModal, BroadcastModal, Broadcast, Message, AnswerSheet, SoundIcon, BottomBar, StyledPillButton, EmptySlot, Avatar, DiamondInline, MessageBox },
+    components: { MessageModal, BusyPillButton, ItemsModal, SnippetsModal, BroadcastModal, Broadcast, Message, AnswerSheet, SoundIcon, BottomBar, StyledPillButton, EmptySlot, Avatar, DiamondInline, MessageBox },
     props: ['ownAccount', 'room'],
     data() {
       return {
@@ -740,7 +743,8 @@
     }
 
     .messages {
-      overflow: auto;
+      overflow: scroll;
+      -webkit-overflow-scrolling: touch;
       padding: .5rem 0;
       /*
       display: flex;
@@ -752,6 +756,9 @@
         min-height: 100%;
       }
       */
+      .message-content {
+        white-space: pre-wrap;
+      }
 
       .message-line {
         line-height: 1.4;

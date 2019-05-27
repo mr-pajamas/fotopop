@@ -7,10 +7,14 @@
       <span class="input-append inflexible small">0/60</span>
     </div>
     -->
-    <button class="btn inflexible d-flex align-items-center snippet-btn" @click="$emit('show-snippets')">
-      <span class="flexible">快捷语输入</span>
+    <button class="btn inflexible d-flex align-items-center message-btn" @click="$emit('show-message')">
+      <span class="flexible" style="margin-right: 1.5em;">输入文字</span>
       <!--<img src="/images/caret-up.png" class="inflexible">-->
-      <img class="inflexible" alt="caret-up" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABcAAAATCAMAAABMZWaEAAAAclBMVEUAAAAEBAQEBAQFBQUaGhoDAwMFBQUFBQX///8DAwMDAwMDAwMEBAQEBAQEBAQDAwMDAwMEBAQFBQUDAwMGBgYKCgoDAwP/zyWBaBM7MArwwyPetCHZsCDBnBylhhmdfxhWRg9XRw40KgofGQcQDQQNCwRhv5IyAAAAFnRSTlMAgHM0CfpoLgH3693Z1LuclIRfTSoZ+MXIFwAAAKJJREFUGNNtz0cWgkAQRdEGBMxKekXO7H+LEg5CK3f4BnV+qZ2zOuLfuPn/2WHi/Gb3wuTi6vn0gDZt4XHS+huGXPIB3vscAJWIVECw5egKtUxquEbf3U/o0rmnHTzXP0ygkEUBmEu2bIhlFYNtzRPvkMgmgfs09gV9Jpush9d4BShlrwRc5UEjugYMZUAS6xLwlMURa1xvo1s/CB1DZ4ZKfQCt8xc5PCkdRwAAAABJRU5ErkJggg==">
+      <!--<img class="inflexible" alt="caret-up" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABcAAAATCAMAAABMZWaEAAAAclBMVEUAAAAEBAQEBAQFBQUaGhoDAwMFBQUFBQX///8DAwMDAwMDAwMEBAQEBAQEBAQDAwMDAwMEBAQFBQUDAwMGBgYKCgoDAwP/zyWBaBM7MArwwyPetCHZsCDBnBylhhmdfxhWRg9XRw40KgofGQcQDQQNCwRhv5IyAAAAFnRSTlMAgHM0CfpoLgH3693Z1LuclIRfTSoZ+MXIFwAAAKJJREFUGNNtz0cWgkAQRdEGBMxKekXO7H+LEg5CK3f4BnV+qZ2zOuLfuPn/2WHi/Gb3wuTi6vn0gDZt4XHS+huGXPIB3vscAJWIVECw5egKtUxquEbf3U/o0rmnHTzXP0ygkEUBmEu2bIhlFYNtzRPvkMgmgfs09gV9Jpush9d4BShlrwRc5UEjugYMZUAS6xLwlMURa1xvo1s/CB1DZ4ZKfQCt8xc5PCkdRwAAAABJRU5ErkJggg==">-->
+    </button>
+    <button class="btn inflexible icon-btn" @click="$emit('show-snippets')">
+      <img alt="snippets" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAoCAMAAACLrFl+AAAAY1BMVEUAAAADAwMEBAQEBAQDAwMDAwMEBAQEBAQEBAQFBQUICAgLCwsGBgYEBAQzMzP///8DAwPl5eUeHh77+/uXl5cICAjLy8vJycljY2NISEi3t7czMzPOzs5UVFREREQsLCyPj4884ztxAAAAD3RSTlMA+z3M6+TAsaxlIBhcfAWW5oKBAAABBUlEQVQ4y+2V2W6DMBQFsc1OEo9t1qbb/39lUUVrIYXg+555ZoSX63Oy7HY1imeowtRNl0VuhiRK/a9cSaVqN8XAd7DPCG7slwHItx8pCPYcNwPq8qsANonJg9Iixbo75K1Isc5DJVPsBGiZYmcohYoboJMpdoFGqPRQ75Q3z2O+3rcvRjA7xXPE599moBAqAZRwYRZI3f5LicrBIQ8f4UhREB5fZW93xKsswCUpcWAMjEkLi2NZQy8c/gYW4RPrYHCyh5yVMMviItPAJAmllQq8E0TfSpvD3QkCdkUr8FNijG9cFDC7tLLY0DkwLP3owkklRdoqufgiukyu10jX1KZQ5yX+A+QYbuTY6Hq6AAAAAElFTkSuQmCC">
+      <span class="small d-block text-center">快捷输入</span>
     </button>
     <button class="btn inflexible icon-btn" @click="$emit('show-broadcast')">
       <!--<img src="/images/snippets.svg" class="d-block mx-auto">-->
@@ -44,7 +48,7 @@
 <script>
   export default {
     name: 'bottom-bar',
-  }
+  };
 </script>
 
 <style lang="scss" scoped>
@@ -70,10 +74,11 @@
       }
     }
 
-    .snippet-btn {
+    .message-btn {
       background-color: #fff;
       border-radius: .3rem;
-      color: #030303;
+      /*color: #030303;*/
+      color: #a0a0a0;
       border: .05rem #030303 solid;
       font-size: .875rem;
       height: 2.4rem;
@@ -91,12 +96,12 @@
       color: #fff;
       padding: .1rem;
       img, svg {
-        height: 1.6rem;
+        height: 1.5rem;
         width: auto;
         margin-bottom: .2rem;
       }
       .small {
-        font-size: 70%;
+        font-size: .75rem;
         min-width: 2.4rem;
       }
     }

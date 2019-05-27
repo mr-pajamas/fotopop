@@ -39,7 +39,7 @@
     },
     methods: {
       async sendMessage(text) {
-        await sendMessage.callAsync({ roomId: this.room._id, messageText: text });
+        await sendMessage.callAsync({ roomId: this.room._id, messageText: text, snippet: true });
         this.$emit('close');
       },
     },
@@ -56,7 +56,8 @@
     border-radius: .8rem .8rem 0 0;
 
     .snippet-list {
-      overflow: auto;
+      overflow: scroll;
+      -webkit-overflow-scrolling: touch;
       height: 100%;
 
       > button {
