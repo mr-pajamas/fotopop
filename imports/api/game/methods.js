@@ -1318,6 +1318,10 @@ export const sendMessage = new ValidatedMethod({
     messageText: {
       type: String,
     },
+    snippet: {
+      type: Boolean,
+      defaultValue: false,
+    }
   }).validator({ clean: true }),
   mixins: [LoggedInMixin],
   checkLoggedInError: {
@@ -1329,9 +1333,10 @@ export const sendMessage = new ValidatedMethod({
     noRetry: false,
     throwStubExceptions: true,
   },
-  run({
+  async run({
     roomId,
     messageText,
+    snippet,
   }) {
     const { userId } = this;
 
@@ -1343,18 +1348,29 @@ export const sendMessage = new ValidatedMethod({
 
     if (!currentRoom) throw new Meteor.Error(400, '用户不在指定房间中');
 
-    Rooms.update({
-      _id: roomId,
-      'users.id': userId,
-    }, {
-      $push: {
-        messages: {
-          type: 2,
-          text: messageText,
-          sender: userId,
+    if (!this.isSimulation) {
+      if (!snippet) {
+        const { textCheck } = await import('../general/server/service-methods.js');
+        try {
+          await textCheck(messageText);
+        } catch (e) {
+          throw new Meteor.Error(500, e.message);
+        }
+      }
+
+      Rooms.update({
+        _id: roomId,
+        'users.id': userId,
+      }, {
+        $push: {
+          messages: {
+            type: 2,
+            text: messageText,
+            sender: userId,
+          },
         },
-      },
-    });
+      });
+    }
   },
 });
 
