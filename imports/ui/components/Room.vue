@@ -207,6 +207,7 @@
         tip: '',
         showBots: false,
         usingFastMatch: false,
+        lastAnswer: this.room.currentQuestion() && this.room.currentQuestion().answer,
       };
     },
     computed: {
@@ -414,7 +415,7 @@
         forEach(this.bots, bot => bot.init(session));
         if (oldSession) this.$emit('session-over', { roomId: this.room._id, session: oldSession }); // TODO: 这里有个疑点，oldSession会是undefined
       },
-      'room.rounds.length'(val) {
+      'room.rounds.length'(val, oldVal) {
         this.stopCountdown();
         /*
         if (val) {
@@ -427,6 +428,17 @@
         this.elapsedTime = undefined;
         this.hintsShown = 0;
         this.tip = '';
+        if (this.lastAnswer) {
+          this.userMessages.push({
+            type: 4,
+            text: `第${oldVal}题答案：${this.lastAnswer}`,
+          });
+        }
+        if (val) {
+          this.lastAnswer = this.room.currentQuestion().answer;
+        } else {
+          this.lastAnswer = '';
+        }
       },
       async elapsedTime(val) { // TODO: 此处还要回收加分动效
         if (val >= 3) {
@@ -531,7 +543,7 @@
         await GameMethods.startGame.callAsync({});
       },
       async submitAnswer(answer) {
-        this.hintsShown = 3;
+        // this.hintsShown = 3;
         this.tip = '';
         await GameMethods.submitAnswer.callAsync({
           roomId: this.room._id,
@@ -740,6 +752,8 @@
     .broadcast {
       position: absolute;
       width: 100%;
+      top: 0;
+      left: 0;
     }
 
     .messages {
