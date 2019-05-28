@@ -13,9 +13,6 @@
         <div class="small" v-if="tipItemAmount">拥有{{ tipItemAmount }}个</div>
         <div class="small" v-else>{{ tipItem.price }}钻石</div>
         <img src="/images/tip.png" class="btn-append-icon">
-        <!--
-        <svg class="btn-append-icon" width="40" height="58" viewBox="0 0 40 58" xmlns="http://www.w3.org/2000/svg"><g transform="translate(2 2)" stroke-width="4" fill="none" fill-rule="evenodd"><path d="M7.667 33.059v17.274A3.667 3.667 0 0 0 11.333 54h12.75a3.667 3.667 0 0 0 3.667-3.667V33.06c-4.234 1.533-7.56 2.307-10.042 2.307-2.48 0-5.807-.774-10.041-2.307z" stroke="#030303" fill="#FFF"/><path d="M8 41h17M8 47h17" stroke="#030303" stroke-linecap="square"/><ellipse stroke="#030303" fill="#FFCF25" cx="17" cy="17.231" rx="17" ry="17.231"/><path d="M18.271 5.53c5.803 1.408 8.704 4.391 8.704 8.949" stroke="#FFF" stroke-linecap="round"/></g></svg>
-        -->
       </button>
     </div>
     <div class="answer-area d-flex" :style="{ flexWrap: !!type ? 'nowrap' : 'wrap' }">
