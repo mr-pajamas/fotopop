@@ -2,14 +2,6 @@
   <div class="achievement-group">
     <div class="group-head d-flex align-items-center">
       <h5 class="flexible">{{ group.name }}</h5>
-      <!--
-      <button class="btn collapse-btn inflexible" @click="show = !show">
-        &lt;!&ndash; collapse &ndash;&gt;
-        <svg v-if="show" width="25" height="19" viewBox="0 0 25 19" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><rect fill="#545454" width="24" height="2" rx="1"/><path stroke="#545454" stroke-width="2" d="M1 18.314L12.314 7l11.313 11.314"/></g></svg>
-        &lt;!&ndash; expand &ndash;&gt;
-        <svg v-else width="25" height="19" viewBox="0 0 25 19" xmlns="http://www.w3.org/2000/svg"><g transform="translate(0 -5)" fill="none" fill-rule="evenodd"><rect fill="#545454" y="5" width="24" height="2" rx="1"/><path stroke="#545454" stroke-width="2" d="M1 11.314l11.314 11.313 11.313-11.313"/></g></svg>
-      </button>
-      -->
     </div>
     <transition name="collapse" @before-enter="beforeEnter" @enter="enter" @before-leave="beforeLeave" @leave="leave">
       <div class="group-body" v-show="true">
