@@ -20,7 +20,7 @@
     "crypto-js": "^3.1.9-1",
     "css-element-queries": "^1.2.0",
     "flickity": "^2.2.0",
-    "gsap": "^2.1.2",
+    "gsap": "^3.6.0",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.11",
     "lottie-web": "^5.5.1",
